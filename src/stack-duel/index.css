@@ -1,0 +1,174 @@
+/* attack red: rgba(85, 0, 3, 1) */
+/* defense red: rgba(0, 17, 85, 1) */
+
+
+* {
+  /*vertical-align: bottom;*/
+}
+.card {
+  /* 63 x 88 */
+  width: 63mm;
+  max-width: 63mm;
+  height:  88mm;
+  max-height:  88mm;
+  /*border:  0mm solid black;*/
+  padding-left:  0px;
+  display:  inline-block;
+  vertical-align: bottom;
+  position: relative;
+  font-size: 8mm;
+
+  /*so that \n triggers a new line*/
+  white-space: pre-wrap;
+
+  /*0.5px for printing, 1.0px for coding*/
+  /*margin:  0.5px;*/
+  margin:  10px;
+}
+
+.icon {
+  max-width: 1em;
+  max-height: 1em;
+}
+
+.icon.attack {
+  transform: rotate(-90deg);
+  width: .8em;
+  height: .8em;
+  margin-top: -5px;
+}
+.icon.attack path {
+  fill: rgba(85, 0, 3, 1);
+}
+
+.icon.defense {
+  width: .8em;
+  height: .8em;
+}
+.icon.defense path {
+  fill: rgba(0, 17, 85, 1);
+}
+
+.icon.energy {
+  width: 2em;
+  top: 4px;
+  position: relative;
+}
+.icon.ahead {
+  width: 1em;
+  height: 1em;
+  transform: rotate(180deg);
+  margin-bottom: -2px;
+}
+.icon.behind {
+  width: 1em;
+  height: 1em;
+  margin-bottom: -5px;
+}
+.icon.range {
+  width: 0.8em;
+  margin-bottom: -2px;
+}
+.icon.twice {
+  margin-bottom: -2px;
+}
+.icon.poison {
+  width:  0.8em;
+}
+
+.trained {
+  color: red;
+  font-weight: bold;
+
+  /*display: inline-block;
+  border: 1px solid gray;
+  border-radius: 10px;
+  width: 1em;
+  background-color: hsla(202deg, 93%, 45%, .3);
+  text-align: center;*/
+}
+
+.top {
+  height: 24.5mm;
+  /*background-color: red;*/
+  border: 2px solid black;
+  margin-bottom: 0.5mm;
+}
+
+.base-attack {
+  padding-left: 1mm;
+  color: ;
+  display: inline-block;
+  width: 25%;
+  height: 100%;
+  border-right: 2px solid rgba(85, 0, 3, .1);
+}
+.base-value {
+  letter-spacing: -.05em;
+}
+
+.agent-effect {
+  display: inline-block;
+  vertical-align: top;
+  padding-top: 5px;
+  width: 50%;
+  text-align: center;
+}
+
+.base-defense {
+  display: inline-block;
+  padding-right: 2mm;
+  text-align: right;
+  color: rgba(0, 17, 85, 1);
+  width: 25%;
+  height: 100%;
+  border-left: 2px solid rgba(0, 17, 85, .1);
+}
+.base-defense-icon-container {
+  margin-right: -4px;
+}
+
+.middle {
+  height: 38mm;
+  /*background-color: blue;*/
+  border: 2px solid black;
+  margin-bottom: 0.5mm;
+  position: relative;
+}
+.card-name {
+  display: inline-block;
+  top: 0;
+  right: 0;
+  margin-right: 10px;
+  position: absolute;
+  color: white;
+  text-shadow: 1px 1px 1px rgb(0 0 0 / 80%);
+}
+.image-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.image-container > img {
+  width: 100%;
+  margin-top: -48px;
+}
+
+.energy-container {
+  display: inline-block;
+  top: 0;
+  position: absolute;
+  /*background-color: rgba(255, 255, 255, .3);*/
+  background-color: white;
+  border-radius: 0 0 15px 0;
+  box-shadow: 1px 1px 1px 1px rgb(50 50 50 / 40%);
+}
+.energy-value {
+
+}
+
+.bottom {
+  height: 24.5mm;
+  border: 2px solid black;
+  background-color: green;
+}

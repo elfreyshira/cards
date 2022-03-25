@@ -1,0 +1,104 @@
+.font-small {
+  font-size: .8em;
+}
+
+.icon {
+  width: 1.8em;
+  vertical-align: middle;
+}
+
+.card {
+  /* 63 x 88 */
+  width: 63mm;
+  max-width: 63mm;
+  height:  88mm;
+  max-height:  88mm;
+  border:  8px solid black;
+  margin:  0.5px;
+  padding-left:  0px;
+  display:  inline-block;
+  vertical-align: bottom;
+  position: relative;
+  font-size: 3.5mm;
+
+  /*so that \n triggers a new line*/
+  white-space: pre-wrap;
+}
+
+/*https://www.canva.com/colors/color-wheel/*/
+.card.HAND {
+  border-color: #29A4D6;
+}
+.card.PLAY {
+  border-color: #B129D6;
+}
+.card.DECK {
+  border-color: #D65B29;
+}
+.card.BUFFET {
+  border-color: #4ED629;
+}
+.card.STARTER {
+  /* no change needed */
+}
+
+.card .energy {
+  font-size:  10mm;
+  /*display: inline-block;*/
+  position:  relative;
+  margin:  2mm;
+}
+.card .energy .energy-right, .card .energy .energy-left {
+  padding: 1mm 1.5mm;
+  border: 1px solid #999;
+  display: inline-block;
+}
+.card .energy .energy-right {
+  position: absolute;
+  top:  0;
+  right: 0;
+}
+
+.card .effect {
+  border: 2px solid #333;
+  margin:  2mm;
+  padding:  1mm;
+}
+
+.card .public-trigger {
+  border: 2px dotted #333;
+  margin: 2mm;
+  padding: 1mm;
+}
+
+.card .public-trigger .trigger-header {
+
+}
+
+.trigger-header {
+  margin-bottom: 1mm;
+  color: #336;
+  font-weight: 600;
+}
+
+.card .private-trigger {
+  margin: 2mm;
+  padding: 1mm;
+  position: absolute;
+  bottom: 0;
+}
+
+.card .private-trigger-title {
+  font-size: .8em;
+  margin-bottom: 1mm;
+  text-align: center;
+}
+
+.card .private-trigger-effects {
+  /*border: 2px dotted #333;*/
+  background-color: #eee;
+  padding: 1mm;
+}
+.card .private-trigger-effects > div:first-child {
+  margin-bottom: 1mm;
+}

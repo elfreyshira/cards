@@ -5,9 +5,19 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* To enable background printing in Chrome */
+  /* https://stackoverflow.com/questions/3893986/css-media-print-issues-with-background-color */
+  -webkit-print-color-adjust: exact !important; 
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+* {
+  -webkit-box-sizing: border-box !important; /* Safari/Chrome, other WebKit */
+  -moz-box-sizing: border-box !important;    /* Firefox, other Gecko */
+  box-sizing: border-box !important;         /* Opera/IE 8+ */
 }
