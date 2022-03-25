@@ -26,7 +26,16 @@ const codeToComponentMapping = {
   TWICE: <ICONS.Twice />,
   POISON: <ICONS.Poison />,
   X2: <span>×2</span>,
-  '/': <br />
+  '/': <br />,
+  recruit: <ICONS.Recruit/>,
+  train: <ICONS.Train/>,
+  towards: <span>&nbsp;<ICONS.Towards/>&nbsp;</span>,
+  deck: <ICONS.Deck/>,
+  to: <span>&nbsp;<ICONS.InOrderTo/>&nbsp;</span>,
+  energy: <ICONS.Energy />,
+  draw: <ICONS.Draw />,
+  hand: <ICONS.Hand />,
+  discard: <ICONS.Discard />,
 }
 
 function AgentEffect ({agentEffect}) {
@@ -37,17 +46,10 @@ function AgentEffect ({agentEffect}) {
   const effectCodes = agentEffect.split(' ')
   const agentEffectArray = _.map(effectCodes, (codeObj) => {
     return codeToComponentMapping[codeObj] || codeObj
-    // return <span>{codeToComponentMapping[codeObj] || codeObj}</span>
   })
-  console.log(agentEffectArray)
 
-
-  // if (agentEffect.startsWith('AHEAD')) {
-  //   return null
-  // }
   return agentEffectArray
 }
-
 
 function Top (props) {
   return (
@@ -63,6 +65,7 @@ function Top (props) {
         <span className="base-value">{props.defense}</span>
         <div className="base-defense-icon-container"><ICONS.Defense /></div>
       </div>
+      <div className="agent-type">{props.type} AGENT</div>
     </div>
   )
 }
@@ -70,28 +73,90 @@ function Top (props) {
 function Middle (props) {
   return (
     <div className="middle">
-      <div className="image-container"><img src={sniper} /></div>
+      {/*<div className="image-container"><img src={sniper} /></div>*/}
       <div className="energy-container">
         <span className="energy-value">{props.energy}</span>
         <ICONS.Energy />
       </div>
-      <div className="card-name">
-        SNIPER
+      {/*<div className="card-name">SNIPER</div>*/}
+    </div>
+  )
+}
+
+function AllyEffect ({allyEffect, type}) {
+
+  if (type == 'MECHA') {
+    return <div className="ally-effect-mecha">{allyEffect}</div>
+  }
+  
+  const effectCodes = allyEffect.split(' ')
+  const allyEffectArray = _.map(effectCodes, (codeObj) => {
+    return codeToComponentMapping[codeObj] || codeObj
+    // return <span>{codeToComponentMapping[codeObj] || codeObj}</span>
+  })
+
+  return allyEffectArray
+
+}
+
+function getBonusType({allyBonus}) {
+  if (allyBonus === 'none') {
+    return 'no'
+  }
+  else if (allyBonus.startsWith('DEFENSE')) {
+    return 'defense'
+  }
+  else {
+    return 'attack'
+  }
+}
+
+function Bottom (props) {
+  return (
+    <div className="bottom">
+      <div className={"ally-effect with-" + getBonusType(props) + "-bonus"}>
+        <div className="ally-type">{props.type} ALLY</div>
+        <AllyEffect {...props} />
       </div>
     </div>
   )
 }
-function Bottom (props) {
-  return (
-    <div className="bottom">
-      hello world
-    </div>
-  )
+/*
+<div className={"bonus-container-" + getBonusType(props)}>
+        {codeToComponentMapping[_.toUpper(getBonusType(props))]}
+        <span className="ally-bonus-text">
+          hi
+        </span>
+      </div>
+*/
+
+function AllyBonusText ({allyBonus}) {
+  const effectCodes = allyBonus.split(' ')
+  const agentEffectArray = _.map(effectCodes, (codeObj) => {
+    return codeToComponentMapping[codeObj] || codeObj
+  })
+  return agentEffectArray
 }
+
 function Bonus (props) {
+  if (props.allyBonus === 'none') {
+    return null
+  }
+
+  const bonusType = getBonusType(props)
   return (
-    <div className="bonus">
-      {/*hello world*/}
+    <div className={"ally-bonus " + bonusType + "-bonus"}>
+
+      <div className={"bonus-icon-" + bonusType + "-container"}>
+        <div className={"bonus-icon-" + bonusType}>
+          {codeToComponentMapping[_.toUpper(bonusType)]}
+        </div>
+      </div>
+      <div className={"bonus-text-" + bonusType + "-container"}>
+        <div className={"bonus-text-" + bonusType}>
+          <AllyBonusText {...props} />
+        </div>
+      </div>
     </div>
   )
 }
