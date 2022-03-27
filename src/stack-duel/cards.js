@@ -2,6 +2,12 @@
 import ICONS from './icons.js'
 import _ from 'lodash'
 
+const serialNumber = [
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+  16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
+  28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+  40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52
+]
 
 const energy = [
   1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2,
@@ -41,7 +47,7 @@ const agentEffect = [
   'none',
   'none',
   'BEHIND RANGE + 1',
-  'DEFENSE POISON',
+  'DEFENSE LETHAL',
   'AHEAD RANGE + 1',
   'none',
   'AHEAD ATTACK X2',
@@ -52,14 +58,14 @@ const agentEffect = [
   'AHEAD TWICE',
   'AHEAD ATTACK + 2',
   'BEHIND ATTACK X2',
-  'AHEAD ATTACK POISON',
+  'AHEAD ATTACK LETHAL',
   'RANGE = 3',
   'none',
   'none',
   'AHEAD RANGE + 2',
   'BEHIND TWICE',
   'AHEAD DEFENSE X2',
-  'DEFENSE POISON',
+  'DEFENSE LETHAL',
   'BEHIND RANGE + 1',
   'TWICE',
   'none',
@@ -69,15 +75,15 @@ const agentEffect = [
   'BEHIND RANGE + 2',
   'RANGE = 2',
   'AHEAD DEFENSE + 3',
-  'POISON ATTACK',
+  'ATTACK LETHAL',
   'AHEAD RANGE + 1',
   'BEHIND RANGE + 2',
-  'AHEAD ATTACK POISON',
+  'AHEAD ATTACK LETHAL',
   'AHEAD ATTACK + 5',
   'AHEAD DEFENSE X2',
-  'POISON ATTACK',
-  'AHEAD DEFENSE + 3 / RANGE = 2',
-  'DEFENSE POISON',
+  'ATTACK LETHAL',
+  'RANGE = 3',
+  'DEFENSE LETHAL',
   'BEHIND ATTACK X2',
   'none',
   'TWICE / RANGE = 2',
@@ -100,8 +106,8 @@ function WithFont({children, px}) {
   console.log(totalLength)
   return <span
     style={{
-      fontSize: _.round(50/Math.pow(totalLength, .5)*2.4, 1)+'px',
-      lineHeight: _.round(7/Math.pow(totalLength, .5), 3)
+      fontSize: _.round(110/Math.pow(totalLength, .5), 1)+'px',
+      lineHeight: _.round(9/Math.pow(totalLength, .5), 3)
     }}>{children}</span>
 }
 
@@ -150,20 +156,20 @@ const allyEffect = [
   
   // for mecha ally
   <WithFont px="15">
-    Remove 0-3 units; for each unit removed, <ICONS.Draw/>1 and <ICONS.Energy/>+2.
+    Remove 0-3 agents; for each agent removed, <ICONS.Draw/>1 and <ICONS.Energy/>+2.
   </WithFont>,
   <WithFont px="20">This turn: every time you defeat an enemy, <ICONS.Draw/>1.</WithFont>,
   <WithFont px="20">This turn: every card you play has its <ICONS.Energy/> cost reduced by 1.</WithFont>,
   <WithFont px="20">This turn: every time you defeat an enemy, <ICONS.Recruit/>1.</WithFont>,
   <WithFont px="20">
-    Remove 1 unit; replace it by playing an agent from hand without cost in the same position.
+    Remove 1 agent; replace it by playing an agent from hand without cost in the same position.
   </WithFont>,
   <WithFont px="20">
-    Remove 0-4 units; for each unit removed, <Block>
+    Remove 0-4 agents; for each agent removed, <Block>
     <ICONS.Recruit/>1 <ICONS.Towards/> <ICONS.Hand/>.</Block>
   </WithFont>,
-  <WithFont px="20">Link 2 units together; you may unlink them at the end of the turn without discarding them.</WithFont>,
-  <WithFont>Remove 2 units, then play any 2 human cards from hand without cost.</WithFont>,
+  <WithFont px="20">Link 2 agents together; you may unlink them at the end of the turn without discarding them.</WithFont>,
+  <WithFont>Remove 2 agents, then play any 2 human cards from hand without cost.</WithFont>,
   <WithFont>
     This turn: every time you defeat an enemy, <Block>
     <ICONS.Recruit/>1 <ICONS.Towards/> <ICONS.Hand/>.</Block>
@@ -172,11 +178,11 @@ const allyEffect = [
     <ICONS.Recruit/>2; you may play any of them without cost if it costs 3 or less <ICONS.Energy/>.
   </WithFont>),
   (<WithFont>
-    This turn: every time you damage an opponent Warden, <Block>
+    This turn: every time you damage a Warden, <Block>
     <ICONS.Recruit/>1 <ICONS.Towards/> <ICONS.Hand/>.</Block>
   </WithFont>),
   <WithFont>
-    Remove 2 units, then <Block><ICONS.Draw/>3</Block> and <Block><ICONS.Energy/>+7.</Block>
+    Remove 2 agents, then <Block><ICONS.Draw/>3</Block> and <Block><ICONS.Energy/>+7.</Block>
   </WithFont>
 ]
 
@@ -193,7 +199,7 @@ const allyBonus = [
   'ATTACK + 2',
   'DEFENSE + 2',
   'DEFENSE + 1',
-  'POISON ATTACK',
+  'ATTACK LETHAL',
   'DEFENSE + 2',
   'ATTACK + 1',
   'RANGE + 1',
@@ -204,8 +210,8 @@ const allyBonus = [
   'DEFENSE + 4',
   'ATTACK + 3',
   'none',
-  'DEFENSE POISON',
-  'POISON ATTACK',
+  'DEFENSE LETHAL',
+  'ATTACK LETHAL',
   'RANGE + 1',
   'DEFENSE + 6',
   'ATTACK X2',
@@ -214,7 +220,7 @@ const allyBonus = [
   'DEFENSE X2',
   'RANGE + 2',
   'DEFENSE + 3',
-  'DEFENSE POISON',
+  'DEFENSE LETHAL',
   'ATTACK X2',
   'RANGE + 1',
   'ATTACK + 6',
@@ -235,29 +241,75 @@ const allyBonus = [
   'none'
 ]
 
-function Trained (props) {
-  return <span class="trained">T</span>
-}
 
-
-const cards = [
-  // {
-  //   agentEffect: (
-  //     <span>
-  //       <Trained/>
-  //       <ICONS.Attack />
-  //       <ICONS.Defense />
-  //     </span>
-  //   )
-  // }
+const wardens = [
+  {
+    name: 'Enforcer of Peace',
+    trigger: 'When enemy agent attacks',
+    effect: <span>Enemy agent <ICONS.Attack/>-3.</span>
+  },
+  {
+    name: 'Pillar of Power',
+    trigger: 'When enemy agent attacks',
+    effect: 'Reduce damage to your Warden by 5.'
+  },
+  {
+    name: 'Shepherd of the Lanes',
+    trigger: 'When enemy agent attacks',
+    effect: <span>Move enemy agent to the back, then <ICONS.Draw/>1.</span>
+  },
+  {
+    name: 'Loyal Steward',
+    trigger: 'When enemy agent attacks',
+    effect: <span>Enemy agent <ICONS.Range/>-1, then <ICONS.Draw/>1.</span>
+  },
+  {
+    name: 'Steady Protector',
+    trigger: 'When enemy agent attacks',
+    effect: 'Your Warden cannot take more than 2 damage from the attack.'
+  },
+  {
+    name: 'Caretaker of the Lanes',
+    trigger: 'When enemy agent attacks',
+    effect: 'Move enemy agent to another lane.'
+  },
+  {
+    name: 'Sentinel of Truth',
+    trigger: 'When enemy agent attacks',
+    effect: 'Negate any agent cards that affect the enemy agent.'
+  },
+  {
+    name: 'Sustainer of the Self',
+    trigger: 'When enemy agent attacks',
+    effect: <span>Negate any ally bonus the enemy agent is receiving, then <ICONS.Draw/>1.</span>
+  },
+  {
+    name: 'Resolute Sentry',
+    trigger: 'When your agent is being attacked',
+    effect: <span>Your agent <ICONS.Defense/>+4.</span>
+  },
+  {
+    name: 'Keeper of the Lanes',
+    trigger: 'When your agent is being attacked',
+    effect: <span>Move your agent to the back, then <ICONS.Draw/>1.</span>
+  },
+  {
+    name: 'Silent Angel',
+    trigger: 'When your agent is destroyed',
+    effect: <span>Play a human agent from hand without cost, then opponent <ICONS.Draw/>1.</span>
+  }
 ]
 
+
+
+const cards = []
 
 
 for (var i = 0; i < 52; i++) {
 // for (var i = 0; i < 10; i++) {
   cards.push({
     type: i <= 39 ? 'HUMAN' : 'MECHA',
+    serialNumber: serialNumber[i],
     energy: energy[i],
     attack: attack[i],
     defense: defense[i],
@@ -266,4 +318,29 @@ for (var i = 0; i < 52; i++) {
     allyBonus: allyBonus[i]
   })
 }
+
+
+for (var i = 0; i < 11; i++) {
+  cards.push({
+    type: 'WARDEN',
+    wardenName: _.toUpper(wardens[i].name),
+    wardenTrigger: wardens[i].trigger,
+    wardenEffect: wardens[i].effect
+  })
+}
+
+_.times(3, () => {
+  cards.push({
+    type: 'ICON-SUMMARY'
+  })
+})
+
+_.times(3, () => {
+  cards.push({
+    type: 'ALWAYS-AVAILABLE'
+  })
+})
+
+
+
 export default cards

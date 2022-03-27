@@ -1,7 +1,12 @@
 /* attack red: rgba(85, 0, 3, 1) */
 /* defense red: rgba(0, 17, 85, 1) */
 
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap');
 
+body {
+  -webkit-print-color-adjust:exact;
+  -webkit-filter:opacity(1);
+}
 * {
   /*vertical-align: bottom;*/
 }
@@ -16,15 +21,23 @@
   display:  inline-block;
   vertical-align: bottom;
   position: relative;
-  font-size: 8mm;
+  font-size: 7mm;
+  font-family: 'Roboto Slab', serif;
+  /*font-family: serif;*/
 
   /*so that \n triggers a new line*/
   white-space: pre-wrap;
 
-  /*0.5px for printing, 1.0px for coding*/
-  /*margin:  0.5px;*/
+  /*0.5px for printing, 1.0px for coding*/  
   margin:  10px;
 }
+
+@media print {
+  .card {
+    margin:  0.5px;  
+  }
+}
+
 
 .icon {
   max-width: 1em;
@@ -45,7 +58,7 @@
   width: .8em;
   height: .8em;
   /*transform: scaleX(1.3);*/
-  margin-bottom: -.05em;
+  margin-bottom: -.02em;
 }
 .icon.defense path {
   fill: rgba(0, 17, 85, 1);
@@ -68,13 +81,13 @@
   margin-bottom: -.125em;
 }
 .icon.range {
-  width: 0.8em;
-  margin-bottom: -0.05em;
+  width: 0.9em;
+  margin-bottom: -0.15em;
 }
 .icon.twice {
   margin-bottom: -0.05em;
 }
-.icon.poison {
+.icon.lethal {
   width: 0.8em;
 }
 .icon.recruit {
@@ -86,10 +99,10 @@
   margin-right: 0.075em;
 }
 .icon.to-direction {
-  vertical-align: bottom;
+  vertical-align: middle;
 }
 .icon.deck {
-  vertical-align: bottom;
+  vertical-align: middle;
 }
 .icon.in-order-to {
   margin-bottom: -0.075em;
@@ -105,7 +118,12 @@
   margin-bottom: -.1em;
 }
 .icon.draw-card {
-  margin-bottom: -.06em;
+  margin-bottom: -.08em;
+  transform: scaleX(1.15);
+}
+.icon.deploy {
+  width: .73em;
+  margin: 0 0.1em;
 }
 
 .trained {
@@ -161,10 +179,9 @@
     linear-gradient(
       to right,
       rgba(0, 0, 0, 0) 30%,
-      black 50%,
+      gray 50%,
       rgba(0, 0, 0, 0) 70%
-    )
-    100% 0 0 0 / 1px 0 0 0 stretch;
+    ) 1;
 }
 
 .base-defense {
@@ -207,17 +224,34 @@
 
 .energy-container {
   display: inline-block;
-  padding: 2px;
+  padding: 3px 5px;
   top: 0;
   position: absolute;
   /*background-color: rgba(255, 255, 255, .3);*/
-  background-color: white;
+  /*background-color: white;*/
   border-radius: 0 0 15px 0;
-  box-shadow: 1px 1px 1px 1px rgb(50 50 50 / 40%);
-}
-.energy-value {
+  box-shadow: 1px 1px 1px 1px rgb(60 60 60 / 40%);
 
+  background-color: #222;
+  /*background-color: black;*/
+  color: white;
 }
+.energy-container .icon.energy path {
+  fill: white;
+}
+.energy-container .icon.deploy path {
+  fill: white;
+}
+
+
+.serial-number {
+  position: absolute;
+  font-size: .3em;
+  right: 0;
+  top: 0;
+  margin: 3px 5px;
+}
+
 
 .bottom {
   height: 24.5mm;
@@ -239,7 +273,7 @@
     linear-gradient(
       to right, 
       rgba(0, 0, 0, 0) 5%,
-      black 50%, 
+      gray 50%, 
       rgba(0, 0, 0, 0) 95%
     ) 1;
 }
@@ -262,25 +296,25 @@
 }
 
 .ally-bonus {
-  /*background-color: red;*/
   background-color: white;
   width: 25%;
   height:  calc(24.5mm + 63mm/4);
   position: absolute;
   border: 2px solid black;
-  outline: 2px solid white;
-  box-shadow: 0 0 3px 2px white;
+  /*outline: 2px solid white;*/
+  /*box-shadow: 0 0 3px 2px white;*/
+  
   border-radius: 50px 50px 0 0;
   bottom: 0;
-
-  /*clip-path: ellipse(100% 100% at 50% 100%);*/
 }
 .ally-bonus.defense-bonus {
   right: 0;
+  box-shadow: -0.5px -1px 0px 1px white;
 }
 
 .ally-bonus.attack-bonus {
   left: 0;
+  box-shadow: 0.5px -1px 0px 1px white;
 }
 
 .bonus-icon-attack-container, .bonus-icon-defense-container {
@@ -300,9 +334,9 @@
     linear-gradient(
       to bottom, 
       rgba(0, 0, 0, 0) 10%,
-      black 50%, 
+      gray 50%, 
       rgba(0, 0, 0, 0) 90%
-    ) 1 100%;
+    ) 1;
 }
 .bonus-icon-defense {
   display: inline-block;
@@ -317,15 +351,52 @@
     linear-gradient(
       to bottom, 
       rgba(0, 0, 0, 0) 10%,
-      black 50%, 
+      gray 50%, 
       rgba(0, 0, 0, 0) 90%
-    ) 1 100%;
+    ) 1;
 }
 
 .bonus-text-attack-container, .bonus-text-defense-container {
   height: calc(100% - 63mm/4);
   position: relative;
 }
+
+.bonus-text-defense-title {
+  transform: rotate(90deg);
+  position: absolute;
+  font-size: .25em;
+  text-align: center;
+  bottom: 41px;
+  left: -40px;
+  width: 24.5mm;
+  border-top: 1px solid gray;
+  border-image: 
+    linear-gradient(
+      to left, 
+      rgba(0, 0, 0, 0) 10%,
+      gray 50%,
+      rgba(0, 0, 0, 0) 90%
+    ) 1;
+}
+.bonus-text-attack-title {
+      transform: rotate(-90deg);
+    position: absolute;
+    font-size: .25em;
+    text-align: center;
+    /* bottom: 41px; */
+    bottom: 40px;
+    left: 3px;
+    /* left: -40px; */
+    width: 24.5mm;
+    border-top: 1px solid gray;
+    border-image: linear-gradient(
+      to left,
+      rgba(0, 0, 0, 0) 10%,
+      gray 50%,
+      rgba(0, 0, 0, 0) 90%
+    ) 1;
+}
+
 .bonus-text-attack {
   transform: rotate(-90deg);
   display: inline-block;
@@ -333,7 +404,7 @@
   text-align: center;
   top: 12px;
   left: -19px;
-  padding-top: 12px;
+  padding-top: 8px;
   width: 24.5mm;
   height: calc(63mm /4);
 }
@@ -344,7 +415,7 @@
   text-align: center;
   top: 15px;
   left: -18px;
-  padding-top: 12px;
+  padding-top: 8px;
   width: 24.5mm;
   height: calc(63mm /4);
 }
@@ -353,4 +424,72 @@
 .ally-bonus-text {
   /*display: inline-block;*/
   /*width: 24mm;*/
+}
+
+
+/* -------------- WARDEN ----------------------*/
+/* -------------- WARDEN ----------------------*/
+.warden-card {
+  border: 10px solid black;
+  font-size: 1.05em;
+  padding: 10px;
+}
+.warden-name {
+  text-align: center;
+  letter-spacing: 1.2;
+  margin-bottom: 20px;
+  border-bottom: 2px solid black;
+  padding-bottom: 10px;
+  letter-spacing: 1px;
+  font-size: 1.2em;
+  border-image: linear-gradient(
+      to left,
+      rgba(0, 0, 0, 0) 0%,
+      gray 50%,
+      rgba(0, 0, 0, 0) 100%
+    ) 1;
+}
+.warden-trigger-title {
+  text-align: center;
+}
+.warden-trigger {
+  margin-bottom: 20px;
+}
+.warden-effect-title {
+  text-align: center;
+  font-size: 1.5em;
+}
+
+/* ---------- ICON SUMMARY ---------- */
+/* ---------- ICON SUMMARY ---------- */
+.card.rules {
+  border: 3px solid blue;
+  padding: 5px;
+  font-size: .635em;
+}
+.icon-description {
+  /*font-size: .3em;*/
+}
+.rules-table {
+  border-spacing: 0;
+}
+.rules-table td {
+  border-top: .1px solid black; 
+  border-left: .1px solid black;
+  padding: 0 2px;
+  margin: 0;
+}
+.rules-table td:first-child {
+  text-align: center;
+}
+
+/* ---------- ALWAYS AVAILABLE ---------- */
+/* ---------- ALWAYS AVAILABLE ---------- */
+.card.always-available {
+  border: 3px solid red;
+  padding: 10px;
+  font-size: 1.9em;
+}
+.always-available-title {
+  text-align: center;
 }

@@ -7,6 +7,7 @@ import {ReactComponent as RangeSvg} from './images/range.svg'
 import {ReactComponent as TwiceSvg} from './images/twice.svg'
 import {ReactComponent as LethalSvg} from './images/lethal.svg'
 import {ReactComponent as DiscardSvg} from './images/discard.svg'
+import {ReactComponent as DeploySvg} from './images/deploy.svg'
 
 import recruit from './images/recruit.png'
 import train from './images/train.png'
@@ -52,8 +53,8 @@ function Twice () {
   return <TwiceSvg className="icon twice" style={{height: "", width: ""}} />
 }
 
-function Poison () {
-  return <LethalSvg className="icon poison" style={{height: "", width: ""}} />
+function Lethal () {
+  return <LethalSvg className="icon lethal" style={{height: "", width: ""}} />
 }
 
 function Recruit () {
@@ -84,6 +85,10 @@ function Discard () {
   return <DiscardSvg className="icon discard" style={{height: "", width: ""}} />
 }
 
+function Deploy () {
+  return <DeploySvg className="icon deploy" style={{height: "", width: ""}} />
+}
+
 export default {
   Draw,
   Attack,
@@ -93,7 +98,7 @@ export default {
   Behind,
   Range,
   Twice,
-  Poison,
+  Lethal,
   Recruit,
   Train,
   Towards,
@@ -101,4 +106,5 @@ export default {
   InOrderTo,
   Hand,
   Discard,
+  Deploy,
 }

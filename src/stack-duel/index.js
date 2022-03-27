@@ -7,15 +7,6 @@ import ICONS from './icons.js'
 
 import sniper from './images/sniper.png'
 
-function Energy (props) {
-  return (
-    <div className="energy">
-      <div className="energy-left">{props.children}</div>
-      <div className="energy-right">{props.children}</div>
-    </div>
-  )
-}
-
 
 const codeToComponentMapping = {
   AHEAD: <ICONS.Ahead />,
@@ -24,7 +15,7 @@ const codeToComponentMapping = {
   DEFENSE: <ICONS.Defense />,
   RANGE: <ICONS.Range />,
   TWICE: <ICONS.Twice />,
-  POISON: <ICONS.Poison />,
+  LETHAL: <ICONS.Lethal />,
   X2: <span>×2</span>,
   '/': <br />,
   recruit: <ICONS.Recruit/>,
@@ -70,22 +61,31 @@ function Top (props) {
   )
 }
 
+function EnergyCost (props) {
+  if (_.isString(props.energy) && props.energy.startsWith('D')) {
+    return <span><ICONS.Deploy />{props.energy[1]}</span>
+  }
+  else {
+    return <span>{props.energy}<ICONS.Energy /></span>
+  }
+}
+
 function Middle (props) {
   return (
     <div className="middle">
       {/*<div className="image-container"><img src={sniper} /></div>*/}
       <div className="energy-container">
-        <span className="energy-value">{props.energy}</span>
-        <ICONS.Energy />
+        <EnergyCost {...props} />
       </div>
       {/*<div className="card-name">SNIPER</div>*/}
+      <div className="serial-number">{props.serialNumber}</div>
     </div>
   )
 }
 
 function AllyEffect ({allyEffect, type}) {
 
-  if (type == 'MECHA') {
+  if (type === 'MECHA') {
     return <div className="ally-effect-mecha">{allyEffect}</div>
   }
   
@@ -121,14 +121,6 @@ function Bottom (props) {
     </div>
   )
 }
-/*
-<div className={"bonus-container-" + getBonusType(props)}>
-        {codeToComponentMapping[_.toUpper(getBonusType(props))]}
-        <span className="ally-bonus-text">
-          hi
-        </span>
-      </div>
-*/
 
 function AllyBonusText ({allyBonus}) {
   const effectCodes = allyBonus.split(' ')
@@ -153,6 +145,9 @@ function Bonus (props) {
         </div>
       </div>
       <div className={"bonus-text-" + bonusType + "-container"}>
+        <div className={"bonus-text-" + bonusType + "-title"}>
+          ALLY BONUS
+        </div>
         <div className={"bonus-text-" + bonusType}>
           <AllyBonusText {...props} />
         </div>
@@ -175,12 +170,109 @@ function Card (props) {
   )
 }
 
+function Warden (props) {
+  return (
+    <div className="card warden-card">
+      <div className="warden-name">{props.wardenName}</div>
+      <div className="warden-trigger-title">[TRIGGER]</div>
+      <div className="warden-trigger">{props.wardenTrigger}</div>
+      <div className="warden-effect-title">[ <ICONS.Deploy/>1 ]</div>
+      <div className="warden-effect">{props.wardenEffect}</div>
+    </div>
+  )
+}
+
+function Rules () {
+  const iconsList = [
+    <ICONS.Attack/>,
+    <ICONS.Defense/>,
+    <ICONS.Draw/>,
+    <ICONS.Energy/>,
+    <ICONS.Ahead/>,
+    <ICONS.Behind/>,
+    <ICONS.Range/>,
+    <ICONS.Twice/>,
+    <ICONS.Lethal/>,
+    <ICONS.Recruit/>,
+    <ICONS.Train/>,
+    <ICONS.Towards/>,
+    <ICONS.Deck/>,
+    <ICONS.InOrderTo/>,
+    <ICONS.Hand/>,
+    <ICONS.Discard/>,
+    <ICONS.Deploy/>,
+    'T'
+  ]
+  const iconsExplanation = [
+    'Attack level',
+    'Defense level',
+    'Draw a card',
+    'Energy cost',
+    'Affects the agent AHEAD',
+    'Affects the agent BEHIND',
+    'Range (default 1)',
+    'Can attack twice',
+    'Lethal (defeats enemy after battle)',
+    'Recruit: take a card from the market',
+    'Train: move card from hand/lane to your Trained pile',
+    'Towards',
+    'top of your deck',
+    '"... in order to..."',
+    'your hand',
+    'Discard',
+    'Deploy: move card from Trained to market deck',
+    'Current number of cards in Trained pile'
+  ]
+
+  const stuff = []
+  for (var i = 0; i < iconsList.length; i++) {
+    stuff.push(
+      <tr>
+        <td>{iconsList[i]}</td>
+        <td className="icon-description">{iconsExplanation[i]}</td>
+      </tr>
+    )
+  }
+  return (
+    <div className="card rules">
+    <table className="rules-table">
+      {stuff}
+    </table>
+    </div>
+  )
+}
+
+function AlwaysAvailable () {
+  return (
+    <div className="card always-available">
+      <div className="always-available-title">[ 2<ICONS.Energy/> ] or [ <ICONS.Discard/>2 ]</div>
+      <br/>Choose one:
+      <ul style={{margin: 0}}>
+        <li><ICONS.Draw/>1</li>
+        <li><ICONS.Energy/>+1</li>
+        <li><ICONS.Recruit/>1</li>
+        <li><ICONS.Train/>1</li>
+      </ul>
+    </div>
+  )
+}
 
 function Cards() {
   return (
     <div>
       {_.map(cards, (cardObj) => {
-        return <Card {...cardObj} />
+        if (cardObj.type === 'HUMAN' || cardObj.type === 'MECHA') {
+          return <Card {...cardObj} />  
+        }
+        else if (cardObj.type === 'WARDEN') {
+          return <Warden {...cardObj} />
+        }
+        else if (cardObj.type === 'ICON-SUMMARY') {
+          return <Rules />
+        }
+        else if (cardObj.type === 'ALWAYS-AVAILABLE') {
+          return <AlwaysAvailable />
+        }
       })}
     </div>
   );
