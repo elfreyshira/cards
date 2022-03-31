@@ -236,6 +236,10 @@ body {
   /*background-color: black;*/
   color: white;
 }
+.card.mecha .energy-container {
+  background-color: rgb(2,0,34);
+  background: linear-gradient(-45deg, rgba(2,0,34,1) 0%, rgba(9,9,121,1) 31%, rgba(0,138,166,1) 100%);  
+}
 .energy-container .icon.energy path {
   fill: white;
 }

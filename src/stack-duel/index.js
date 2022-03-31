@@ -161,7 +161,7 @@ function Bonus (props) {
 function Card (props) {
 
   return (
-    <div className="card">
+    <div className={"card " + _.toLower(props.type)}>
       <Top {...props} />
       <Middle {...props} />
       <Bottom {...props} />

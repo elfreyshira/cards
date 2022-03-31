@@ -246,54 +246,44 @@ const wardens = [
   {
     name: 'Enforcer of Peace',
     trigger: 'When enemy agent attacks',
-    effect: <span>Enemy agent <ICONS.Attack/>-3.</span>
-  },
-  {
+    effect: <span>Enemy agent <ICONS.Attack/>-4.</span>
+  }, {
     name: 'Pillar of Power',
-    trigger: 'When enemy agent attacks',
-    effect: 'Reduce damage to your Warden by 5.'
-  },
-  {
+    trigger: 'When enemy agent attacks a Warden',
+    effect: 'Reduce damage to your Warden by 6.'
+  }, {
     name: 'Shepherd of the Lanes',
     trigger: 'When enemy agent attacks',
     effect: <span>Move enemy agent to the back, then <ICONS.Draw/>1.</span>
-  },
-  {
+  }, {
     name: 'Loyal Steward',
     trigger: 'When enemy agent attacks',
     effect: <span>Enemy agent <ICONS.Range/>-1, then <ICONS.Draw/>1.</span>
-  },
-  {
+  }, {
     name: 'Steady Protector',
     trigger: 'When enemy agent attacks',
     effect: 'Your Warden cannot take more than 2 damage from the attack.'
-  },
-  {
+  }, {
     name: 'Caretaker of the Lanes',
     trigger: 'When enemy agent attacks',
     effect: 'Move enemy agent to another lane.'
-  },
-  {
+  }, {
     name: 'Sentinel of Truth',
     trigger: 'When enemy agent attacks',
     effect: 'Negate any agent cards that affect the enemy agent.'
-  },
-  {
+  }, {
     name: 'Sustainer of the Self',
     trigger: 'When enemy agent attacks',
     effect: <span>Negate any ally bonus the enemy agent is receiving, then <ICONS.Draw/>1.</span>
-  },
-  {
+  }, {
     name: 'Resolute Sentry',
     trigger: 'When your agent is being attacked',
     effect: <span>Your agent <ICONS.Defense/>+4.</span>
-  },
-  {
+  }, {
     name: 'Keeper of the Lanes',
     trigger: 'When your agent is being attacked',
     effect: <span>Move your agent to the back, then <ICONS.Draw/>1.</span>
-  },
-  {
+  }, {
     name: 'Silent Angel',
     trigger: 'When your agent is destroyed',
     effect: <span>Play a human agent from hand without cost, then opponent <ICONS.Draw/>1.</span>
