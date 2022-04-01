@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap');
+
+body {
+  -webkit-print-color-adjust:exact;
+  -webkit-filter:opacity(1);
+}
+* {
+  /*vertical-align: bottom;*/
+}
+
+:root {
+  --card-width: 63mm;
+  --card-height: 88mm;
+  --card-border-width: 6px;
+  --ally-bonus-width: 15mm;
+}
+
+.card {
+  /* 63 x 88 */
+  width: var(--card-width);
+  max-width: var(--card-width);
+  height:  var(--card-height);
+  max-height:  var(--card-height);
+  /*border:  0mm solid black;*/
+  padding-left:  0px;
+  display:  inline-block;
+  vertical-align: bottom;
+  position: relative;
+  font-size: 7mm;
+  font-family: 'Roboto Slab', serif;
+  /*font-family: serif;*/
+
+  border: var(--card-border-width) solid black;
+  /* thickness consistent, but will be changed depending on the type and race */
+
+  /*so that \n triggers a new line*/
+  white-space: pre-wrap;
+
+  /*0.5px for printing, 1.0px for coding*/  
+  margin:  10px;
+}
+
+@media print {
+  .card {
+    margin:  0.5px;  
+  }
+}
+
+
+.card.ally {
+  /*border: 6px solid black;*/
+  border-image: linear-gradient(45deg, rgb(0,143,104), rgb(250,224,66)) 1;
+}
+
+.cost-container {
+  display: inline-block;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: var(--ally-bonus-width);
+  padding: 5px;
+  border: 2px solid black;
+  border-radius: 0 10px 10px 0;
+  background-color: black;
+  color: white;
+  font-weight: 600;
+}
+.cost-container .icon.discard path {
+  fill: white;
+}
+.cost-container .icon.deploy path {
+  fill: white;
+}
+
+.ally-effect {
+  width: calc(
+    var(--card-width)
+    - var(--card-border-width)*2
+    - var(--ally-bonus-width)
+    - 20px
+  );
+  position: absolute;
+  right: 0;
+  border: 1px solid black;
+  margin: 10px;
+  text-align: center;
+}
