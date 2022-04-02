@@ -1,21 +1,747 @@
 import _ from 'lodash'
+import ICONS from './icons'
 
-const cards = [
+
+// const cost = [
+//   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+//   2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+//   'D1', 'D1', 'D1', 'D2', 'D2', 'D2', 'D3', 'D3', 'D3'
+// ]
+// const serialNumber = [
+//   1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+//   1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+//   1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+//   1, 2, 3, 1, 2, 3, 1, 2, 3
+// ]
+
+// const type = [
+//   'agent', 'agent', 'agent', 'agent', 'agent', 'agent', 'agent',
+//   'ally', 'ally', 'ally', 'ally', 'ally', 'ally', 'ally',
+//   'agent', 'agent', 'agent', 'agent', 'agent', 'agent', 'agent',
+//   'ally', 'ally', 'ally', 'ally', 'ally', 'ally', 'ally',
+//   'agent', 'agent', 'agent', 'agent', 'agent', 'agent', 'agent',
+//   'ally', 'ally', 'ally', 'ally', 'ally', 'ally', 'ally',
+//   'agent', 'agent', 'ally', 'agent', 'agent', 'ally', 'agent', 'agent', 'ally'
+// ]
+
+// const agentAttack = [
+//   1, 2, 1, 2, 1, 1, 1,
+//   null, null, null, null, null, null, null, 
+//   '4', 'T', 'T+1', '1', 'T', '2', 'T+1',
+//   null, null, null, null, null, null, null,
+//   'T+3', '3', 'T+2', '4', '2', '2T', 'T+1',
+//   null, null, null, null, null, null, null,
+//   1, 3, null, 4, 3, null, 7, 4, null
+// ]
+
+// const agentDefense = [
+//   '2', '2', '0', '0', 'T', 'T+1', '0',
+//   null, null, null, null, null, null, null,
+//   'T+1', '2', '1', 'T+3', '1', 'T+1', '0',
+//   null, null, null, null, null, null, null,
+//   '6', 'T+2', '4', 'T', 'T+5', '1', '8',
+//   null, null, null, null, null, null, null,
+//   2, 2, null, 0, 6, null, 0, 4, null
+// ]
+
+// const effect = [
+//   "BEHIND ATTACK + 2",
+//   "none",
+//   "AHEAD ATTACK + T",
+//   "TWICE",
+//   "QUICK",
+//   "BEHIND RANGE + 1",
+//   "AHEAD DEFENSE + 4",
+//   "none",
+//   "RECRUIT 1 / TRAIN 1",
+//   "TRAIN 1",
+//   "none",
+//   "none",
+//   "RECRUIT 1",
+//   "none",
+//   "none",
+//   "DEFENSE LETHAL",
+//   "RANGE = 2",
+//   "BEHIND QUICK",
+//   "AHEAD ATTACK + 4",
+//   "AHEAD RANGE + 1",
+//   "AHEAD DEFENSE + 5",
+//   "RECRUIT 2 / TRAIN 2",
+//   "RECRUIT 1",
+//   "RECRUIT 2 / TRAIN 2",
+//   "RECRUIT 2 / TRAIN 2",
+//   "RECRUIT 2 / TRAIN 2",
+//   "none",
+//   "RECRUIT 1 / TRAIN 1",
+//   "none",
+//   "ATTACK LETHAL",
+//   "QUICK",
+//   "AHEAD ATTACK X2",
+//   "BEHIND RANGE + 2",
+//   "AHEAD DEFENSE LETHAL",
+//   "BEHIND TWICE",
+//   "RECRUIT 2 / TRAIN 1",
+//   "RECRUIT 2 / TRAIN 2",
+//   "RECRUIT 2 / TRAIN 2",
+//   "RECRUIT 5 / TRAIN 4",
+//   "RECRUIT 4 / TRAIN 3",
+//   "RECRUIT 1 / DRAW 1",
+//   "DRAW 3 / DISCARD 1",
+//   "ATTACK LETHAL",
+//   "QUICK",
+//   "One of your opponent's wardens gains 1 health (their choice), then draw 1.",
+//   "TWICE / RANGE = 2",
+//   "QUICK",
+//   "Play any human card while reducing its discard cost by 1. If you play a 0-discard card, draw 1 card.",
+//   "QUICK",
+//   "RANGE = 2 / DEFENSE LETHAL",
+//   "Opponent draws 1 card, then play any human card without cost.",
+// ]
+
+// const allyAttackBonus = [
+//   null, null, null, null, null, null, null,
+//   'QUICK',
+//   'ATTACK + 1',
+//   'TWICE',
+//   'RANGE + 1',
+//   'QUICK',
+//   'ATTACK + 2',
+//   'RANGE + 1',
+//   null, null, null, null, null, null, null,
+//   'QUICK',
+//   'ATTACK LETHAL',
+//   'RANGE + 1',
+//   'QUICK',
+//   'TWICE',
+//   'ATTACK + 3',
+//   'RANGE + 2',
+//   null, null, null, null, null, null, null,
+//   'ATTACK + 5',
+//   'ATTACK LETHAL',
+//   'ATTACK X2',
+//   'QUICK',
+//   'RANGE + 2',
+//   'TWICE',
+//   'RANGE + 1',
+//   null, null,
+//   'TWICE',
+//   null, null,
+//   'ATTACK X2',
+//   null, null,
+//   'ATTACK + 5'
+// ]
+
+// const allyDefenseBonus = [
+//   null, null, null, null, null, null, null,
+//   'DEFENSE LETHAL',
+//   'DEFENSE + 2',
+//   'DEFENSE X2',
+//   'TOUGH',
+//   'TOUGH',
+//   'DEFENSE + 3',
+//   'DEFENSE + 4',
+//   null, null, null, null, null, null, null,
+//   'TOUGH',
+//   'DEFENSE + 6',
+//   'DEFENSE X2',
+//   'DEFENSE X2',
+//   'DEFENSE LETHAL',
+//   'LIFE',
+//   'DEFENSE + 5',
+//   null, null, null, null, null, null, null,
+//   'LIFE',
+//   'LIFE',
+//   'LIFE',
+//   'DEFENSE X2',
+//   'DEFENSE LETHAL',
+//   'LIFE',
+//   'DEFENSE + 4',
+//   null, null,
+//   'TOUGH',
+//   null, null,
+//   'DEFENSE + 6',
+//   null, null,
+//   'LIFE'
+// ]
+
+
+
+// const cards = _.map(cost, (value, index) =>{
+//   return {
+//     cost: _.startsWith(value, 'D') ? value[1] : value,
+//     race: _.startsWith(value, 'D') ? 'MECHA' : 'HUMAN',
+//     serialNumber: serialNumber[index],
+//     type: _.toUpper(type[index]),
+//     attack: agentAttack[index],
+//     defense: agentDefense[index],
+//     effect: effect[index],
+//     attackBonus: allyAttackBonus[index],
+//     defenseBonus: allyDefenseBonus[index],
+
+//   }
+// })
+
+export default [
   {
-    type: 'AGENT',
-    race: 'HUMAN',
-    attack: 4,
-    defense: 5,
-    effect: 'BEHIND ATTACK + 2',
-    cost: 1
-  }, {
-    type: 'ALLY',
-    race: 'MECHA',
-    effect: 'RECRUIT 1 / TRAIN 2',
-    attackBonus: 'RANGE + 1',
-    defenseBonus: 'LIFE + 1',
-    cost: 2
+    "cost": 0,
+    "race": "HUMAN",
+    "serialNumber": 1,
+    "type": "AGENT",
+    "attack": 1,
+    "defense": "2",
+    "effect": "BEHIND ATTACK + 2",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": 0,
+    "race": "HUMAN",
+    "serialNumber": 2,
+    "type": "AGENT",
+    "attack": 2,
+    "defense": "2",
+    "effect": "none",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": 0,
+    "race": "HUMAN",
+    "serialNumber": 3,
+    "type": "AGENT",
+    "attack": 1,
+    "defense": "0",
+    "effect": "AHEAD ATTACK + T",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": 0,
+    "race": "HUMAN",
+    "serialNumber": 4,
+    "type": "AGENT",
+    "attack": 2,
+    "defense": "0",
+    "effect": "TWICE",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": 0,
+    "race": "HUMAN",
+    "serialNumber": 5,
+    "type": "AGENT",
+    "attack": 1,
+    "defense": 2,
+    "effect": "QUICK",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": 0,
+    "race": "HUMAN",
+    "serialNumber": 6,
+    "type": "AGENT",
+    "attack": 1,
+    "defense": "T+1",
+    "effect": "BEHIND RANGE + 1",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": 0,
+    "race": "HUMAN",
+    "serialNumber": 7,
+    "type": "AGENT",
+    "attack": 1,
+    "defense": "0",
+    "effect": "AHEAD DEFENSE + 4",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": 0,
+    "race": "HUMAN",
+    "serialNumber": 8,
+    "type": "ALLY",
+    "attack": null,
+    "defense": null,
+    "effect": "none",
+    "attackBonus": "QUICK",
+    "defenseBonus": "DEFENSE LETHAL"
+  },
+  {
+    "cost": 0,
+    "race": "HUMAN",
+    "serialNumber": 9,
+    "type": "ALLY",
+    "attack": null,
+    "defense": null,
+    "effect": "RECRUIT 1 / TRAIN 1",
+    "attackBonus": "ATTACK + 1",
+    "defenseBonus": "DEFENSE + 2"
+  },
+  {
+    "cost": 0,
+    "race": "HUMAN",
+    "serialNumber": 10,
+    "type": "ALLY",
+    "attack": null,
+    "defense": null,
+    "effect": "TRAIN 1",
+    "attackBonus": "TWICE",
+    "defenseBonus": "DEFENSE X2"
+  },
+  {
+    "cost": 0,
+    "race": "HUMAN",
+    "serialNumber": 11,
+    "type": "ALLY",
+    "attack": null,
+    "defense": null,
+    "effect": "none",
+    "attackBonus": "RANGE + 1",
+    "defenseBonus": "TOUGH"
+  },
+  {
+    "cost": 0,
+    "race": "HUMAN",
+    "serialNumber": 12,
+    "type": "ALLY",
+    "attack": null,
+    "defense": null,
+    "effect": "none",
+    "attackBonus": "QUICK",
+    "defenseBonus": "TOUGH"
+  },
+  {
+    "cost": 0,
+    "race": "HUMAN",
+    "serialNumber": 13,
+    "type": "ALLY",
+    "attack": null,
+    "defense": null,
+    "effect": "RECRUIT 1",
+    "attackBonus": "ATTACK + 2",
+    "defenseBonus": "DEFENSE + 3"
+  },
+  {
+    "cost": 0,
+    "race": "HUMAN",
+    "serialNumber": 14,
+    "type": "ALLY",
+    "attack": null,
+    "defense": null,
+    "effect": "none",
+    "attackBonus": "RANGE + 1",
+    "defenseBonus": "DEFENSE + 4"
+  },
+  {
+    "cost": 1,
+    "race": "HUMAN",
+    "serialNumber": 1,
+    "type": "AGENT",
+    "attack": "4",
+    "defense": "T+1",
+    "effect": "none",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": 1,
+    "race": "HUMAN",
+    "serialNumber": 2,
+    "type": "AGENT",
+    "attack": "T",
+    "defense": "2",
+    "effect": "DEFENSE LETHAL",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": 1,
+    "race": "HUMAN",
+    "serialNumber": 3,
+    "type": "AGENT",
+    "attack": "T+1",
+    "defense": "1",
+    "effect": "RANGE = 2",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": 1,
+    "race": "HUMAN",
+    "serialNumber": 4,
+    "type": "AGENT",
+    "attack": "1",
+    "defense": "T+3",
+    "effect": "BEHIND QUICK",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": 1,
+    "race": "HUMAN",
+    "serialNumber": 5,
+    "type": "AGENT",
+    "attack": "T",
+    "defense": "1",
+    "effect": "AHEAD ATTACK + 4",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": 1,
+    "race": "HUMAN",
+    "serialNumber": 6,
+    "type": "AGENT",
+    "attack": "2",
+    "defense": "T+1",
+    "effect": "AHEAD RANGE + 1",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": 1,
+    "race": "HUMAN",
+    "serialNumber": 7,
+    "type": "AGENT",
+    "attack": "T+1",
+    "defense": "0",
+    "effect": "AHEAD DEFENSE + 5",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": 1,
+    "race": "HUMAN",
+    "serialNumber": 8,
+    "type": "ALLY",
+    "attack": null,
+    "defense": null,
+    "effect": "RECRUIT 2 / TRAIN 2",
+    "attackBonus": "QUICK",
+    "defenseBonus": "TOUGH"
+  },
+  {
+    "cost": 1,
+    "race": "HUMAN",
+    "serialNumber": 9,
+    "type": "ALLY",
+    "attack": null,
+    "defense": null,
+    "effect": "RECRUIT 1",
+    "attackBonus": "ATTACK LETHAL",
+    "defenseBonus": "DEFENSE + 6"
+  },
+  {
+    "cost": 1,
+    "race": "HUMAN",
+    "serialNumber": 10,
+    "type": "ALLY",
+    "attack": null,
+    "defense": null,
+    "effect": "RECRUIT 2 / TRAIN 2",
+    "attackBonus": "RANGE + 1",
+    "defenseBonus": "DEFENSE X2"
+  },
+  {
+    "cost": 1,
+    "race": "HUMAN",
+    "serialNumber": 11,
+    "type": "ALLY",
+    "attack": null,
+    "defense": null,
+    "effect": "RECRUIT 2 / TRAIN 2",
+    "attackBonus": "QUICK",
+    "defenseBonus": "DEFENSE X2"
+  },
+  {
+    "cost": 1,
+    "race": "HUMAN",
+    "serialNumber": 12,
+    "type": "ALLY",
+    "attack": null,
+    "defense": null,
+    "effect": "RECRUIT 2 / TRAIN 2",
+    "attackBonus": "TWICE",
+    "defenseBonus": "DEFENSE LETHAL"
+  },
+  {
+    "cost": 1,
+    "race": "HUMAN",
+    "serialNumber": 13,
+    "type": "ALLY",
+    "attack": null,
+    "defense": null,
+    "effect": "none",
+    "attackBonus": "ATTACK + 3",
+    "defenseBonus": "LIFE"
+  },
+  {
+    "cost": 1,
+    "race": "HUMAN",
+    "serialNumber": 14,
+    "type": "ALLY",
+    "attack": null,
+    "defense": null,
+    "effect": "RECRUIT 1 / TRAIN 1",
+    "attackBonus": "RANGE + 2",
+    "defenseBonus": "DEFENSE + 5"
+  },
+  {
+    "cost": 2,
+    "race": "HUMAN",
+    "serialNumber": 1,
+    "type": "AGENT",
+    "attack": "T+3",
+    "defense": "6",
+    "effect": "none",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": 2,
+    "race": "HUMAN",
+    "serialNumber": 2,
+    "type": "AGENT",
+    "attack": "3",
+    "defense": "T+2",
+    "effect": "ATTACK LETHAL",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": 2,
+    "race": "HUMAN",
+    "serialNumber": 3,
+    "type": "AGENT",
+    "attack": "T+2",
+    "defense": "3",
+    "effect": "QUICK",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": 2,
+    "race": "HUMAN",
+    "serialNumber": 4,
+    "type": "AGENT",
+    "attack": "4",
+    "defense": "T",
+    "effect": "AHEAD ATTACK X2",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": 2,
+    "race": "HUMAN",
+    "serialNumber": 5,
+    "type": "AGENT",
+    "attack": "2",
+    "defense": "T+5",
+    "effect": "BEHIND RANGE + 2",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": 2,
+    "race": "HUMAN",
+    "serialNumber": 6,
+    "type": "AGENT",
+    "attack": "2T",
+    "defense": "1",
+    "effect": "AHEAD DEFENSE LETHAL",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": 2,
+    "race": "HUMAN",
+    "serialNumber": 7,
+    "type": "AGENT",
+    "attack": "T+1",
+    "defense": "8",
+    "effect": "BEHIND TWICE",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": 2,
+    "race": "HUMAN",
+    "serialNumber": 8,
+    "type": "ALLY",
+    "attack": null,
+    "defense": null,
+    "effect": "RECRUIT 2 / TRAIN 1",
+    "attackBonus": "ATTACK + 5",
+    "defenseBonus": "LIFE"
+  },
+  {
+    "cost": 2,
+    "race": "HUMAN",
+    "serialNumber": 9,
+    "type": "ALLY",
+    "attack": null,
+    "defense": null,
+    "effect": "RECRUIT 2 / TRAIN 2",
+    "attackBonus": "ATTACK LETHAL",
+    "defenseBonus": "LIFE"
+  },
+  {
+    "cost": 2,
+    "race": "HUMAN",
+    "serialNumber": 10,
+    "type": "ALLY",
+    "attack": null,
+    "defense": null,
+    "effect": "RECRUIT 2 / TRAIN 2",
+    "attackBonus": "ATTACK X2",
+    "defenseBonus": "LIFE"
+  },
+  {
+    "cost": 2,
+    "race": "HUMAN",
+    "serialNumber": 11,
+    "type": "ALLY",
+    "attack": null,
+    "defense": null,
+    "effect": "RECRUIT 5 / TRAIN 4",
+    "attackBonus": "QUICK",
+    "defenseBonus": "DEFENSE X2"
+  },
+  {
+    "cost": 2,
+    "race": "HUMAN",
+    "serialNumber": 12,
+    "type": "ALLY",
+    "attack": null,
+    "defense": null,
+    "effect": "RECRUIT 4 / TRAIN 3",
+    "attackBonus": "RANGE + 2",
+    "defenseBonus": "DEFENSE LETHAL"
+  },
+  {
+    "cost": 2,
+    "race": "HUMAN",
+    "serialNumber": 13,
+    "type": "ALLY",
+    "attack": null,
+    "defense": null,
+    "effect": "RECRUIT 1 / DRAW 1",
+    "attackBonus": "TWICE",
+    "defenseBonus": "LIFE"
+  },
+  {
+    "cost": 2,
+    "race": "HUMAN",
+    "serialNumber": 14,
+    "type": "ALLY",
+    "attack": null,
+    "defense": null,
+    "effect": "DRAW 3 / DISCARD 1",
+    "attackBonus": "RANGE + 1",
+    "defenseBonus": "DEFENSE + 4"
+  },
+  {
+    "cost": "1",
+    "race": "MECHA",
+    "serialNumber": 1,
+    "type": "AGENT",
+    "attack": 1,
+    "defense": 2,
+    "effect": "ATTACK LETHAL",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": "1",
+    "race": "MECHA",
+    "serialNumber": 2,
+    "type": "AGENT",
+    "attack": 3,
+    "defense": 1,
+    "effect": "QUICK",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": "1",
+    "race": "MECHA",
+    "serialNumber": 3,
+    "type": "ALLY",
+    "attack": null,
+    "defense": null,
+    "effect": "Draw 1 card. Your opponent's warden gains 1 health (their choice).",
+    "attackBonus": "TWICE",
+    "defenseBonus": "TOUGH"
+  },
+  {
+    "cost": "2",
+    "race": "MECHA",
+    "serialNumber": 1,
+    "type": "AGENT",
+    "attack": 4,
+    "defense": 0,
+    "effect": "TWICE / RANGE = 2",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": "2",
+    "race": "MECHA",
+    "serialNumber": 2,
+    "type": "AGENT",
+    "attack": 3,
+    "defense": 5,
+    "effect": "QUICK",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": "2",
+    "race": "MECHA",
+    "serialNumber": 3,
+    "type": "ALLY",
+    "attack": null,
+    "defense": null,
+    "effect": <span>Play any human card while reducing its discard cost by 1. If you play a <ICONS.Discard/>0, draw 1 card.</span>,
+    "attackBonus": "ATTACK X2",
+    "defenseBonus": "DEFENSE + 6"
+  },
+  {
+    "cost": "3",
+    "race": "MECHA",
+    "serialNumber": 1,
+    "type": "AGENT",
+    "attack": 7,
+    "defense": 0,
+    "effect": "QUICK",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": "3",
+    "race": "MECHA",
+    "serialNumber": 2,
+    "type": "AGENT",
+    "attack": 4,
+    "defense": 4,
+    "effect": "RANGE = 2 / DEFENSE LETHAL",
+    "attackBonus": null,
+    "defenseBonus": null
+  },
+  {
+    "cost": "3",
+    "race": "MECHA",
+    "serialNumber": 3,
+    "type": "ALLY",
+    "attack": null,
+    "defense": null,
+    "effect": "Opponent draws 1 card. Play any human card without cost.",
+    "attackBonus": "ATTACK + 5",
+    "defenseBonus": "LIFE"
   }
 ]
-
-export default cards

@@ -1,4 +1,4 @@
-import {ReactComponent as DrawSvg} from './images/draw.svg'
+import {ReactComponent as DrawSvg} from './images/draw-2.svg'
 import {ReactComponent as AttackSvg} from './images/attack.svg'
 import {ReactComponent as DefenseSvg} from './images/defense-3.svg'
 import {ReactComponent as EnergySvg} from './images/energy.svg'
@@ -9,6 +9,10 @@ import {ReactComponent as LethalSvg} from './images/lethal.svg'
 import {ReactComponent as DiscardSvg} from './images/discard-2.svg'
 import {ReactComponent as DeploySvg} from './images/deploy.svg'
 import {ReactComponent as LifeSvg} from './images/life.svg'
+import {ReactComponent as QuickSvg} from './images/quick.svg'
+import {ReactComponent as ToughSvg} from './images/tough.svg'
+import {ReactComponent as RecruitSvg} from './images/recruit.svg'
+import {ReactComponent as TrainSvg} from './images/train.svg'
 
 import recruit from './images/recruit.png'
 import train from './images/train.png'
@@ -58,14 +62,6 @@ function Lethal () {
   return <LethalSvg className="icon lethal" style={{height: "", width: ""}} />
 }
 
-function Recruit () {
-  return <img className="icon recruit" src={recruit} />
-}
-
-function Train () {
-  return <img className="icon train" src={train} />
-}
-
 function Towards () {
   return <img className="icon to-direction" src={arrowThin} />
 }
@@ -93,6 +89,21 @@ function Deploy () {
 function Life () {
   return <LifeSvg className="icon life" style={{height: "", width: ""}} />
 }
+function Quick () {
+  return <QuickSvg className="icon quick" style={{height: "", width: ""}} />
+}
+
+function Tough () {
+  return <ToughSvg className="icon tough" style={{height: "", width: ""}} />
+}
+
+function Recruit () {
+  return <RecruitSvg className="icon recruit" style={{height: "", width: ""}} />
+}
+
+function Train () {
+  return <TrainSvg className="icon train" style={{height: "", width: ""}} />
+}
 
 export default {
   Draw,
@@ -113,4 +124,6 @@ export default {
   Discard,
   Deploy,
   Life,
+  Quick,
+  Tough
 }

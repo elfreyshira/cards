@@ -28,10 +28,30 @@ const codeToComponentMapping = {
   deck: <ICONS.Deck/>,
   to: <span>&nbsp;<ICONS.InOrderTo/>&nbsp;</span>,
   energy: <ICONS.Energy />,
-  draw: <ICONS.Draw />,
+  DRAW: <ICONS.Draw />,
   hand: <ICONS.Hand />,
-  discard: <ICONS.Discard />,
+  DISCARD: <ICONS.Discard />,
   LIFE: <ICONS.Life />,
+  QUICK: <ICONS.Quick />,
+  TOUGH: <ICONS.Tough />,
+}
+
+function getComponentsFromCode(effect) {
+  const effectCodes = effect.split(' ')
+  const effectArray = _.map(effectCodes, (codeObj) => {
+    return codeToComponentMapping[codeObj] || codeObj
+  })
+  return effectArray
+}
+
+function RaceAndType (props) {
+  return (
+    <div className="race-and-type">
+      {props.race}
+      <br/>
+      {props.type}
+    </div>
+  )
 }
 
 function CardCost (props) {
@@ -44,22 +64,53 @@ function CardCost (props) {
   }
 }
 
+function AgentEffect (props) {
+  if (props.effect === 'none') {
+    return null
+  }
+  else {
+    return (
+      <div className="agent-effect-container">
+      <div className="agent-effect-text">
+        {getComponentsFromCode(props.effect)}
+      </div>
+      </div>
+    )
+  }
+}
+
+function AgentTop (props) {
+  return (
+    <div className="agent-top">
+      <div className="agent-attack">
+        {props.attack}
+        <div><ICONS.Attack/></div>
+      </div>
+      <AgentEffect {...props} />
+      <div className="agent-defense">
+        {props.defense}
+        <div><ICONS.Defense/></div>
+      </div>
+    </div>
+  )
+}
+
 function Agent (props) {
   return (
     <div className={classnames("card", _.toLower(props.type), _.toLower(props.race))}>
+      <AgentTop {...props} />
       <CardCost {...props} />
+      <RaceAndType {...props} />
     </div>
   )
 }
 
 function AllyBonusText ({bonusCode}) {
-  const effectCodes = bonusCode.split(' ')
-  const agentEffectArray = _.map(effectCodes, (codeObj) => {
-    return codeToComponentMapping[codeObj] || codeObj
-  })
-  return <div className="ally-bonus-text">
-    {agentEffectArray}
+  return (
+    <div className="ally-bonus-text">
+      {getComponentsFromCode(bonusCode)}
     </div>
+  )
 }
 
 function AttackBonus (props) {
@@ -81,18 +132,23 @@ function DefenseBonus (props) {
 }
 
 function AllyEffect (props) {
-  const effectCodes = props.effect.split(' ')
-  const allyEffectArray = _.map(effectCodes, (codeObj) => {
-    return codeToComponentMapping[codeObj] || codeObj
-    // return <span>{codeToComponentMapping[codeObj] || codeObj}</span>
-  })
-
-  // return allyEffectArray
-  return (
-    <div className="ally-effect">
-      {allyEffectArray}
+  if (props.effect === 'none') {
+    return null
+  }
+  
+  if (props.race === 'MECHA') {
+    return <div className="ally-effect">
+      {props.effect}
     </div>
-  )
+  }
+  else if (props.race === 'HUMAN') {
+    return (
+      <div className="ally-effect">
+        {getComponentsFromCode(props.effect)}
+      </div>
+    )
+  }
+
 }
 
 function Ally (props) {
@@ -102,6 +158,7 @@ function Ally (props) {
       <DefenseBonus {...props} />
       <CardCost {...props} />
       <AllyEffect {...props} />
+      <RaceAndType {...props} />
     </div>
   )
 }
