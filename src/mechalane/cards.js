@@ -1,7 +1,137 @@
 import _ from 'lodash'
 import ICONS from './icons'
 
-export default [
+function Block(props) {
+  return <span style={{display: 'inline-block'}}>{props.children}</span>
+}
+
+const guardians = [
+  {
+    type: 'GUARDIAN',
+    cost: 2,
+    name: 'Enforcer of Peace',
+    trigger: 'When enemy agent attacks',
+    effect: <span>Enemy agent <ICONS.Attack/>-5.</span>,
+  },
+  {
+    type: 'GUARDIAN',
+    cost: 1,
+    name: 'Pillar of Power',
+    trigger: 'When enemy agent attacks a Guardian',
+    effect: "Reduce damage to your Guardian by 5.",
+  },
+  {
+    type: 'GUARDIAN',
+    cost: 1,
+    name: 'Shepherd of the Lanes',
+    trigger: 'When enemy agent attacks',
+    effect: "Move enemy agent to the back.",
+  },
+  {
+    type: 'GUARDIAN',
+    cost: 1,
+    name: 'Loyal Steward',
+    trigger: 'When enemy agent attacks',
+    effect: <span>
+      Enemy agent <Block><ICONS.Range/>-1</Block><br/>(cannot
+      go below <Block><ICONS.Range/>=1</Block> )
+    </span>,
+  },
+  {
+    type: 'GUARDIAN',
+    cost: 1,
+    name: 'Steady Protector',
+    trigger: 'When enemy agent attacks a Guardian',
+    effect: "Your Guardian cannot take more than 1 damage from the attack.",
+  },
+  {
+    type: 'GUARDIAN',
+    cost: 2,
+    name: 'Caretaker of the Lanes',
+    trigger: 'When enemy agent attacks',
+    effect: "Move enemy agent to another lane (you must still have a Guardian alive in that lane).",
+  },
+  {
+    type: 'GUARDIAN',
+    cost: 2,
+    name: 'Sentinel of Truth',
+    trigger: 'When enemy agent attacks',
+    effect: "Negate all opponent agent effects.",
+  },
+  {
+    type: 'GUARDIAN',
+    cost: 2,
+    name: 'Sustainer of the Self',
+    trigger: 'When enemy agent attacks',
+    effect: "Negate all opponent ally effects.",
+  },
+  {
+    type: 'GUARDIAN',
+    cost: 1,
+    name: 'Resolute Sentry',
+    trigger: 'When your agent is being attacked',
+    effect: <span>Your agent <Block><ICONS.Defense/>+4</Block>.</span>,
+  },
+  {
+    type: 'GUARDIAN',
+    cost: 1,
+    name: 'Director of the Lanes',
+    trigger: 'When your agent is being attacked',
+    effect: "Move your agent to the back of ANY lane of your choice.",
+  },
+  {
+    type: 'GUARDIAN',
+    cost: 3,
+    name: 'Silent Angel',
+    trigger: 'When your agent is destroyed',
+    effect: "Play a human without cost. Opponent draws 1 card.",
+  },
+  {
+    type: 'GUARDIAN',
+    cost: 2,
+    name: 'Gentle Patron',
+    trigger: 'When your agent is being attacked',
+    effect: <span>Your agent is immune <Block>to <ICONS.Lethal/></Block>.</span>,
+  },
+  {
+    type: 'GUARDIAN',
+    cost: 2,
+    name: 'Caretaker of Life',
+    trigger: 'When your agent is destroyed',
+    effect: "Replace your destroyed agent with an agent in the same position. (Pay its cost as normal.)",
+  },
+  {
+    type: 'GUARDIAN',
+    cost: 2,
+    name: 'Curator of the Afterlife',
+    trigger: 'When your agent is destroyed',
+    effect: "Draw as many cards equal to the discard cost of your destroyed agent (if it's a MECHA, draw 1 card)",
+  },
+  {
+    type: 'GUARDIAN',
+    cost: 2,
+    name: 'Righteous Keeper',
+    trigger: 'When your agent is destroyed',
+    effect: "Return your destroyed agent to your hand.",
+  },
+  {
+    type: 'GUARDIAN',
+    cost: 1,
+    name: 'Resilient Champion',
+    trigger: 'When your agent is being attacked',
+    effect: <span>Your agent gains <ICONS.Tough/>.</span>,
+  },
+  {
+    type: 'GUARDIAN',
+    cost: 3,
+    name: 'Kind Preserver',
+    trigger: 'When your agent is destroyed',
+    effect: "If your destroyed agent had any allies, move the allies to another agent.",
+  }
+]
+
+
+const units = [
   {
     "cost": 0,
     "race": "HUMAN",
@@ -493,7 +623,7 @@ export default [
     "type": "ALLY",
     "attack": null,
     "defense": null,
-    "effect": "Draw 1 card. Your opponent's warden gains 1 health (their choice).",
+    "effect": "Draw 1 card. Your opponent's Guardian gains 1 health (their choice).",
     "attackBonus": "TWICE",
     "defenseBonus": "TOUGH"
   },
@@ -564,3 +694,5 @@ export default [
     "defenseBonus": "LIFE"
   }
 ]
+
+export default units.concat(guardians)

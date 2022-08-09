@@ -59,7 +59,7 @@ function CardCost (props) {
     return <div className="cost-container"><ICONS.Discard/>{props.cost}</div>
   }
 
-  else if (props.race === 'MECHA') {
+  else if (props.race === 'MECHA' || props.type === 'GUARDIAN') {
     return <div className="cost-container"><ICONS.Deploy />{props.cost}</div>
   }
 }
@@ -163,6 +163,39 @@ function Ally (props) {
   )
 }
 
+function WithFlexibleFont({children}) {
+  const totalLength = _.sum(_.map(children, (child) => {
+    if (_.isString(child)) {
+      return child.length
+    }
+    else {
+      return 2
+    }
+  }))
+  console.log(totalLength)
+  return <span
+    style={{
+      fontSize: _.round(110/Math.pow(totalLength, .5), 1)+'px',
+      lineHeight: _.round(1/Math.pow(totalLength, .5), 3)
+    }}>{children}</span>
+}
+
+function Guardian (props) {
+  return (
+    <div class="card guardian">
+      <CardCost {...props} />
+      <div className="guardian-name">{props.name}</div>
+      <div className="guardian-trigger">
+        [TRIGGER] {props.trigger}
+      </div>
+      <div className="guardian-effect">
+        {props.effect}
+      </div>
+      {/*{JSON.stringify(props)}*/}
+    </div>
+  )
+}
+
 function Cards() {
   return (
     <div>
@@ -174,6 +207,9 @@ function Cards() {
         else if (cardObj.type === 'ALLY') {
           return <Ally {...cardObj} />
           // return <div> ally </div>
+        }
+        else if (cardObj.type === 'GUARDIAN') {
+          return <Guardian {...cardObj} />
         }
       })}
     </div>

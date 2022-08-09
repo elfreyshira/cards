@@ -94,7 +94,7 @@ function Block(props) {
   return <span style={{display: 'inline-block'}}>{props.children}</span>
 }
 
-function WithFont({children, px}) {
+function WithFont({children}) {
   const totalLength = _.sum(_.map(children, (child) => {
     if (_.isString(child)) {
       return child.length
