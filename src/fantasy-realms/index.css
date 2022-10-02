@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap');
+
+body {
+  -webkit-print-color-adjust:exact;
+  -webkit-filter:opacity(1);
+}
+* {
+  /*vertical-align: bottom;*/
+}
+.card {
+  /* 63 x 88 */
+  width: 63mm;
+  max-width: 63mm;
+  height:  88mm;
+  max-height:  88mm;
+  
+  padding-left:  0px;
+  display:  inline-block;
+  vertical-align: bottom;
+  position: relative;
+  font-size: 7mm;
+  font-family: 'Roboto Slab', serif;
+
+  /*so that \n triggers a new line*/
+  white-space: pre-wrap;
+
+  /*0.5px for printing, 1.0px for coding*/  
+  margin:  10px;
+  overflow: hidden;
+
+  border: 1px solid black;
+}
+
+@media print {
+  .card {
+    margin:  0.5px;  
+  }
+}
+
+
+.card img {
+  position: absolute;
+}
