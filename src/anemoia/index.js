@@ -156,7 +156,8 @@ const TAP = 'TAP'
 
 const MIN_POINTS_MAP = {
   POINTS_1_4: 1,
-  POINTS_5_8: 5
+  POINTS_5_8: 5,
+  POINTS_9_12: 9
 }
 const LEVELS = {
   LEVEL_1: 'LEVEL_1',
@@ -170,92 +171,128 @@ const LEVELS_MAX_VALUE = {
 }
 
 const RESOURCE_GAIN_VALUE = {
-  money: _.constant(50),
-  card: _.constant(50),
-  fire: _.constant(100),
-  water: _.constant(100),
-  air: _.constant(100),
-  earth: _.constant(100),
-  wild: _.constant(125),
-  develop: _.constant(50),
-  untap: _.constant(100),
-  retrieve: _.constant(25),
-  chainLevel1: _.constant(75),
-  // chainLevel1: (callLevel) => {
-  //   if (callLevel === LEVELS.LEVEL_1) {
-  //     return 75
-  //   }
-  //   else { // level 2 or 3
-  //     return 50
-  //   }
-  // },
-  chainLevel2: (callLevel) => {
-    if (callLevel === LEVELS.LEVEL_1) {
-      // throw new Error('Level 1 should never chain to Level 2')
-      return 400
-    }
-    // else if (callLevel === LEVELS.LEVEL_2) {
-    //   return 150
-    // }
-    else { // level 2 or 3
-      // return 125 for level 3 dulu
-      return 150
-    }
-  },
+  money: 50,
+  card: 50,
+  fire: 100,
+  water: 100,
+  air: 100,
+  earth: 100,
+  wild: 125,
+  develop: 50,
+  untap: 100,
+  retrieve: 25,
+  chainLevel1: 75,
+  chainLevel2: 150
 }
 
 const RESOURCE_LOSS_VALUE = {
-  money: _.constant(50),
-  card: _.constant(37.5), // discarding unwanted cards doesn't hurt as much
-  fire: _.constant(100),
-  water: _.constant(100),
-  air: _.constant(100),
-  earth: _.constant(100),
-  wild: _.constant(75),
-  tapAnother: _.constant(75) // at first was thinking 100, but just like a wild, it gives freedom to what you want to tap, so make it -75
+  money: 50,
+  card: 37.5, // discarding unwanted cards doesn't hurt as much
+  fire: 100,
+  water: 100,
+  air: 100,
+  earth: 100,
+  wild: 75,
+  tapAnother: 75 // at first was thinking 100, but just like a wild, it gives freedom to what you want to tap, so make it -75
 }
 
-const ABSTRACT_RESOURCE_ARRAY = ['develop', 'untap', 'retrieve','chainLevel1','chainLevel2', 'card']
-const PHYSICAL_RESOURCE_ARRAY = ['money', 'fire', 'water', 'air', 'earth', 'wild']
+const ABSTRACT_RESOURCE_ARRAY = ['develop', 'untap', 'retrieve','chainLevel1','chainLevel2']
+const SPECIAL_RESOURCE_ARRAY = ['money', 'card']
+const PHYSICAL_RESOURCE_ARRAY = ['fire', 'water', 'air', 'earth', 'wild']
 
-function excludeValuesAbove (value, level) {
+function excludeValuesAbove (value) {
   return _.keys(
-    _.omitBy(RESOURCE_GAIN_VALUE, (func) => {
-      return func(level) <= value
+    _.omitBy(RESOURCE_GAIN_VALUE, (gainVal) => {
+      return gainVal <= value
     })
   )  
 }
 
 
-// add the type and level
-let spotArray = []
-_.times(8, () => {
-  spotArray.push({
+let cardArray = []
+
+// SPOT
+_.times(7, () => {
+  cardArray.push({
     type: SPOT,
-    spotLevel: LEVELS.LEVEL_1
+    spotLevel: LEVELS.LEVEL_1,
+    maxValue: 100
   })
 })
-_.times(12, () => {
-  spotArray.push({
+_.times(13, () => {
+  cardArray.push({
     type: SPOT,
-    spotLevel: LEVELS.LEVEL_2
+    spotLevel: LEVELS.LEVEL_2,
+    maxValue: 200
   })
 })
 _.times(10, () => {
-  spotArray.push({
+  cardArray.push({
     type: SPOT,
-    spotLevel: LEVELS.LEVEL_3
+    spotLevel: LEVELS.LEVEL_3,
+    maxValue: 300
   })
 })
+
+
+// HOME
+_.times(8, () => {
+  cardArray.push({
+    type: HOME,
+    maxValue: 100
+  })
+})
+_.times(7, () => {
+  cardArray.push({
+    type: HOME,
+    maxValue: 200
+  })
+})
+
+// TAP
+_.times(4, () => {
+  cardArray.push({
+    type: TAP,
+    maxValue: 50
+  })
+})
+_.times(5, () => {
+  cardArray.push({
+    type: TAP,
+    maxValue: 100
+  })
+})
+_.times(6, () => {
+  cardArray.push({
+    type: TAP,
+    maxValue: 150
+  })
+})
+
 
 const spotPointsRoller = new Brng({
   POINTS_1_4: 1,
   POINTS_5_8: 1,
-  // POINTS_5_6:1
-} ,{bias: 3})
+  // POINTS_9_12: 0.5
+}, {bias: 2})
+const tapPointsRoller = new Brng({
+  POINTS_1_4: .5,
+  POINTS_5_8: 1,
+  POINTS_9_12: 1
+}, {bias: 2})
 
-_.forEach(spotArray, (spotObj) => {
-  spotObj.points = spotPointsRoller.roll()
+_.forEach(cardArray, (cardObj) => {
+  let pointsRoller
+
+  if (cardObj.type === SPOT || cardObj.type === HOME) pointsRoller = spotPointsRoller
+  else if (cardObj.type === TAP) pointsRoller = tapPointsRoller
+
+  let excludeList = []
+  if (cardObj.maxValue <= 50) { // for the small tap cards
+    excludeList = ['POINTS_1_4']
+  }
+
+  cardObj.points = pointsRoller.roll({exclude: excludeList})
 })
 
 const spotGainRoller = new Brng({
@@ -277,7 +314,7 @@ const spotGainRoller = new Brng({
 })
 
 const spotLossNumRoller = new Brng({0: 12, 1: 5, 2: 3}, {keepHistory: true, bias: 2})
-const spotLossResourceRoller = new Brng({
+const lossResourceRoller = new Brng({
   money: 2,
   card: 2,
   fire: 2,
@@ -291,15 +328,49 @@ const spotLossResourceRoller = new Brng({
   bias: 2
 })
 
-spotArray = _.sortBy(spotArray, ['type', 'spotLevel', 'points'])
+const homeGainRoller = new Brng({
+  money: 2,
+  card: 2,
+  fire: 2,
+  water: 2,
+  air: 2,
+  earth: 2,
+  wild: 3,
+  develop: 2.5,
+  untap: 2,
+}, {
+  keepHistory: true,
+  bias: 2
+})
+
+const tapLossNumRoller = new Brng({1: 1, 2: 1}, {keepHistory: true, bias: 2})
+const tapGainRoller = new Brng({
+  money: 2,
+  card: 2,
+  fire: 2,
+  water: 2,
+  air: 2,
+  earth: 2,
+  wild: 3,
+  develop: 2.5,
+  untap: 0.5,
+  retrieve: 3
+}, {
+  keepHistory: true,
+  bias: 2
+})
+
+cardArray = _.sortBy(cardArray, ['type', 'maxValue', 'points'])
 
 // add how many spaces the spot has
 const spotNumSpaceRoller = new Brng({1: 1, 2: 1}, {bias: 2})
-_.forEach(spotArray, (spotObj) => {
-  spotObj.spotSpaces = _.toNumber(spotNumSpaceRoller.roll())
+_.forEach(cardArray, (cardObj) => {
+  if (cardObj.type === SPOT) {
+    cardObj.spotSpaces = _.toNumber(spotNumSpaceRoller.roll())
+  }
 })
 
-spotArray = _.sortBy(spotArray, ['type', 'spotLevel', 'points', 'spotSpaces'])
+cardArray = _.sortBy(cardArray, ['type', 'maxValue', 'points', 'spotSpaces'])
 
 // add whether it has a bonus or not
 const cardHasBonusRoller = new Brng({hasBonus: 1, noBonus: 2}, {bias: 2})
@@ -310,19 +381,13 @@ const cardBonusRoller = new Brng({
   chainLevel1: 1,
   chainLevel2: 1
 }, {keepHistory: true, bias: 2})
-_.forEach(spotArray, (spotObj) => {
+_.forEach(cardArray, (cardObj) => {
   if (cardHasBonusRoller.roll() === 'hasBonus') {
-    let bonusResource = cardBonusRoller.roll()
-
-    if (spotObj.spotLevel === LEVELS.LEVEL_1 && bonusResource === 'chainLevel2') {
-      cardBonusRoller.undo()
-      bonusResource = cardBonusRoller.roll({exclude: ['chainLevel2']})
-    }
-    spotObj.bonus = bonusResource
+    cardObj.bonus = cardBonusRoller.roll()
   }
 })
 
-spotArray = _.sortBy(spotArray, ['type', 'spotLevel', 'points', 'spotSpaces', 'bonus'])
+cardArray = _.sortBy(cardArray, ['type', 'maxValue', 'points', 'spotSpaces', 'bonus'])
 
 
 /*
@@ -335,8 +400,8 @@ rules for the resource loss and gain:
 */
 
 
-_.forEach(spotArray, (spotObj) => {
-  const fixedMaxValue = LEVELS_MAX_VALUE[spotObj.spotLevel]
+_.forEach(cardArray, (cardObj) => {
+  const fixedMaxValue = cardObj.maxValue
   let currentMaxValue = fixedMaxValue
   let currentValue = 0
   const resourceGainObj = {}
@@ -350,45 +415,58 @@ _.forEach(spotArray, (spotObj) => {
 
   /// START: RESOURCE LOSS
   /// START: RESOURCE LOSS
-  let numResourceLoss = _.toNumber(spotLossNumRoller.roll())
-  let chosenResourceLoss
-  if (numResourceLoss > 0) {
-    chosenResourceLoss = spotLossResourceRoller.roll()
-    spotObj.loss = {}
+  if (cardObj.type !== HOME) { // only for SPOT and TAP, not for HOME
+    
+    let lossNumRoller
+    if (cardObj.type === SPOT) lossNumRoller = spotLossNumRoller
+    else if (cardObj.type === TAP) lossNumRoller = tapLossNumRoller
+    
+    let numResourceLoss = _.toNumber(lossNumRoller.roll())
 
-    if (chosenResourceLoss === 'tapAnother' && numResourceLoss === 2) {
-      numResourceLoss = 1
-      spotLossNumRoller.undo()
-      spotLossNumRoller.roll('1')
-    }
+    let chosenResourceLoss
+    if (numResourceLoss > 0) {
+      chosenResourceLoss = lossResourceRoller.roll()
+      cardObj.loss = {}
 
-    if (numResourceLoss === 2) {
-      spotLossResourceRoller.roll(chosenResourceLoss)
-    }
+      if (chosenResourceLoss === 'tapAnother' && numResourceLoss === 2) {
+        numResourceLoss = 1
+        lossNumRoller.undo()
+        lossNumRoller.roll('1')
+      }
 
-    spotObj.loss[chosenResourceLoss] = numResourceLoss
+      if (numResourceLoss === 2) {
+        lossResourceRoller.roll(chosenResourceLoss)
+      }
 
-    const valueLoss = RESOURCE_LOSS_VALUE[chosenResourceLoss]()*numResourceLoss
-    currentValue = currentValue - valueLoss
-    currentMaxValue = currentMaxValue + valueLoss
+      cardObj.loss[chosenResourceLoss] = numResourceLoss
 
-    excludeList.push(chosenResourceLoss)
+      const valueLoss = RESOURCE_LOSS_VALUE[chosenResourceLoss]*numResourceLoss
+      currentValue = currentValue - valueLoss
+      currentMaxValue = currentMaxValue + valueLoss
+
+      excludeList.push(chosenResourceLoss)
+    } 
   }
   /// END: RESOURCE LOSS
   /// END: RESOURCE LOSS
 
-  if (spotObj.spotLevel === LEVELS.LEVEL_1) {
-    excludeList.push('chainLevel2')
-  }
 
-  while (currentValue < (fixedMaxValue-40) && loopTimes <= 10) {
+  // START: RESOURCE GAIN
+  // START: RESOURCE GAIN
+  while (currentValue < (fixedMaxValue-30) && loopTimes <= 10) {
     loopTimes++
     if (loopTimes === 10) {
       console.log(loopTimes)
       console.log(resourceGainObj)
     }
-    // const chosenResource = spotGainRoller.roll()
-    const chosenResource = _.attempt(() => spotGainRoller.roll({
+
+    let typeGainRoller
+    if (cardObj.type === SPOT) typeGainRoller = spotGainRoller
+    else if (cardObj.type === HOME) typeGainRoller = homeGainRoller
+    else if (cardObj.type === TAP) typeGainRoller = tapGainRoller
+
+
+    const chosenResource = _.attempt(() => typeGainRoller.roll({
       only: _.isEmpty(onlyInclude) ? undefined : onlyInclude,
       exclude: excludeValuesAbove(currentMaxValue).concat(excludeList)
     }))
@@ -404,17 +482,25 @@ _.forEach(spotArray, (spotObj) => {
       console.log('-----------------')
       break
     }
+
+    // each abstract resource should only be once per card
     if (_.includes(ABSTRACT_RESOURCE_ARRAY, chosenResource)) {
+      excludeList.push(chosenResource)
+    }
+
+    // each special resource should be called a max of 2 per card
+    if (_.includes(SPECIAL_RESOURCE_ARRAY, chosenResource) && resourceGainObj[chosenResource] === 1) {
       excludeList.push(chosenResource)
     }
     
     resourceGainObj[chosenResource] = (resourceGainObj[chosenResource] || 0) + 1
 
+    // if it has at least 2 physical resources, don't add anymore physical resources
     if (
-      _.intersection(
+      !hasLimitedPhysicalResource
+      && _.intersection(
         _.keys(resourceGainObj), PHYSICAL_RESOURCE_ARRAY
       ).length === 2
-      && !hasLimitedPhysicalResource
     ) {
       excludeList = _.uniq(
         excludeList.concat(_.without(PHYSICAL_RESOURCE_ARRAY, ..._.keys(resourceGainObj)))
@@ -423,33 +509,37 @@ _.forEach(spotArray, (spotObj) => {
       hasLimitedPhysicalResource = true
     }
 
+    // if there's already 3 total resources involved, don't add anymore
     if (
-      _.keys(resourceGainObj).concat(_.keys(spotObj.loss)).length === 3
-      && !hasLimitedTotalResource
+      !hasLimitedTotalResource
+      && _.keys(resourceGainObj).concat(_.keys(cardObj.loss)).length === 3
     ) {
       onlyInclude = _.uniq(onlyInclude.concat(_.keys(resourceGainObj)))
       hasLimitedTotalResource = true
     }
 
+    // don't have both chains in 1 card
     if (chosenResource === 'chainLevel1' || chosenResource === 'chainLevel2') {
       excludeList = _.uniq(excludeList.concat(['chainLevel1', 'chainLevel2']))
     }
 
     if (
-      _.keys(resourceGainObj).concat(_.keys(spotObj.loss)).length === 2
+      _.keys(resourceGainObj).concat(_.keys(cardObj.loss)).length === 2
       && currentMaxValue >= 100
       && _.intersection(_.keys(resourceGainObj), PHYSICAL_RESOURCE_ARRAY).length === 0
     ) {
-      excludeList = _.uniq(excludeList.concat(ABSTRACT_RESOURCE_ARRAY))
+      excludeList = _.uniq(excludeList.concat(ABSTRACT_RESOURCE_ARRAY).concat(SPECIAL_RESOURCE_ARRAY))
     }
 
-    
-    const valueGained = RESOURCE_GAIN_VALUE[chosenResource](spotObj.spotLevel)
+    const valueGained = RESOURCE_GAIN_VALUE[chosenResource]
     currentValue += valueGained
     currentMaxValue = currentMaxValue - valueGained
 
   }
-  spotObj.gain = resourceGainObj
+  // END: RESOURCE GAIN
+  // END: RESOURCE GAIN
+
+  cardObj.gain = resourceGainObj
   // console.log('resourceGainObj', resourceGainObj)
 
 
@@ -461,36 +551,37 @@ function roundToNearest25 (x) {
 }
 
 // RESOURCE COST
-_.forEach(spotArray, (spotObj) => {
+_.forEach(cardArray, (cardObj) => {
   let totalCostValue = 0
   // == bonus - (loss+gain)*2 + points - default card cost
 
-  const bonusValue = spotObj.bonus ? RESOURCE_GAIN_VALUE[spotObj.bonus]() : 0
-  const lossValue = spotObj.loss ?
-    RESOURCE_LOSS_VALUE[_.keys(spotObj.loss)[0]]()*_.values(spotObj.loss)[0] : 0
-  const gainValue = _.chain(spotObj.gain).map((val, key) => RESOURCE_GAIN_VALUE[key]()*val).sum().value()
+  const bonusValue = cardObj.bonus ? RESOURCE_GAIN_VALUE[cardObj.bonus] : 0
+  const lossValue = cardObj.loss ?
+    RESOURCE_LOSS_VALUE[_.keys(cardObj.loss)[0]]*_.values(cardObj.loss)[0] : 0
+  const gainValue = _.chain(cardObj.gain).map((val, key) => RESOURCE_GAIN_VALUE[key]*val).sum().value()
   const defaultCardCost = 100
 
-  const multiplier = spotObj.spotSpaces === 2 ? 2 : 1.5
+  // by default, if it doesn't have a spotSpaces value, it'll be 2x
+  const multiplier = cardObj.spotSpaces === 1.5 ? 1.5 : 2
 
   totalCostValue = bonusValue + (gainValue - lossValue)*multiplier - defaultCardCost
 
-  const minPointsOnCard = MIN_POINTS_MAP[spotObj.points]
+  const minPointsOnCard = MIN_POINTS_MAP[cardObj.points]
   let pointsOnCard = 0
   while (pointsOnCard < minPointsOnCard || roundToNearest25(totalCostValue)%100 !== 0) {
     pointsOnCard++
     totalCostValue += 25
   }
 
-  spotObj.pointsOnCard = pointsOnCard
-  spotObj.totalCostValue = roundToNearest25(totalCostValue)
+  cardObj.pointsOnCard = pointsOnCard
+  cardObj.totalCostValue = roundToNearest25(totalCostValue)
   
 })
 
-console.log(_.chain(spotArray).map('totalCostValue').mean().value())
+console.log(_.chain(cardArray).map('totalCostValue').mean().value())
 // average is usually 360
 
-console.log(_.chain(spotArray).map('totalCostValue').max().value())
+console.log(_.chain(cardArray).map('totalCostValue').max().value())
 
 const costVarietyRoller = new Brng({1:2, 2:3, 3:1}, {keepHistory: true, bias: 2})
 const costToVarietyMap = {
@@ -512,37 +603,50 @@ const resourceCostRoller = new Brng({
 }, {keepHistory: true, bias: 2})
 
 
-spotArray = _.sortBy(spotArray, ['type', 'spotLevel', 'totalCostValue', 'points', 'spotSpaces', 'bonus'])
-_.forEach(spotArray, (spotObj) => {
+cardArray = _.sortBy(cardArray, ['type', 'maxValue', 'totalCostValue', 'points', 'spotSpaces', 'bonus'])
+_.forEach(cardArray, (cardObj) => {
 
-  const totalCostValue = spotObj.totalCostValue
+  const totalCostValue = cardObj.totalCostValue
   const costVariety = _.toNumber(costVarietyRoller.roll({only:costToVarietyMap[totalCostValue]}))
 
   const resourceCostObj = {}
   let onlyResourceCost = []
-  while (_.sum(_.values(resourceCostObj))*100 < spotObj.totalCostValue) {
+  while (_.sum(_.values(resourceCostObj))*100 < cardObj.totalCostValue) {
     const chosenResourceToPay = resourceCostRoller.roll(
       {only: _.isEmpty(onlyResourceCost) ? undefined : onlyResourceCost}
     )
     resourceCostObj[chosenResourceToPay] = (resourceCostObj[chosenResourceToPay] + 1) || 1
 
-    if (costVariety === _.keys(resourceCostObj).length) {
-      console.log('here', costVariety, _.keys(resourceCostObj))
+    if (_.isEmpty(onlyResourceCost) && costVariety === _.keys(resourceCostObj).length) {
       onlyResourceCost = _.keys(resourceCostObj)
     }
 
   }
-  spotObj.resourceCost = resourceCostObj
-
+  cardObj.resourceCost = resourceCostObj
 
 })
 
-console.log(spotArray)
+console.log(cardArray)
 
 console.log(spotGainRoller.proportions)
 
+////////////////////////////////////////////
+////////////////////////////////////////////
+////////////////////////////////////////////
+////////////////////////////////////////////
+
+
+// MOMENTS (rank cards)
+
+
+////////////////////////////////////////////
+////////////////////////////////////////////
+
+
 function Cards () {
-  return <div><pre>{JSON.stringify(spotArray, null, 2)}</pre> </div>
+  return <div><pre>{JSON.stringify(
+    cardArray
+  , null, 2)}</pre> </div>
 }
 
 export default Cards
