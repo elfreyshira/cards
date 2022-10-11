@@ -1,6 +1,11 @@
 import Brng from 'brng'
 import _ from 'lodash'
 
+import {
+  generateConsistentMoment,
+  generateRandomMoment
+} from './generate-moment-cards.js'
+
 /*
 card obj
 --------------------
@@ -171,18 +176,28 @@ const LEVELS_MAX_VALUE = {
 }
 
 const RESOURCE_GAIN_VALUE = {
-  money: 50,
-  card: 50,
-  fire: 100,
-  water: 100,
-  air: 100,
-  earth: 100,
-  wild: 125,
-  develop: 50,
-  untap: 100,
-  retrieve: 25,
-  chainLevel1: 75,
-  chainLevel2: 150
+  money: _.constant(50),
+  card: _.constant(50),
+  fire: _.constant(100),
+  water: _.constant(100),
+  air: _.constant(100),
+  earth: _.constant(100),
+  wild: _.constant(125),
+  develop: _.constant(50),
+  // untap: _.constant(100),
+  untap: (type) => {
+    if (type === HOME) {
+      // untap for home doesn't have any effect when activated on rest.
+      // therefore it's less valuable on a HOME card.
+      return 75
+    }
+    else {
+      return 100
+    }
+  },
+  retrieve: _.constant(25),
+  chainLevel1: _.constant(75),
+  chainLevel2: _.constant(150)
 }
 
 const RESOURCE_LOSS_VALUE = {
@@ -193,17 +208,17 @@ const RESOURCE_LOSS_VALUE = {
   air: 100,
   earth: 100,
   wild: 75,
-  tapAnother: 75 // at first was thinking 100, but just like a wild, it gives freedom to what you want to tap, so make it -75
+  tapAnother: 75 // at first was thinking 100. but just like a wild, it gives freedom to what you want to tap, so make it -75
 }
 
 const ABSTRACT_RESOURCE_ARRAY = ['develop', 'untap', 'retrieve','chainLevel1','chainLevel2']
 const SPECIAL_RESOURCE_ARRAY = ['money', 'card']
 const PHYSICAL_RESOURCE_ARRAY = ['fire', 'water', 'air', 'earth', 'wild']
 
-function excludeValuesAbove (value) {
+function excludeValuesAbove (value, type) {
   return _.keys(
-    _.omitBy(RESOURCE_GAIN_VALUE, (gainVal) => {
-      return gainVal <= value
+    _.omitBy(RESOURCE_GAIN_VALUE, (func) => {
+      return func(type) <= value
     })
   )  
 }
@@ -313,7 +328,7 @@ const spotGainRoller = new Brng({
   bias: 2
 })
 
-const spotLossNumRoller = new Brng({0: 12, 1: 5, 2: 3}, {keepHistory: true, bias: 2})
+const spotLossNumRoller = new Brng({0: 10, 1: 6, 2: 4}, {keepHistory: true, bias: 2})
 const lossResourceRoller = new Brng({
   money: 2,
   card: 2,
@@ -423,9 +438,8 @@ _.forEach(cardArray, (cardObj) => {
     
     let numResourceLoss = _.toNumber(lossNumRoller.roll())
 
-    let chosenResourceLoss
     if (numResourceLoss > 0) {
-      chosenResourceLoss = lossResourceRoller.roll()
+      const chosenResourceLoss = lossResourceRoller.roll()
       cardObj.loss = {}
 
       if (chosenResourceLoss === 'tapAnother' && numResourceLoss === 2) {
@@ -468,7 +482,7 @@ _.forEach(cardArray, (cardObj) => {
 
     const chosenResource = _.attempt(() => typeGainRoller.roll({
       only: _.isEmpty(onlyInclude) ? undefined : onlyInclude,
-      exclude: excludeValuesAbove(currentMaxValue).concat(excludeList)
+      exclude: excludeValuesAbove(currentMaxValue, cardObj.type).concat(excludeList)
     }))
 
     if (_.isError(chosenResource)) {
@@ -523,15 +537,18 @@ _.forEach(cardArray, (cardObj) => {
       excludeList = _.uniq(excludeList.concat(['chainLevel1', 'chainLevel2']))
     }
 
+    // if there's already 2 resources, and none of them are physical
+    // make sure the 3rd one is physical
     if (
       _.keys(resourceGainObj).concat(_.keys(cardObj.loss)).length === 2
       && currentMaxValue >= 100
       && _.intersection(_.keys(resourceGainObj), PHYSICAL_RESOURCE_ARRAY).length === 0
     ) {
+      // exclude all non-physical resource
       excludeList = _.uniq(excludeList.concat(ABSTRACT_RESOURCE_ARRAY).concat(SPECIAL_RESOURCE_ARRAY))
     }
 
-    const valueGained = RESOURCE_GAIN_VALUE[chosenResource]
+    const valueGained = RESOURCE_GAIN_VALUE[chosenResource](cardObj.type)
     currentValue += valueGained
     currentMaxValue = currentMaxValue - valueGained
 
@@ -555,10 +572,16 @@ _.forEach(cardArray, (cardObj) => {
   let totalCostValue = 0
   // == bonus - (loss+gain)*2 + points - default card cost
 
-  const bonusValue = cardObj.bonus ? RESOURCE_GAIN_VALUE[cardObj.bonus] : 0
+  
+  // for bonus, don't pass cardObj.type because it should be ignored
+  const bonusValue = cardObj.bonus ? RESOURCE_GAIN_VALUE[cardObj.bonus]() : 0
+
   const lossValue = cardObj.loss ?
     RESOURCE_LOSS_VALUE[_.keys(cardObj.loss)[0]]*_.values(cardObj.loss)[0] : 0
-  const gainValue = _.chain(cardObj.gain).map((val, key) => RESOURCE_GAIN_VALUE[key]*val).sum().value()
+  const gainValue = _.chain(cardObj.gain)
+    .map((val, key) => RESOURCE_GAIN_VALUE[key](cardObj.type) * val)
+    .sum()
+    .value()
   const defaultCardCost = 100
 
   // by default, if it doesn't have a spotSpaces value, it'll be 2x
@@ -637,6 +660,108 @@ console.log(spotGainRoller.proportions)
 
 
 // MOMENTS (rank cards)
+let momentsArray = []
+
+// SPOT
+// const momentsConsistentCost = [2,2,3,3,3,4,4,4,5,5]
+const momentsCost = [2,3,3,4,4]
+_.times(5, (idx) => {
+  momentsArray.push({
+    type: 'CONSISTENT',
+    cost: momentsCost[idx],
+    bonus: {}, // {2: 'develop', 4: 'chainLevel1', 6: 'untap'}
+    points: {} // {1: 10, 2: 10, 3: 10, ...}
+  })
+})
+_.times(5, (idx) => {
+  momentsArray.push({
+    type: 'RANDOM',
+    cost: momentsCost[idx],
+    bonus: {},
+    points: {}
+  })
+})
+_.times(5, (idx) => {
+  momentsArray.push({
+    type: 'INCREASE',
+    cost: momentsCost[idx],
+    bonus: {},
+    points: {}
+  })
+})
+_.times(5, (idx) => {
+  momentsArray.push({
+    type: 'DECREASE',
+    cost: momentsCost[idx],
+    bonus: {},
+    points: {}
+  })
+})
+
+// const momentsBonusRoller = new Brng({
+//   develop: 1,
+//   untap: 1,
+//   retrieve: 2,
+//   chainLevel1: 1,
+//   chainLevel2: 1,
+// }, {keepHistory: true, bias: 2})
+
+const momentHasBonusRoller = new Brng({
+  hasBonus: 1,
+  noBonus: 1
+}, {keepHistory: true})
+
+
+
+_.forEach(momentsArray, (momentObj) => {
+  
+  // 5 steps
+  _.times(5, (idx) => {
+    if (momentHasBonusRoller.roll() === 'hasBonus') {
+      
+      // just use cardBonusRoller because it's the same resources
+      momentObj.bonus[idx+1] = cardBonusRoller.roll()
+
+      // brainstorm: could make it where each point not rightfully given, add 1/4 points until it's rightfully spent. essentially interest over a debt.
+      /*
+        for example: a 2 resource moments card, giving 0 points until the 6th step.
+        1st step: 0 points (hold 8 points + 2 points)
+        2nd: 0 points (hold 8 + 2 points)
+        ...
+        6th: = 8 (for this step) + 8*5 (held) + 2*5 (from points interest) = 58 (vs 48)
+      */
+
+      // or could make it a compounding interest almost? like: points held * 1.25? not sure how it would work though...
+      /*
+        maybe: points held * 1.2 * ratio of resources spent to claim it
+        where ratio = 1+(resources/X) (where X=10 or something)
+          -- maybe gotta add 0.5 to resources, since it requires a develop
+        example: 2 resources, if X=10
+        1: 0 points (8 held)
+        2: 0 points (8 held + 8*(1+2/10) = 8 held + 9.6 to claim but not given)
+        3: 0 points -- 8 held + 17.6*(1+2/10) = 8 + 21.12
+        4: 0 points -- 8 held + 29.12*(1+2/10) = 8 + 34.944
+        5: 0 points -- 8 held + 42.944*(1+2/10) = 8 + 51.53
+        6: 8 + (59.53)*(1+2/10) = 79
+        ***** maybe too strong? can tone it down. although, it IS a lot investing.
+      */
+
+      // WHAT IF: i have a separate thing for resource cost and rank points/bonus.
+      // but then it'd require all resource costs to be the same. not sure if I want that.
+    }
+  })
+
+  if (momentObj.type === 'CONSISTENT') {
+    generateConsistentMoment(momentObj, RESOURCE_GAIN_VALUE)
+  }
+  else if (momentObj.type === 'RANDOM') {
+    generateRandomMoment(momentObj, RESOURCE_GAIN_VALUE)
+  }
+  
+})
+
+console.log('momentsArray')
+console.log(momentsArray)
 
 
 ////////////////////////////////////////////
