@@ -3,7 +3,9 @@ import _ from 'lodash'
 
 import {
   generateConsistentMoment,
-  generateRandomMoment
+  generateRandomMoment,
+  generateIncreaseMoment,
+  generateDecreaseMoment
 } from './generate-moment-cards.js'
 
 /*
@@ -691,7 +693,7 @@ _.times(5, (idx) => {
 })
 _.times(5, (idx) => {
   momentsArray.push({
-    type: 'DECREASE',
+    type: 'DECREASE', // make it barely decrease throughout the steps
     cost: momentsCost[idx],
     bonus: {},
     points: {}
@@ -757,6 +759,12 @@ _.forEach(momentsArray, (momentObj) => {
   else if (momentObj.type === 'RANDOM') {
     generateRandomMoment(momentObj, RESOURCE_GAIN_VALUE)
   }
+  else if (momentObj.type === 'INCREASE') {
+    generateIncreaseMoment(momentObj, RESOURCE_GAIN_VALUE)
+  }
+  else if (momentObj.type === 'DECREASE') {
+    generateDecreaseMoment(momentObj, RESOURCE_GAIN_VALUE)
+  }
   
 })
 
@@ -770,7 +778,7 @@ console.log(momentsArray)
 
 function Cards () {
   return <div><pre>{JSON.stringify(
-    cardArray
+    momentsArray
   , null, 2)}</pre> </div>
 }
 
