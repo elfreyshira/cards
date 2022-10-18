@@ -320,8 +320,6 @@ function generateDecreaseMoment (momentObj, RESOURCE_GAIN_VALUE) {
     })
 
     if (isGoodToGo(momentObj.points)) {
-      console.log('good to go')
-      console.log(momentObj.points)
       break // leave the while loop
     }
   }

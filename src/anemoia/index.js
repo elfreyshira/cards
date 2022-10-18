@@ -226,65 +226,68 @@ function excludeValuesAbove (value, type) {
 }
 
 
-let cardArray = []
+let cardsArray = []
 
 // SPOT
 _.times(7, () => {
-  cardArray.push({
+  cardsArray.push({
     type: SPOT,
     spotLevel: LEVELS.LEVEL_1,
-    maxValue: 100
+    // maxValue: 100
+    maxValue: 120
   })
 })
 _.times(13, () => {
-  cardArray.push({
+  cardsArray.push({
     type: SPOT,
     spotLevel: LEVELS.LEVEL_2,
-    maxValue: 200
+    // maxValue: 200
+    maxValue: 220
   })
 })
 _.times(10, () => {
-  cardArray.push({
+  cardsArray.push({
     type: SPOT,
     spotLevel: LEVELS.LEVEL_3,
-    maxValue: 300
+    // maxValue: 300
+    maxValue: 320
   })
 })
 
 
 // HOME
-_.times(8, () => {
-  cardArray.push({
-    type: HOME,
-    maxValue: 100
-  })
-})
-_.times(7, () => {
-  cardArray.push({
-    type: HOME,
-    maxValue: 200
-  })
-})
+// _.times(8, () => {
+//   cardsArray.push({
+//     type: HOME,
+//     maxValue: 125
+//   })
+// })
+// _.times(7, () => {
+//   cardsArray.push({
+//     type: HOME,
+//     maxValue: 225
+//   })
+// })
 
-// TAP
-_.times(4, () => {
-  cardArray.push({
-    type: TAP,
-    maxValue: 50
-  })
-})
-_.times(5, () => {
-  cardArray.push({
-    type: TAP,
-    maxValue: 100
-  })
-})
-_.times(6, () => {
-  cardArray.push({
-    type: TAP,
-    maxValue: 150
-  })
-})
+// // TAP
+// _.times(4, () => {
+//   cardsArray.push({
+//     type: TAP,
+//     maxValue: 75
+//   })
+// })
+// _.times(5, () => {
+//   cardsArray.push({
+//     type: TAP,
+//     maxValue: 125
+//   })
+// })
+// _.times(6, () => {
+//   cardsArray.push({
+//     type: TAP,
+//     maxValue: 175
+//   })
+// })
 
 
 const spotPointsRoller = new Brng({
@@ -298,7 +301,7 @@ const tapPointsRoller = new Brng({
   POINTS_9_12: 1
 }, {bias: 2})
 
-_.forEach(cardArray, (cardObj) => {
+_.forEach(cardsArray, (cardObj) => {
   let pointsRoller
 
   if (cardObj.type === SPOT || cardObj.type === HOME) pointsRoller = spotPointsRoller
@@ -339,7 +342,7 @@ const lossResourceRoller = new Brng({
   air: 2,
   earth: 2,
   wild: 3,
-  tapAnother: .5, // (-100 value)
+  tapAnother: 1, // (-100 value)
 }, {
   keepHistory: true,
   bias: 2
@@ -377,17 +380,17 @@ const tapGainRoller = new Brng({
   bias: 2
 })
 
-cardArray = _.sortBy(cardArray, ['type', 'maxValue', 'points'])
+cardsArray = _.sortBy(cardsArray, ['type', 'maxValue', 'points'])
 
 // add how many spaces the spot has
 const spotNumSpaceRoller = new Brng({1: 1, 2: 1}, {bias: 2})
-_.forEach(cardArray, (cardObj) => {
+_.forEach(cardsArray, (cardObj) => {
   if (cardObj.type === SPOT) {
     cardObj.spotSpaces = _.toNumber(spotNumSpaceRoller.roll())
   }
 })
 
-cardArray = _.sortBy(cardArray, ['type', 'maxValue', 'points', 'spotSpaces'])
+cardsArray = _.sortBy(cardsArray, ['type', 'maxValue', 'points', 'spotSpaces'])
 
 // add whether it has a bonus or not
 const cardHasBonusRoller = new Brng({hasBonus: 1, noBonus: 2}, {bias: 2})
@@ -398,13 +401,13 @@ const cardBonusRoller = new Brng({
   chainLevel1: 1,
   chainLevel2: 1
 }, {keepHistory: true, bias: 2})
-_.forEach(cardArray, (cardObj) => {
+_.forEach(cardsArray, (cardObj) => {
   if (cardHasBonusRoller.roll() === 'hasBonus') {
     cardObj.bonus = cardBonusRoller.roll()
   }
 })
 
-cardArray = _.sortBy(cardArray, ['type', 'maxValue', 'points', 'spotSpaces', 'bonus'])
+cardsArray = _.sortBy(cardsArray, ['type', 'maxValue', 'points', 'spotSpaces', 'bonus'])
 
 
 /*
@@ -417,7 +420,7 @@ rules for the resource loss and gain:
 */
 
 
-_.forEach(cardArray, (cardObj) => {
+_.forEach(cardsArray, (cardObj) => {
   const fixedMaxValue = cardObj.maxValue
   let currentMaxValue = fixedMaxValue
   let currentValue = 0
@@ -482,9 +485,14 @@ _.forEach(cardArray, (cardObj) => {
     else if (cardObj.type === TAP) typeGainRoller = tapGainRoller
 
 
+    // don't have chainLevel2 on level 1 cards
+    if (cardObj.spotLevel === LEVELS.LEVEL_1) {
+      excludeList = _.uniq(excludeList.concat('chainLevel2'))
+    }
+
     const chosenResource = _.attempt(() => typeGainRoller.roll({
       only: _.isEmpty(onlyInclude) ? undefined : onlyInclude,
-      exclude: excludeValuesAbove(currentMaxValue, cardObj.type).concat(excludeList)
+      exclude: _.uniq(excludeValuesAbove(currentMaxValue, cardObj.type).concat(excludeList))
     }))
 
     if (_.isError(chosenResource)) {
@@ -497,6 +505,13 @@ _.forEach(cardArray, (cardObj) => {
       console.log(JSON.stringify(excludeValuesAbove(currentMaxValue).concat(excludeList)))
       console.log('-----------------')
       break
+    }
+
+    if (cardObj.spotLevel === LEVELS.LEVEL_1 && chosenResource === 'chainLevel2') {
+      
+      typeGainRoller.undo()
+      excludeList = _.uniq(excludeList.concat('chainLevel2'))
+
     }
 
     // each abstract resource should only be once per card
@@ -570,7 +585,7 @@ function roundToNearest25 (x) {
 }
 
 // RESOURCE COST
-_.forEach(cardArray, (cardObj) => {
+_.forEach(cardsArray, (cardObj) => {
   let totalCostValue = 0
   // == bonus - (loss+gain)*2 + points - default card cost
 
@@ -600,15 +615,16 @@ _.forEach(cardArray, (cardObj) => {
 
   cardObj.pointsOnCard = pointsOnCard
   cardObj.totalCostValue = roundToNearest25(totalCostValue)
+  cardObj._usageValue = gainValue - lossValue
   
 })
 
-console.log(_.chain(cardArray).map('totalCostValue').mean().value())
+console.log(_.chain(cardsArray).map('totalCostValue').mean().value())
 // average is usually 360
 
-console.log(_.chain(cardArray).map('totalCostValue').max().value())
+console.log(_.chain(cardsArray).map('totalCostValue').max().value())
 
-const costVarietyRoller = new Brng({1:2, 2:3, 3:1}, {keepHistory: true, bias: 2})
+const costVarietyRoller = new Brng({1:2, 2:4, 3:1}, {keepHistory: true, bias: 2})
 const costToVarietyMap = {
   100: [1],
   200: [1,2],
@@ -628,15 +644,18 @@ const resourceCostRoller = new Brng({
 }, {keepHistory: true, bias: 2})
 
 
-cardArray = _.sortBy(cardArray, ['type', 'maxValue', 'totalCostValue', 'points', 'spotSpaces', 'bonus'])
-_.forEach(cardArray, (cardObj) => {
+// RESOURCE COST
+cardsArray = _.sortBy(cardsArray, ['type', 'maxValue', 'totalCostValue', 'points', 'spotSpaces', 'bonus'])
 
-  const totalCostValue = cardObj.totalCostValue
+// returns resourceCostObj = {fire: 2, water: 1}
+function getResourceCost (totalCostValue) {
+  
   const costVariety = _.toNumber(costVarietyRoller.roll({only:costToVarietyMap[totalCostValue]}))
 
   const resourceCostObj = {}
   let onlyResourceCost = []
-  while (_.sum(_.values(resourceCostObj))*100 < cardObj.totalCostValue) {
+
+  while (_.sum(_.values(resourceCostObj))*100 < totalCostValue) {
     const chosenResourceToPay = resourceCostRoller.roll(
       {only: _.isEmpty(onlyResourceCost) ? undefined : onlyResourceCost}
     )
@@ -645,13 +664,37 @@ _.forEach(cardArray, (cardObj) => {
     if (_.isEmpty(onlyResourceCost) && costVariety === _.keys(resourceCostObj).length) {
       onlyResourceCost = _.keys(resourceCostObj)
     }
-
   }
-  cardObj.resourceCost = resourceCostObj
+
+  return resourceCostObj
+
+}
+
+_.forEach(cardsArray, (cardObj) => {
+
+
+
+  // const totalCostValue = cardObj.totalCostValue
+  // const costVariety = _.toNumber(costVarietyRoller.roll({only:costToVarietyMap[totalCostValue]}))
+
+  // const resourceCostObj = {}
+  // let onlyResourceCost = []
+  // while (_.sum(_.values(resourceCostObj))*100 < cardObj.totalCostValue) {
+  //   const chosenResourceToPay = resourceCostRoller.roll(
+  //     {only: _.isEmpty(onlyResourceCost) ? undefined : onlyResourceCost}
+  //   )
+  //   resourceCostObj[chosenResourceToPay] = (resourceCostObj[chosenResourceToPay] + 1) || 1
+
+  //   if (_.isEmpty(onlyResourceCost) && costVariety === _.keys(resourceCostObj).length) {
+  //     onlyResourceCost = _.keys(resourceCostObj)
+  //   }
+
+  // }
+  cardObj.resourceCost = getResourceCost(cardObj.totalCostValue)
 
 })
 
-console.log(cardArray)
+console.log(cardsArray)
 
 console.log(spotGainRoller.proportions)
 
@@ -765,21 +808,78 @@ _.forEach(momentsArray, (momentObj) => {
   else if (momentObj.type === 'DECREASE') {
     generateDecreaseMoment(momentObj, RESOURCE_GAIN_VALUE)
   }
+
+  momentObj.resourceCost = getResourceCost(momentObj.cost * 100)
   
 })
 
 console.log('momentsArray')
 console.log(momentsArray)
 
+console.log('----------------------')
+console.log('tap avg')
+console.log(_.chain(cardsArray).filter({type:TAP}).map('_usageValue').value())
+console.log(_.chain(cardsArray).filter({type:TAP}).map('_usageValue').mean().value())
+
+console.log('----------------------')
+console.log('spot, level 1 avg')
+console.log(_.chain(cardsArray).filter({type:SPOT, spotLevel: LEVELS.LEVEL_1}).map('_usageValue').value())
+console.log(_.chain(cardsArray).filter({type:SPOT, spotLevel: LEVELS.LEVEL_1}).map('_usageValue').mean().value())
+
+console.log('----------------------')
+console.log('spot, level 2 avg')
+console.log(_.chain(cardsArray).filter({type:SPOT, spotLevel: LEVELS.LEVEL_2}).map('_usageValue').value())
+console.log(_.chain(cardsArray).filter({type:SPOT, spotLevel: LEVELS.LEVEL_2}).map('_usageValue').mean().value())
+
+console.log('----------------------')
+console.log('spot, level 3 avg')
+console.log(_.chain(cardsArray).filter({type:SPOT, spotLevel: LEVELS.LEVEL_3}).map('_usageValue').value())
+console.log(_.chain(cardsArray).filter({type:SPOT, spotLevel: LEVELS.LEVEL_3}).map('_usageValue').mean().value())
+
+console.log('----------------------')
+console.log('HOME avg')
+console.log(_.chain(cardsArray).filter({type:HOME}).map('_usageValue').value())
+console.log(_.chain(cardsArray).filter({type:HOME}).map('_usageValue').mean().value())
 
 ////////////////////////////////////////////
 ////////////////////////////////////////////
 
+
+// momentsArray
+// cardsArray
+
+const importantKeys = [
+  'type',
+  'spotLevel',
+  'resourceCost',
+  'pointsOnCard',
+  'bonus',
+  'loss',
+  'gain',
+  'spotSpaces',
+  '_usageValue'
+]
 
 function Cards () {
-  return <div><pre>{JSON.stringify(
-    momentsArray
-  , null, 2)}</pre> </div>
+  return (
+    <div>
+      <pre>
+        {JSON.stringify(_.chain(cardsArray).map((obj) => _.pick(obj, importantKeys)).value(), null, 2)}
+      </pre>
+
+      <br/>--------------------------------------------------------
+      <br/>--------------------------------------------------------
+      <br/>--------------------------------------------------------
+      <br/>--------------------------------------------------------
+      <br/>--------------------------------------------------------
+      <br/>--------------------------------------------------------
+      <br/>--------------------------------------------------------
+
+      <pre>
+        {JSON.stringify(momentsArray, null, 2)}
+      </pre>
+    </div>
+  )
 }
 
 export default Cards
