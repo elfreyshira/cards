@@ -182,7 +182,7 @@ const RESOURCE_GAIN_VALUE = {
   card: _.constant(50),
   fire: _.constant(100),
   water: _.constant(100),
-  air: _.constant(100),
+  // air: _.constant(100),
   earth: _.constant(100),
   wild: _.constant(125),
   develop: _.constant(50),
@@ -197,7 +197,7 @@ const RESOURCE_GAIN_VALUE = {
       return 100
     }
   },
-  retrieve: _.constant(25),
+  retrieve: _.constant(50),
   chainLevel1: _.constant(75),
   chainLevel2: _.constant(150)
 }
@@ -207,15 +207,19 @@ const RESOURCE_LOSS_VALUE = {
   card: 37.5, // discarding unwanted cards doesn't hurt as much
   fire: 100,
   water: 100,
-  air: 100,
+  // air: 100,
   earth: 100,
   wild: 75,
   tapAnother: 75 // at first was thinking 100. but just like a wild, it gives freedom to what you want to tap, so make it -75
 }
 
+const ACTION_RESOURCE_ARRAY = ['retrieve', 'chainLevel1', 'chainLevel2']
+
 const ABSTRACT_RESOURCE_ARRAY = ['develop', 'untap', 'retrieve','chainLevel1','chainLevel2']
 const SPECIAL_RESOURCE_ARRAY = ['money', 'card']
-const PHYSICAL_RESOURCE_ARRAY = ['fire', 'water', 'air', 'earth', 'wild']
+
+// const PHYSICAL_RESOURCE_ARRAY = ['fire', 'water', 'air', 'earth', 'wild']
+const PHYSICAL_RESOURCE_ARRAY = ['fire', 'water', 'earth', 'wild']
 
 function excludeValuesAbove (value, type) {
   return _.keys(
@@ -234,7 +238,7 @@ _.times(7, () => {
     type: SPOT,
     spotLevel: LEVELS.LEVEL_1,
     // maxValue: 100
-    maxValue: 120
+    maxValue: 125
   })
 })
 _.times(13, () => {
@@ -242,7 +246,7 @@ _.times(13, () => {
     type: SPOT,
     spotLevel: LEVELS.LEVEL_2,
     // maxValue: 200
-    maxValue: 220
+    maxValue: 225
   })
 })
 _.times(10, () => {
@@ -250,44 +254,50 @@ _.times(10, () => {
     type: SPOT,
     spotLevel: LEVELS.LEVEL_3,
     // maxValue: 300
-    maxValue: 320
+    maxValue: 325
   })
 })
 
 
 // HOME
-// _.times(8, () => {
-//   cardsArray.push({
-//     type: HOME,
-//     maxValue: 125
-//   })
-// })
-// _.times(7, () => {
-//   cardsArray.push({
-//     type: HOME,
-//     maxValue: 225
-//   })
-// })
+_.times(5, () => {
+  cardsArray.push({
+    type: HOME,
+    maxValue: 125
+  })
+})
+_.times(5, () => {
+  cardsArray.push({
+    type: HOME,
+    maxValue: 175
+  })
+})
+_.times(5, () => {
+  cardsArray.push({
+    type: HOME,
+    maxValue: 225
+  })
+})
 
-// // TAP
-// _.times(4, () => {
-//   cardsArray.push({
-//     type: TAP,
-//     maxValue: 75
-//   })
-// })
-// _.times(5, () => {
-//   cardsArray.push({
-//     type: TAP,
-//     maxValue: 125
-//   })
-// })
-// _.times(6, () => {
-//   cardsArray.push({
-//     type: TAP,
-//     maxValue: 175
-//   })
-// })
+// TAP
+_.times(5, () => {
+  cardsArray.push({
+    type: TAP,
+    maxValue: 75
+  })
+})
+_.times(5, () => {
+  cardsArray.push({
+    type: TAP,
+    maxValue: 125
+  })
+})
+_.times(5, () => {
+  cardsArray.push({
+    type: TAP,
+    maxValue: 175
+  })
+})
 
 
 const spotPointsRoller = new Brng({
@@ -296,9 +306,9 @@ const spotPointsRoller = new Brng({
   // POINTS_9_12: 0.5
 }, {bias: 2})
 const tapPointsRoller = new Brng({
-  POINTS_1_4: .5,
+  POINTS_1_4: 1,
   POINTS_5_8: 1,
-  POINTS_9_12: 1
+  // POINTS_9_12: 1
 }, {bias: 2})
 
 _.forEach(cardsArray, (cardObj) => {
@@ -318,11 +328,11 @@ _.forEach(cardsArray, (cardObj) => {
 const spotGainRoller = new Brng({
   money: 2,
   card: 2,
-  fire: 2,
-  water: 2,
-  air: 2,
-  earth: 2,
-  wild: 3,
+  fire: 2.5,
+  water: 2.5,
+  // air: 2,
+  earth: 2.5,
+  wild: 4,
   develop: 2.5,
   untap: 0.5,
   retrieve: 2,
@@ -333,15 +343,15 @@ const spotGainRoller = new Brng({
   bias: 2
 })
 
-const spotLossNumRoller = new Brng({0: 10, 1: 6, 2: 4}, {keepHistory: true, bias: 2})
+const spotLossNumRoller = new Brng({0: 10, 1: 10}, {keepHistory: true, bias: 2})
 const lossResourceRoller = new Brng({
   money: 2,
   card: 2,
-  fire: 2,
-  water: 2,
-  air: 2,
-  earth: 2,
-  wild: 3,
+  fire: 2.5,
+  water: 2.5,
+  // air: 2,
+  earth: 2.5,
+  wild: 4,
   tapAnother: 1, // (-100 value)
 }, {
   keepHistory: true,
@@ -351,11 +361,11 @@ const lossResourceRoller = new Brng({
 const homeGainRoller = new Brng({
   money: 2,
   card: 2,
-  fire: 2,
-  water: 2,
-  air: 2,
-  earth: 2,
-  wild: 3,
+  fire: 2.5,
+  water: 2.5,
+  // air: 2,
+  earth: 2.5,
+  wild: 4,
   develop: 2.5,
   untap: 2,
 }, {
@@ -363,15 +373,15 @@ const homeGainRoller = new Brng({
   bias: 2
 })
 
-const tapLossNumRoller = new Brng({1: 1, 2: 1}, {keepHistory: true, bias: 2})
+const tapLossNumRoller = new Brng({1: 1}, {keepHistory: true, bias: 2})
 const tapGainRoller = new Brng({
   money: 2,
   card: 2,
-  fire: 2,
-  water: 2,
-  air: 2,
-  earth: 2,
-  wild: 3,
+  fire: 2.5,
+  water: 2.5,
+  // air: 2,
+  earth: 2.5,
+  wild: 4,
   develop: 2.5,
   untap: 0.5,
   retrieve: 3
@@ -383,10 +393,11 @@ const tapGainRoller = new Brng({
 cardsArray = _.sortBy(cardsArray, ['type', 'maxValue', 'points'])
 
 // add how many spaces the spot has
-const spotNumSpaceRoller = new Brng({1: 1, 2: 1}, {bias: 2})
+// const spotNumSpaceRoller = new Brng({1: 1, 2: 1}, {bias: 2})
 _.forEach(cardsArray, (cardObj) => {
   if (cardObj.type === SPOT) {
-    cardObj.spotSpaces = _.toNumber(spotNumSpaceRoller.roll())
+    // cardObj.spotSpaces = _.toNumber(spotNumSpaceRoller.roll())
+    cardObj.spotSpaces = 1
   }
 })
 
@@ -463,7 +474,10 @@ _.forEach(cardsArray, (cardObj) => {
       currentValue = currentValue - valueLoss
       currentMaxValue = currentMaxValue + valueLoss
 
-      excludeList.push(chosenResourceLoss)
+      // it's okay for wild to be on both sides
+      // if (chosenResourceLoss !== 'wild') {
+        excludeList.push(chosenResourceLoss)  
+      // }
     } 
   }
   /// END: RESOURCE LOSS
@@ -472,7 +486,7 @@ _.forEach(cardsArray, (cardObj) => {
 
   // START: RESOURCE GAIN
   // START: RESOURCE GAIN
-  while (currentValue < (fixedMaxValue-30) && loopTimes <= 10) {
+  while (currentValue < (fixedMaxValue-0) && loopTimes <= 10) {
     loopTimes++
     if (loopTimes === 10) {
       console.log(loopTimes)
@@ -505,13 +519,6 @@ _.forEach(cardsArray, (cardObj) => {
       console.log(JSON.stringify(excludeValuesAbove(currentMaxValue).concat(excludeList)))
       console.log('-----------------')
       break
-    }
-
-    if (cardObj.spotLevel === LEVELS.LEVEL_1 && chosenResource === 'chainLevel2') {
-      
-      typeGainRoller.undo()
-      excludeList = _.uniq(excludeList.concat('chainLevel2'))
-
     }
 
     // each abstract resource should only be once per card
@@ -549,9 +556,14 @@ _.forEach(cardsArray, (cardObj) => {
       hasLimitedTotalResource = true
     }
 
-    // don't have both chains in 1 card
-    if (chosenResource === 'chainLevel1' || chosenResource === 'chainLevel2') {
-      excludeList = _.uniq(excludeList.concat(['chainLevel1', 'chainLevel2']))
+    // // don't have both chains in 1 card
+    // if (chosenResource === 'chainLevel1' || chosenResource === 'chainLevel2') {
+    //   excludeList = _.uniq(excludeList.concat(['chainLevel1', 'chainLevel2']))
+    // }
+
+    // can't have 2 of [retrieve, chainLevel1, chainLevel2] appear on the same card
+    if (_.includes(ACTION_RESOURCE_ARRAY, chosenResource)) {
+      excludeList = _.uniq(excludeList.concat(ACTION_RESOURCE_ARRAY))
     }
 
     // if there's already 2 resources, and none of them are physical
@@ -602,7 +614,7 @@ _.forEach(cardsArray, (cardObj) => {
   const defaultCardCost = 100
 
   // by default, if it doesn't have a spotSpaces value, it'll be 2x
-  const multiplier = cardObj.spotSpaces === 1.5 ? 1.5 : 2
+  const multiplier = cardObj.spotSpaces === 1 ? 1.5 : 2
 
   totalCostValue = bonusValue + (gainValue - lossValue)*multiplier - defaultCardCost
 
@@ -624,23 +636,28 @@ console.log(_.chain(cardsArray).map('totalCostValue').mean().value())
 
 console.log(_.chain(cardsArray).map('totalCostValue').max().value())
 
-const costVarietyRoller = new Brng({1:2, 2:4, 3:1}, {keepHistory: true, bias: 2})
+const cost12VarietyRoller = new Brng({1:1, 2:1}, {keepHistory: true, bias: 2})
+const cost123VarietyRoller = new Brng({1:1, 2:1, 3:1}, {keepHistory: true, bias: 2})
+const cost23VarietyRoller = new Brng({2:1, 3:1}, {keepHistory: true, bias: 2})
+
 const costToVarietyMap = {
-  100: [1],
-  200: [1,2],
-  300: [1,2],
-  400: [2,3],
-  500: [2,3],
-  600: [2,3],
-  700: [2,3],
-  800: [2,3],
-  900: [2,3]
+  0: _.constant(1),
+  100: _.constant(1),
+  200: () => cost12VarietyRoller.roll(),
+  300: () => cost123VarietyRoller.roll(),
+  400: () => cost23VarietyRoller.roll(),
+  500: () => cost23VarietyRoller.roll(),
+  600: _.constant(3),
+  700: _.constant(3),
+  800: _.constant(3),
+  900: _.constant(3)
 }
+
 const resourceCostRoller = new Brng({
   fire: 1,
   water: 1,
   earth: 1,
-  air: 1
+  // air: 1
 }, {keepHistory: true, bias: 2})
 
 
@@ -650,7 +667,7 @@ cardsArray = _.sortBy(cardsArray, ['type', 'maxValue', 'totalCostValue', 'points
 // returns resourceCostObj = {fire: 2, water: 1}
 function getResourceCost (totalCostValue) {
   
-  const costVariety = _.toNumber(costVarietyRoller.roll({only:costToVarietyMap[totalCostValue]}))
+  const costVariety = _.toNumber(costToVarietyMap[totalCostValue]())
 
   const resourceCostObj = {}
   let onlyResourceCost = []
@@ -671,27 +688,7 @@ function getResourceCost (totalCostValue) {
 }
 
 _.forEach(cardsArray, (cardObj) => {
-
-
-
-  // const totalCostValue = cardObj.totalCostValue
-  // const costVariety = _.toNumber(costVarietyRoller.roll({only:costToVarietyMap[totalCostValue]}))
-
-  // const resourceCostObj = {}
-  // let onlyResourceCost = []
-  // while (_.sum(_.values(resourceCostObj))*100 < cardObj.totalCostValue) {
-  //   const chosenResourceToPay = resourceCostRoller.roll(
-  //     {only: _.isEmpty(onlyResourceCost) ? undefined : onlyResourceCost}
-  //   )
-  //   resourceCostObj[chosenResourceToPay] = (resourceCostObj[chosenResourceToPay] + 1) || 1
-
-  //   if (_.isEmpty(onlyResourceCost) && costVariety === _.keys(resourceCostObj).length) {
-  //     onlyResourceCost = _.keys(resourceCostObj)
-  //   }
-
-  // }
   cardObj.resourceCost = getResourceCost(cardObj.totalCostValue)
-
 })
 
 console.log(cardsArray)
@@ -709,7 +706,7 @@ let momentsArray = []
 
 // SPOT
 // const momentsConsistentCost = [2,2,3,3,3,4,4,4,5,5]
-const momentsCost = [2,3,3,4,4]
+const momentsCost = [2,2,3,3,4]
 _.times(5, (idx) => {
   momentsArray.push({
     type: 'CONSISTENT',
@@ -817,27 +814,27 @@ console.log('momentsArray')
 console.log(momentsArray)
 
 console.log('----------------------')
-console.log('tap avg')
+console.log('TAP _usageValue avg')
 console.log(_.chain(cardsArray).filter({type:TAP}).map('_usageValue').value())
 console.log(_.chain(cardsArray).filter({type:TAP}).map('_usageValue').mean().value())
 
 console.log('----------------------')
-console.log('spot, level 1 avg')
+console.log('SPOT, _usageValue, level 1 avg')
 console.log(_.chain(cardsArray).filter({type:SPOT, spotLevel: LEVELS.LEVEL_1}).map('_usageValue').value())
 console.log(_.chain(cardsArray).filter({type:SPOT, spotLevel: LEVELS.LEVEL_1}).map('_usageValue').mean().value())
 
 console.log('----------------------')
-console.log('spot, level 2 avg')
+console.log('SPOT, _usageValue, level 2 avg')
 console.log(_.chain(cardsArray).filter({type:SPOT, spotLevel: LEVELS.LEVEL_2}).map('_usageValue').value())
 console.log(_.chain(cardsArray).filter({type:SPOT, spotLevel: LEVELS.LEVEL_2}).map('_usageValue').mean().value())
 
 console.log('----------------------')
-console.log('spot, level 3 avg')
+console.log('SPOT, _usageValue, level 3 avg')
 console.log(_.chain(cardsArray).filter({type:SPOT, spotLevel: LEVELS.LEVEL_3}).map('_usageValue').value())
 console.log(_.chain(cardsArray).filter({type:SPOT, spotLevel: LEVELS.LEVEL_3}).map('_usageValue').mean().value())
 
 console.log('----------------------')
-console.log('HOME avg')
+console.log('HOME _usageValue avg')
 console.log(_.chain(cardsArray).filter({type:HOME}).map('_usageValue').value())
 console.log(_.chain(cardsArray).filter({type:HOME}).map('_usageValue').mean().value())
 
@@ -864,7 +861,8 @@ function Cards () {
   return (
     <div>
       <pre>
-        {JSON.stringify(_.chain(cardsArray).map((obj) => _.pick(obj, importantKeys)).value(), null, 2)}
+        {/*{JSON.stringify(_.chain(cardsArray).map((obj) => _.pick(obj, importantKeys)).value(), null, 2)}*/}
+        {JSON.stringify(cardsArray, null, 2)}
       </pre>
 
       <br/>--------------------------------------------------------
