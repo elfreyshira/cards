@@ -320,8 +320,8 @@ _.forEach(cardsArray, (cardObj) => {
 // for abstract 510
 const resourceGainRoller = new Brng({
 // const spotGainRoller = new Brng({
-  money: 3,
-  card: 2,
+  money: 4,
+  card: 2.5,
   fire: 2,
   water: 2,
   air: 2,
@@ -352,37 +352,37 @@ const lossResourceRoller = new Brng({
   bias: 2
 })
 
-const homeGainRoller = new Brng({
-  money: 3,
-  card: 2,
-  fire: 2,
-  water: 2,
-  air: 2,
-  earth: 2,
-  wild: 4,
-  // develop: 2.5,
-  untap: 3,
-}, {
-  keepHistory: true,
-  bias: 2
-})
+// const homeGainRoller = new Brng({
+//   money: 3,
+//   card: 2,
+//   fire: 2,
+//   water: 2,
+//   air: 2,
+//   earth: 2,
+//   wild: 4,
+//   // develop: 2.5,
+//   untap: 3,
+// }, {
+//   keepHistory: true,
+//   bias: 2
+// })
 
 const tapLossNumRoller = new Brng({1: 1}, {keepHistory: true, bias: 2})
-const tapGainRoller = new Brng({
-  money: 3,
-  card: 2,
-  fire: 2,
-  water: 2,
-  air: 2,
-  earth: 2,
-  wild: 4,
-  // develop: 2.5,
-  // untap: 0.5,
-  retrieve: 3
-}, {
-  keepHistory: true,
-  bias: 2
-})
+// const tapGainRoller = new Brng({
+//   money: 3,
+//   card: 2,
+//   fire: 2,
+//   water: 2,
+//   air: 2,
+//   earth: 2,
+//   wild: 4,
+//   // develop: 2.5,
+//   // untap: 0.5,
+//   retrieve: 3
+// }, {
+//   keepHistory: true,
+//   bias: 2
+// })
 
 cardsArray = _.sortBy(cardsArray, ['type', 'maxValue', 'points'])
 
@@ -398,21 +398,24 @@ cardsArray = _.sortBy(cardsArray, ['type', 'maxValue', 'points'])
 // cardsArray = _.sortBy(cardsArray, ['type', 'maxValue', 'points'])
 
 // add whether it has a bonus or not
-const cardHasBonusRoller = new Brng({hasBonus: 1, noBonus: 2}, {bias: 2})
-const cardBonusRoller = new Brng({
-  // develop: 1,
-  untap: 2,
+// const cardHasBonusRoller = new Brng({hasBonus: 1, noBonus: 2}, {bias: 2})
+const discardEffectRoller = new Brng({
+  discard1moneyAnd1Wild_untap: 2,
   retrieve: 2,
-  chainLevel1: 1.2,
-  chainLevel2: 0.8
+  discard1money_chainLevel1: 1.2,
+  discard1moneyAnd1Wild_chainLevel2: 0.8,
+
+  money2: 2,
+  draw: 2,
+  discard1Wild_wild: 2,
+  discard3money_wild: 2,
 }, {keepHistory: true, bias: 2})
+
 _.forEach(cardsArray, (cardObj) => {
-  if (cardHasBonusRoller.roll() === 'hasBonus') {
-    cardObj.bonus = cardBonusRoller.roll()
-  }
+  cardObj.discardEffect = discardEffectRoller.roll()
 })
 
-cardsArray = _.sortBy(cardsArray, ['type', 'maxValue', 'points', 'bonus'])
+cardsArray = _.sortBy(cardsArray, ['type', 'maxValue', 'points', 'discardEffect'])
 
 
 /*
@@ -610,11 +613,7 @@ COST_MULTIPLIER[TAP] = 1.75
 // RESOURCE COST
 _.forEach(cardsArray, (cardObj) => {
   let totalCostValue = 0
-  // == (gain-loss)*multiplier + points + bonus - (default card cost)
-
-  
-  // for bonus, don't pass cardObj.type because it should be ignored
-  const bonusValue = cardObj.bonus ? RESOURCE_GAIN_VALUE[cardObj.bonus]() : 0
+  // == (gain-loss)*multiplier + points - (default card cost)
 
   const lossValue = cardObj.loss ?
     RESOURCE_LOSS_VALUE[_.keys(cardObj.loss)[0]]*_.values(cardObj.loss)[0] : 0
@@ -629,7 +628,7 @@ _.forEach(cardsArray, (cardObj) => {
   // by default, if it doesn't have a spotSpaces value, it'll be 2x
   const multiplier = COST_MULTIPLIER[cardObj.type] 
 
-  totalCostValue = bonusValue + (gainValue - lossValue)*multiplier - defaultCardCost
+  totalCostValue = (gainValue - lossValue)*multiplier - defaultCardCost
 
   const minPointsOnCard = MIN_POINTS_MAP[cardObj.points]
   let pointsOnCard = 0
@@ -675,7 +674,7 @@ const resourceCostRoller = new Brng({
 
 
 // RESOURCE COST
-cardsArray = _.sortBy(cardsArray, ['type', 'maxValue', 'totalCostValue', 'points', 'bonus'])
+cardsArray = _.sortBy(cardsArray, ['type', 'maxValue', 'totalCostValue', 'points', 'discardEffect'])
 
 // returns resourceCostObj = {fire: 2, water: 1}
 function getResourceCost (totalCostValue) {
@@ -765,7 +764,12 @@ const momentHasBonusRoller = new Brng({
   hasBonus: 1,
   noBonus: 1
 }, {keepHistory: true})
-
+const momentBonusRoller = new Brng({
+  untap: 2,
+  retrieve: 2,
+  chainLevel1: 1.2,
+  chainLevel2: 0.8
+})
 
 
 _.forEach(momentsArray, (momentObj) => {
@@ -775,7 +779,7 @@ _.forEach(momentsArray, (momentObj) => {
     if (momentHasBonusRoller.roll() === 'hasBonus') {
       
       // just use cardBonusRoller because it's the same resources
-      momentObj.bonus[idx+1] = cardBonusRoller.roll()
+      momentObj.bonus[idx+1] = momentBonusRoller.roll()
 
       // brainstorm: could make it where each point not rightfully given, add 1/4 points until it's rightfully spent. essentially interest over a debt.
       /*
@@ -851,6 +855,49 @@ console.log('HOME _usageValue avg')
 console.log(_.chain(cardsArray).filter({type:HOME}).map('_usageValue').value())
 console.log(_.chain(cardsArray).filter({type:HOME}).map('_usageValue').mean().value())
 
+let lossCount = 0
+_.forEach(
+  cardsArray, obj=> {
+    const objWithLoss = _.pick(obj.loss, ['wild', 'air', 'fire', 'water', 'earth'])
+    if (!_.isEmpty(objWithLoss)) {
+      lossCount++
+    }
+  }
+)
+
+let gainCount = 0
+const lol = _.map(
+  cardsArray, obj => {
+    const objGain = _.pick(obj.gain, ['wild', 'air', 'fire', 'water', 'earth'])
+    gainCount += _.sum(_.values(objGain))
+    return objGain
+  }
+)
+
+let moneyCount = 0
+_.map(
+  cardsArray, obj => {
+    const objGain = _.pick(obj.gain, ['money'])
+    moneyCount += _.sum(_.values(objGain))
+    return objGain
+  }
+)
+
+let cardCount = 0
+_.map(
+  cardsArray, obj => {
+    const objGain = _.pick(obj.gain, ['card'])
+    cardCount += _.sum(_.values(objGain))
+    return objGain
+  }
+)
+
+console.log('lossCount', lossCount)
+console.log('gainCount', gainCount)
+console.log('net count', gainCount - lossCount)
+console.log('moneyCount', moneyCount)
+console.log('cardCount', cardCount)
+
 ////////////////////////////////////////////
 ////////////////////////////////////////////
 
@@ -863,7 +910,7 @@ const importantKeys = [
   'spotLevel',
   'resourceCost',
   'pointsOnCard',
-  'bonus',
+  'discardEffect',
   'loss',
   'gain',
   '_usageValue'
