@@ -320,8 +320,8 @@ _.forEach(cardsArray, (cardObj) => {
 // for abstract 510
 const resourceGainRoller = new Brng({
 // const spotGainRoller = new Brng({
-  money: 4,
-  card: 2.5,
+  money: 3.5,
+  card: 2.3,
   fire: 2,
   water: 2,
   air: 2,
@@ -459,6 +459,7 @@ _.forEach(cardsArray, (cardObj) => {
 
   let hasLimitedPhysicalResource = false
   let hasLimitedTotalResource = false
+  let hasAlreadyEnforcedPhysical = false
 
   /// START: RESOURCE LOSS
   /// START: RESOURCE LOSS
@@ -558,16 +559,6 @@ _.forEach(cardsArray, (cardObj) => {
       hasLimitedPhysicalResource = true
     }
 
-    // if there's already 3 total resources involved, don't add anymore
-    if (
-      !hasLimitedTotalResource
-      && _.keys(resourceGainObj).concat(_.keys(cardObj.loss)).length === 3
-    ) {
-      onlyInclude = _.uniq(onlyInclude.concat(_.keys(resourceGainObj)))
-      excludeList = ABSTRACT_RESOURCE_ARRAY // !! reset the excludeList
-      hasLimitedTotalResource = true
-    }
-
     // can't have 2 of [retrieve, chainLevel1, chainLevel2] appear on the same card
     if (_.includes(ACTION_RESOURCE_ARRAY, chosenResource)) {
       excludeList = _.uniq(excludeList.concat(ACTION_RESOURCE_ARRAY))
@@ -576,13 +567,28 @@ _.forEach(cardsArray, (cardObj) => {
     // if there's already 2 resources, and none of them are physical
     // make sure the 3rd one is physical
     if (
-      _.keys(resourceGainObj).concat(_.keys(cardObj.loss)).length === 2
+      !hasAlreadyEnforcedPhysical
+      && _.keys(resourceGainObj).concat(_.keys(cardObj.loss)).length === 2
       && currentMaxValue >= 100
       && _.intersection(_.keys(resourceGainObj), PHYSICAL_RESOURCE_ARRAY).length === 0
     ) {
+      hasAlreadyEnforcedPhysical = true
       // exclude all non-physical resource
       excludeList = _.uniq(excludeList.concat(ABSTRACT_RESOURCE_ARRAY).concat(SPECIAL_RESOURCE_ARRAY))
     }
+
+    // if there's already 3 total resources involved, don't add anymore
+    if (
+      !hasLimitedTotalResource
+      && _.keys(resourceGainObj).concat(_.keys(cardObj.loss)).length === 3
+    ) {
+      // onlyInclude = _.uniq(onlyInclude.concat(_.keys(resourceGainObj)))
+      onlyInclude = _.keys(resourceGainObj)
+      excludeList = _.cloneDeep(ABSTRACT_RESOURCE_ARRAY) // !! reset the excludeList
+
+      hasLimitedTotalResource = true
+    }
+
 
     // UPDATE THE CURRENT MAX VALUE
     const valueGained = RESOURCE_GAIN_VALUE[chosenResource](cardObj.type)
