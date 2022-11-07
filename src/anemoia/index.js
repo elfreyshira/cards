@@ -1,6 +1,7 @@
 import Brng from 'brng'
 import _ from 'lodash'
 
+
 import {
   generateConsistentMoment,
   generateRandomMoment,
@@ -9,6 +10,9 @@ import {
 } from './generate-moment-cards.js'
 
 import checkSimilarity from './check-similarity.js'
+import Card from './Card.js'
+
+import './index.css';
 
 /*
 card obj
@@ -432,13 +436,12 @@ rules for the resource loss and gain:
 
 
 // returns undoChainArray
-function setLossAndGain(cardObj) {
+function getLossAndGain(cardObj) {
   const undoChainArray = []
 
   const fixedMaxValue = cardObj.maxValue
   let currentMaxValue = fixedMaxValue
   let currentValue = 0
-  const resourceGainObj = {}
   let excludeList = []
 
   let loopTimes = 0
@@ -450,6 +453,7 @@ function setLossAndGain(cardObj) {
 
   /// START: RESOURCE LOSS
   /// START: RESOURCE LOSS
+  const lossObj = {}
   if (cardObj.type !== HOME && cardObj.spotLevel !== LEVELS.LEVEL_1) { 
     // only for SPOT and TAP, not for HOME
     // level1 spots shouldn't have losses
@@ -464,8 +468,7 @@ function setLossAndGain(cardObj) {
     if (numResourceLoss > 0) {
       const chosenResourceLoss = lossResourceRoller.roll()
       undoChainArray.push(() => lossResourceRoller.undo())
-      cardObj.loss = {}
-      cardObj.loss[chosenResourceLoss] = numResourceLoss
+      lossObj[chosenResourceLoss] = numResourceLoss
 
       const valueLoss = RESOURCE_LOSS_VALUE[chosenResourceLoss]*numResourceLoss
       currentValue = currentValue - valueLoss
@@ -485,11 +488,12 @@ function setLossAndGain(cardObj) {
 
   // START: RESOURCE GAIN
   // START: RESOURCE GAIN
+  const gainObj = {}
   while (currentValue < (fixedMaxValue-25) && loopTimes <= 10) {
     loopTimes++
     if (loopTimes === 10) {
       console.log(loopTimes)
-      console.log(resourceGainObj)
+      console.log(gainObj)
     }
 
     // don't have chainLevel2 on level 1 cards
@@ -506,7 +510,7 @@ function setLossAndGain(cardObj) {
       break
       console.log('----------------')
       console.log(chosenResource)
-      console.log(JSON.stringify(resourceGainObj))
+      console.log(JSON.stringify(gainObj))
       console.log(JSON.stringify(onlyInclude))
       console.log(JSON.stringify(excludeList))
       console.log(JSON.stringify(excludeValuesAbove(currentMaxValue).concat(excludeList)))
@@ -517,7 +521,7 @@ function setLossAndGain(cardObj) {
     undoChainArray.push(() => resourceGainRoller.undo())
 
     // ADD CHOSEN RESOURCE TO THE CARD OBJ
-    resourceGainObj[chosenResource] = (resourceGainObj[chosenResource] || 0) + 1
+    gainObj[chosenResource] = (gainObj[chosenResource] || 0) + 1
 
     // each abstract resource should only be once per card
     if (_.includes(ABSTRACT_RESOURCE_ARRAY, chosenResource)) {
@@ -525,7 +529,7 @@ function setLossAndGain(cardObj) {
     }
 
     // each special resource should be called a max of 2 per card
-    if (_.includes(SPECIAL_RESOURCE_ARRAY, chosenResource) && resourceGainObj[chosenResource] === 2) {
+    if (_.includes(SPECIAL_RESOURCE_ARRAY, chosenResource) && gainObj[chosenResource] === 2) {
       excludeList.push(chosenResource)
     }
     
@@ -533,13 +537,13 @@ function setLossAndGain(cardObj) {
     if (
       !hasLimitedPhysicalResource
       && _.intersection(
-        _.keys(resourceGainObj), PHYSICAL_RESOURCE_ARRAY
+        _.keys(gainObj), PHYSICAL_RESOURCE_ARRAY
       ).length === 2
     ) {
       excludeList = _.uniq(
-        excludeList.concat(_.without(PHYSICAL_RESOURCE_ARRAY, ..._.keys(resourceGainObj)))
+        excludeList.concat(_.without(PHYSICAL_RESOURCE_ARRAY, ..._.keys(gainObj)))
       )
-      // onlyInclude = _.uniq(onlyInclude.concat(_.keys(resourceGainObj).concat()))
+      // onlyInclude = _.uniq(onlyInclude.concat(_.keys(gainObj).concat()))
       hasLimitedPhysicalResource = true
     }
 
@@ -552,9 +556,9 @@ function setLossAndGain(cardObj) {
     // make sure the 3rd one is physical
     if (
       !hasAlreadyEnforcedPhysical
-      && _.keys(resourceGainObj).concat(_.keys(cardObj.loss)).length === 2
+      && _.keys(gainObj).concat(_.keys(lossObj)).length === 2
       && currentMaxValue >= 100
-      && _.intersection(_.keys(resourceGainObj), PHYSICAL_RESOURCE_ARRAY).length === 0
+      && _.intersection(_.keys(gainObj), PHYSICAL_RESOURCE_ARRAY).length === 0
     ) {
       hasAlreadyEnforcedPhysical = true
       // exclude all non-physical resource
@@ -564,16 +568,16 @@ function setLossAndGain(cardObj) {
     // if there's already 3 total resources involved, don't add anymore
     if (
       !hasLimitedTotalResource
-      && _.keys(resourceGainObj).concat(_.keys(cardObj.loss)).length === 3
+      && _.keys(gainObj).concat(_.keys(lossObj)).length === 3
     ) {
-      onlyInclude = _.keys(resourceGainObj)
+      onlyInclude = _.keys(gainObj)
       
       // so that there isn't too much of "element: 3", and spreads it out
       if (currentMaxValue > 300) {
-        onlyInclude = _.uniq(_.keys(resourceGainObj).concat(PHYSICAL_RESOURCE_ARRAY))  
+        onlyInclude = _.uniq(_.keys(gainObj).concat(PHYSICAL_RESOURCE_ARRAY))  
       }
       // !! reset the excludeList
-      excludeList = _.cloneDeep(ABSTRACT_RESOURCE_ARRAY).concat(_.keys(cardObj.loss))
+      excludeList = _.cloneDeep(ABSTRACT_RESOURCE_ARRAY).concat(_.keys(lossObj))
 
       hasLimitedTotalResource = true
     }
@@ -587,9 +591,7 @@ function setLossAndGain(cardObj) {
   // END: RESOURCE GAIN
   // END: RESOURCE GAIN
 
-  cardObj.gain = resourceGainObj
-
-  return undoChainArray
+  return {undoChainArray, lossObj, gainObj}
 }
 
 
@@ -628,22 +630,40 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
     }
   }
 
-  setLossAndGain(cardObj, cardsArrayIndex)
+  // getLossAndGain(cardObj, cardsArrayIndex)
+  // checkSimilarity(cardsArray.slice(0, cardsArrayIndex), _.cloneDeep(cardObj))
 
-  // let timesTriedToSetResources = 0
-  // while (timesTriedToSetResources < 4) {
-  //   timesTriedToSetResources++
-  //   const undoChainArray = setLossAndGain(cardObj, cardsArrayIndex)
-  //   const similarityRatio = checkSimilarity(cardsArray.slice(0, cardsArrayIndex), _.cloneDeep(cardObj))
-  //   if (similarityRatio < 0.80) {
-  //     break
-  //   }
-  //   else {
-  //     // undoes everything and retries
-  //     console.log('failed!')
-  //     _.over(undoChainArray)()
-  //   }
-  // }
+  let timesTriedToSetResources = 0
+  while (true) {
+    timesTriedToSetResources++
+    const {undoChainArray, lossObj, gainObj} = getLossAndGain(cardObj)
+
+    const newCardObj = _.cloneDeep(cardObj)
+    if (!_.isEmpty(lossObj)) {
+      newCardObj.loss = lossObj
+    }
+    newCardObj.gain = gainObj
+
+    const {similarityRatio, mostSimilarCardObj} = checkSimilarity(
+      cardsArray.slice(0, cardsArrayIndex), newCardObj)
+    
+    if (similarityRatio < 0.8 || timesTriedToSetResources > 10) {
+      if (!_.isEmpty(lossObj)) {
+        cardObj.loss = lossObj
+      }
+      cardObj.gain = gainObj
+
+      if (similarityRatio >= 0.8 && timesTriedToSetResources > 10) {
+        console.log('just gave up', similarityRatio, mostSimilarCardObj, cardObj)
+      }
+      break
+    }
+    else {
+      // undoes everything and retries
+      // console.log('failed!')
+      _.over(undoChainArray)()
+    }
+  }
   
 
 })
@@ -656,7 +676,7 @@ function roundToNearest25 (x) {
 
 const COST_MULTIPLIER = {}
 COST_MULTIPLIER[SPOT] = 1.4
-COST_MULTIPLIER[HOME] = 1.75
+COST_MULTIPLIER[HOME] = 1.6
 COST_MULTIPLIER[TAP] = 1.5
 
 // RESOURCE COST
@@ -1047,24 +1067,20 @@ const importantKeys = [
   // 'discardEffect',
   'loss',
   'gain',
-  // '_usageValue'
+  '_usageValue'
 ]
 
 function Cards () {
   return (
     <div>
       <pre>
-        {JSON.stringify(_.chain(cardsArray).map((obj) => _.pick(obj, importantKeys)).value(), null, 2)}
+        {/*{JSON.stringify(_.chain(cardsArray).map((obj) => _.pick(obj, importantKeys)).value(), null, 2)}*/}
         {/*{JSON.stringify(cardsArray, null, 2)}*/}
       </pre>
 
-      <br/>--------------------------------------------------------
-      <br/>--------------------------------------------------------
-      <br/>--------------------------------------------------------
-      <br/>--------------------------------------------------------
-      <br/>--------------------------------------------------------
-      <br/>--------------------------------------------------------
-      <br/>--------------------------------------------------------
+      {_.map(cardsArray, (obj) => {
+        return <Card cardObj={_.pick(obj, importantKeys)} key={obj.uuid} />
+      })}
 
       <pre>
         {/*{JSON.stringify(momentsArray, null, 2)}*/}
@@ -1072,5 +1088,7 @@ function Cards () {
     </div>
   )
 }
+
+
 
 export default Cards

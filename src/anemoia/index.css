@@ -1,0 +1,149 @@
+.card {
+  /* 63 x 88 */
+  width: 63mm;
+  max-width: 63mm;
+  height:  88mm;
+  max-height:  88mm;
+  border:  5px solid black;
+  
+  padding-left:  0px;
+  display:  inline-block;
+  vertical-align: bottom;
+  position: relative;
+
+  /* 0.5px for printing */
+  margin:  10px;
+}
+
+
+@media print {
+  .card {
+    margin:  0.5px;  
+  }
+}
+/*
+spot: purple - 530EA1
+home: orange.
+tap: yellow. - B3A500
+*/
+
+.card.spot {
+  border-top-color: #530EA1;
+}
+.card.home {
+  border-top-color: #b35500;
+}
+.card.tap {
+  border-top-color: #B3A500;
+}
+
+.type {
+  margin: 5px 10px;
+  position: relative;
+}
+.type .icon {
+  height: 40px !important;
+  width: 40px !important;
+}
+
+
+.level {
+  display: inline-block;
+  font-size: 3em;
+  bottom: 3px;
+  position: relative;
+}
+
+.points {
+  font-size: 2em;
+  top: 0;
+  right: 0;
+  position: absolute;
+  margin: 10px;
+}
+
+.cost {
+  padding: 5px;
+  border-top: 1px dotted black;
+  border-bottom: 3px solid black;
+  /*display: inline-block;*/
+  /*margin-left: 5px;*/
+}
+.cost .icon {
+  height: 20px;
+  width: 20px;
+}
+
+.icon.untap {
+  height: 50px;
+  width: 50px;
+}
+.icon.gaincard + .icon.gaincard {
+  margin-left: -5px;
+}
+
+.effect {
+  position: absolute;
+  bottom: 0;
+}
+
+.effect .icon {
+  height: 30px !important;
+  width: 30px  !important;
+}
+.effect .gain-family {
+  display: inline-block;
+  margin-right: 10px;
+}
+.loss {
+  margin: 10px;
+  padding: 5px;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(200, 0, 0, 20%),
+    rgba(200, 0, 0, 20%) 3px,
+    transparent 3px,
+    transparent 6px
+  );
+  border: 2px solid rgba(200, 0, 0, 40%);
+  display: inline-block;
+}
+.gain {
+  /*display: inline-block;*/
+  margin: 10px;
+}
+
+.effect .icon.untap {
+  height: 40px !important;
+  width: 40px !important;
+}
+
+.retrieve {
+  /*margin: auto 5px;*/
+  display: inline-block;
+}
+
+.icon.wild {
+  height: 32px !important;
+  width: 32px !important;
+}
+.chain {
+  font-size: 2em;
+  display: inline-block;
+
+  padding: 4px 4px 0;
+  border: 1px solid rgba(0,0,0,10%);
+  border-radius: 10px;
+}
+.chain .level {
+  font-size: inherit;
+}
+
+.icon.money {
+  font-size: 2em;
+  bottom: 3px;
+  position: relative;
+  padding: 0 4px;
+  border: 1px solid rgba(0,0,0,10%);
+  border-radius: 10px;
+}
