@@ -30,6 +30,11 @@ function SpotLevel ({level}) {
 }
 
 function Points ({pointsOnCard}) {
+
+  if (!pointsOnCard) {
+    return null
+  }
+
   return (
     <div className="points">
       &#x274B;{pointsOnCard}
@@ -47,13 +52,19 @@ function ResourceIcon ({resource, amount}) {
 
 function Cost ({resourceCost}) {
   const resourceArray = []
-  _.forEach(resourceCost, (amount, resource) => {
+
+  const resourceCostOrder = _.sortBy(
+    _.keys(resourceCost),
+    (resource) => -resourceCost[resource]
+  )
+
+  _.forEach(resourceCostOrder, (resource) => {
     const resourceDiv = (
-      <div key={resource}>
-        {_.times(amount, (idx) => {
+      <span className="resource-cost-group" key={resource}>
+        {_.times(resourceCost[resource], (idx) => {
           return <ResourceIcon key={idx} resource={resource} />
         })}
-      </div>
+      </span>
     )
     resourceArray.push(resourceDiv)
   })
@@ -71,7 +82,7 @@ function Loss({loss}) {
   }
   return (
     <div className="loss">
-      <ResourceIcon resource={_.keys(loss)[0]} />
+      <ResourceIcon resource={_.keys(loss)[0]} amount={1}/>
     </div>
   )
 }
@@ -115,7 +126,7 @@ function Effect ({loss, gain}) {
 }
 
 function Card (props) {
-  const {type, spotLevel, pointsOnCard, resourceCost, loss, gain} = props.cardObj
+  const {type, spotLevel, pointsOnCard, resourceCost, loss, gain, uuid, _usageValue} = props.cardObj
 
   return (
     <div className={'card ' + _.lowerCase(type.replaceAll('_', ''))}>
@@ -130,6 +141,8 @@ function Card (props) {
       <Cost resourceCost={resourceCost} />
 
       <Effect loss={loss} gain={gain} />
+      <div>{uuid}</div>
+      <div>{_usageValue}</div>
 
       {/*<div>{JSON.stringify(loss)}</div>
       <div>{JSON.stringify(gain)}</div>*/}

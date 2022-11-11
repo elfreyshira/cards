@@ -12,6 +12,9 @@ import {
 import checkSimilarity from './check-similarity.js'
 import Card from './Card.js'
 
+// import endGameCards from './end-game-cards.js'
+// import './calculate-retrieve-cost.js'
+
 import './index.css';
 
 /*
@@ -71,95 +74,6 @@ gain for spots and upgrades: {
   // level 3: chain to level 3 == +225
 }
 
-
-bonus: { // instant effects
-// 25% of the cards
-// most of the rank cards (90%) (maybe some can have none, straight up points)
-  gain: {
-    develop: 2,
-    retrieve: 2,
-    chainLevel1: 1,
-    chainLevel2: 1,
-    chainLevel3: 0, // don't want this early game, so just make it 0
-    untap: 1,
-
-    ....
-  }
-}
-
-{
-  // don't want this i think, because getting this early game would be better than late game
-  treatAsLevel1: 0, 
-  treatAsLevel2: 0,
-}
-
-card distribution:
-- spots: 30
-- upgrades: 15
-- homes: 15
-- tap: 15
-------------------------------------
-SPOTS
-// avg cost (-100 for the card/develop base cost)
-level 1. 1-2 points. = 175
-level 1. 3-4 points. = 275
-level 1. 5-6 points. = 375
-avg: 275
-
-175*2+50*1.5-100
-level 2. 1-2 points. = 325
-level 2. 3-4 points. = 425
-level 2. 5-6 points. = 525
-avg: 425
-
-275*2+50*1.5-100
-level 3. 1-2 points. = 525
-level 3. 3-4 points. = 625
-level 3. 5-6 points. = 725
-avg: 625
-
-level 1: 8
-level 2: 12
-level 3: 10
-
-avg cost of spots: 451.67
-------------------------------------
-UPGRADES
-+50: 4
-+100: 8
-+150: 3
-
-(50*2*4+100*2*8+150*2*3+3.5*50*15-100*15)/15
-avg cost of upgrades = 268.3
-------------------------------------
-HOMES
-+100: 5
-+150: 4
-+200: 3
-+250: 3
-
-(100*2*5 + 150*2*4 + 200*2*3 + 250*2*3 + 3.5*50*15 - 100*15) / 15
-avg cost of homes = 401.7
-------------------------------------
-TAP
-+50: 4
-+100: 7
-+150: 4
-
-(50*2*4+100*2*7+150*2*4+3.5*50*15-100*15)/15
-avg cost of tap cards = 275
-------------------------------------
-
-(451.67*30 + 268.3*15 + 401.7*15 + 275*15)/(30+15+15+15)
-avg cost of all cards = 370
-
---------------------------------
-
-if avg cost of ranked cards are 300
-then can have a ratio of 3:1 for elements:develop. which hopefully means you'll have more chances to develop than in general.
-
-therefore: make it a 3:1 ratio for the cards. the rest of the develop can come from: 1-time bonus, rank bonus.
-
 */
 
 const SPOT = '_SPOT'
@@ -188,24 +102,64 @@ const RESOURCE_GAIN_VALUE = {
   card: _.constant(50),
   fire: _.constant(100),
   water: _.constant(100),
-  // air: _.constant(100),
   earth: _.constant(100),
   wild: _.constant(120),
-  // develop: _.constant(50),
-  // untap: _.constant(100),
-  untap: (type) => {
+  untap: ({type} = {}) => {
+    // if (!_.isEmpty(cardObj) && cardObj.type === HOME) {
     if (type === HOME) {
       // untap for home doesn't have any effect when activated on rest.
       // therefore it's less valuable on a HOME card.
-      return 115
+      return 100
     }
     else {
-      return 140
+      return 150
     }
   },
-  retrieve: _.constant(70), // 50 OR 75??
-  chainLevel1: _.constant(65),
-  chainLevel2: _.constant(130)
+  retrieve: (cardObj = {}) => {
+    const spotLevel = cardObj.spotLevel
+    if (spotLevel === LEVELS.LEVEL_1) {
+      return 50
+    }
+    else if (spotLevel === LEVELS.LEVEL_2) {
+      return 37
+    }
+    else if (spotLevel === LEVELS.LEVEL_3) {
+      return 25
+    }
+    else {
+      return 25 // on tap cards
+    }
+  },
+  chainLevel1: (cardObj = {}) => {
+    const spotLevel = cardObj.spotLevel
+    if (spotLevel === LEVELS.LEVEL_1) {
+      return 99
+    }
+    else if (spotLevel === LEVELS.LEVEL_2) {
+      return 125
+    }
+    else if (spotLevel === LEVELS.LEVEL_3) {
+      return 150
+    }
+    else {
+      return 125 // default avg value
+    }
+  },
+  chainLevel2: (cardObj = {}) => {
+    const spotLevel = cardObj.spotLevel
+    if (spotLevel === LEVELS.LEVEL_1) {
+      return 99999 // should not be happening
+    }
+    else if (spotLevel === LEVELS.LEVEL_2) {
+      return 150
+    }
+    else if (spotLevel === LEVELS.LEVEL_3) {
+      return 175
+    }
+    else {
+      return 160 // default avg value
+    }
+  },
 }
 
 const RESOURCE_LOSS_VALUE = {
@@ -213,25 +167,19 @@ const RESOURCE_LOSS_VALUE = {
   // card: 37.5, // discarding unwanted cards doesn't hurt as much
   fire: 100,
   water: 100,
-  // air: 100,
   earth: 100,
   wild: 80,
-  tapAnother: 130 // at first was thinking 100. but just like a wild, it gives freedom to what you want to tap, so make it -75
+  tapAnother: 140
 }
 
-const ACTION_RESOURCE_ARRAY = ['retrieve', 'chainLevel1', 'chainLevel2']
-
-// const ABSTRACT_RESOURCE_ARRAY = ['develop', 'untap', 'retrieve','chainLevel1','chainLevel2']
 const ABSTRACT_RESOURCE_ARRAY = ['untap', 'retrieve','chainLevel1','chainLevel2']
 const SPECIAL_RESOURCE_ARRAY = ['money', 'card']
-
-// const PHYSICAL_RESOURCE_ARRAY = ['fire', 'water', 'air', 'earth', 'wild']
 const PHYSICAL_RESOURCE_ARRAY = ['fire', 'water', 'earth', 'wild']
 
-function excludeValuesAbove (value, type) {
+function excludeValuesAbove (value, cardObj) {
   return _.keys(
     _.omitBy(RESOURCE_GAIN_VALUE, (func) => {
-      return func(type) <= value
+      return func(cardObj) <= value
     })
   )  
 }
@@ -267,27 +215,33 @@ _.times(7, () => {
 
 
 // HOME
-_.times(5, () => {
+_.times(3, () => {
   cardsArray.push({
     type: HOME,
     maxValue: 125
   })
 })
-_.times(5, () => {
+_.times(3, () => {
   cardsArray.push({
     type: HOME,
     maxValue: 175
   })
 })
-_.times(5, () => {
+_.times(2, () => {
   cardsArray.push({
     type: HOME,
     maxValue: 225
   })
 })
+_.times(2, () => {
+  cardsArray.push({
+    type: HOME,
+    maxValue: 275
+  })
+})
 
 // TAP
-_.times(4, () => {
+_.times(5, () => {
   cardsArray.push({
     type: TAP,
     maxValue: 125
@@ -299,7 +253,7 @@ _.times(5, () => {
     maxValue: 175
   })
 })
-_.times(6, () => {
+_.times(5, () => {
   cardsArray.push({
     type: TAP,
     maxValue: 225
@@ -310,8 +264,7 @@ _.times(6, () => {
 const cardPointsRoller = new Brng({
   POINTS_1_4: 1,
   POINTS_5_8: 1,
-  // POINTS_9_12: 0.5
-}, {bias: 3})
+}, {bias: 4})
 
 _.forEach(cardsArray, (cardObj) => {
   let excludeList = []
@@ -321,108 +274,44 @@ _.forEach(cardsArray, (cardObj) => {
   cardObj.points = cardPointsRoller.roll({exclude: excludeList})
   cardObj.uuid = Math.random().toString(36).slice(2)
 })
-// for non-abstract 1475
-// for abstract 510
+
 const resourceGainRoller = new Brng({
 // const spotGainRoller = new Brng({
   money: 3.5,
   card: 2.3,
   fire: 3,
   water: 3,
-  // air: 2,
   earth: 3,
   wild: 3,
-  // develop: 2.5,
-  untap: 1.7,
-  retrieve: 1.4,
-  chainLevel1: 2.1, // added on later
-  // chainLevel2: 1.6 // added on later
+  untap: 1.5, // changed later
+  retrieve: 1.7, // changed later
+  chainLevel1: 2.2, // removed later
+  // chainLevel2: 1.6 // added, then removed later
 }, {
   keepHistory: true,
   bias: 4
 })
+const proportionsForChainLevel2 = 2.2 // only added starting in level 2 spots
+const proportionsForUntapOnHomeCards = 1.7 // changed for home cards
+const proportionsForRetrieveOnTapCards = 2.0 // changed for tap cards
 
-const spotLossNumRoller = new Brng({0: 1, 1: 1}, {keepHistory: true, bias: 3})
+const spotLossNumRoller = new Brng({0: 3, 1: 2}, {keepHistory: true, bias: 4})
 
 const lossResourceRoller = new Brng({
-  // money: 2,
-  // card: 2,
   fire: 2,
   water: 2,
-  // air: 1.75,
   earth: 2,
   wild: 5,
-  tapAnother: 1, // (-120 value)
+  tapAnother: 3, // changed later for tap cards
 }, {
   keepHistory: true,
   bias: 4
 })
-
-// const homeGainRoller = new Brng({
-//   money: 3,
-//   card: 2,
-//   fire: 2,
-//   water: 2,
-//   air: 2,
-//   earth: 2,
-//   wild: 4,
-//   // develop: 2.5,
-//   untap: 3,
-// }, {
-//   keepHistory: true,
-//   bias: 2
-// })
+const proportionsForTapAnotherOnTapCards = 1
 
 const tapLossNumRoller = new Brng({1: 1}, {keepHistory: true, bias: 2})
-// const tapGainRoller = new Brng({
-//   money: 3,
-//   card: 2,
-//   fire: 2,
-//   water: 2,
-//   air: 2,
-//   earth: 2,
-//   wild: 4,
-//   // develop: 2.5,
-//   // untap: 0.5,
-//   retrieve: 3
-// }, {
-//   keepHistory: true,
-//   bias: 2
-// })
 
 cardsArray = _.sortBy(cardsArray, ['type', 'maxValue', 'points'])
-
-// add how many spaces the spot has
-// const spotNumSpaceRoller = new Brng({1: 1, 2: 1}, {bias: 2})
-// _.forEach(cardsArray, (cardObj) => {
-//   if (cardObj.type === SPOT) {
-//     // cardObj.spotSpaces = _.toNumber(spotNumSpaceRoller.roll())
-//     cardObj.spotSpaces = 1
-//   }
-// })
-
-// cardsArray = _.sortBy(cardsArray, ['type', 'maxValue', 'points'])
-
-// add whether it has a bonus or not
-// const cardHasBonusRoller = new Brng({hasBonus: 1, noBonus: 2}, {bias: 2})
-
-// const discardEffectRoller = new Brng({
-//   discard1moneyAnd1Wild_untap: 2,
-//   discard1money_retrieve: 2,
-//   discard1money_chainLevel1: 1.2,
-//   discard1moneyAnd1Wild_chainLevel2: 0.8,
-
-//   money2: 2,
-//   draw: 2,
-//   discard1Wild_wild: 2,
-//   discard3money_wild: 2,
-// }, {keepHistory: true, bias: 2})
-
-// _.forEach(cardsArray, (cardObj) => {
-//   cardObj.discardEffect = discardEffectRoller.roll()
-// })
-
-// cardsArray = _.sortBy(cardsArray, ['type', 'maxValue', 'points', 'discardEffect'])
 
 
 /*
@@ -454,9 +343,10 @@ function getLossAndGain(cardObj) {
   /// START: RESOURCE LOSS
   /// START: RESOURCE LOSS
   const lossObj = {}
-  if (cardObj.type !== HOME && cardObj.spotLevel !== LEVELS.LEVEL_1) { 
-    // only for SPOT and TAP, not for HOME
-    // level1 spots shouldn't have losses
+  if (
+    cardObj.type !== HOME // only for SPOT and TAP, not for HOME
+    // && cardObj.spotLevel !== LEVELS.LEVEL_1 // level1 spots shouldn't have losses
+  ) { 
     
     let lossNumRoller
     if (cardObj.type === SPOT) lossNumRoller = spotLossNumRoller
@@ -489,7 +379,7 @@ function getLossAndGain(cardObj) {
   // START: RESOURCE GAIN
   // START: RESOURCE GAIN
   const gainObj = {}
-  while (currentValue < (fixedMaxValue-25) && loopTimes <= 10) {
+  while (currentValue < (fixedMaxValue - 25) && loopTimes <= 10) {
     loopTimes++
     if (loopTimes === 10) {
       console.log(loopTimes)
@@ -503,7 +393,7 @@ function getLossAndGain(cardObj) {
 
     const chosenResource = _.attempt(() => resourceGainRoller.roll({
       only: _.isEmpty(onlyInclude) ? undefined : onlyInclude,
-      exclude: _.uniq(excludeValuesAbove(currentMaxValue, cardObj.type).concat(excludeList))
+      exclude: _.uniq(excludeValuesAbove(currentMaxValue, cardObj).concat(excludeList))
     }))
 
     if (_.isError(chosenResource)) {
@@ -523,14 +413,23 @@ function getLossAndGain(cardObj) {
     // ADD CHOSEN RESOURCE TO THE CARD OBJ
     gainObj[chosenResource] = (gainObj[chosenResource] || 0) + 1
 
-    // each abstract resource should only be once per card
+    // // each abstract resource should only be once per card
+    // if (_.includes(ABSTRACT_RESOURCE_ARRAY, chosenResource)) {
+    //   excludeList.push(chosenResource)
+    // }
+
+    // can't have 2 of [retrieve, chainLevel1, chainLevel2] appear on the same card
     if (_.includes(ABSTRACT_RESOURCE_ARRAY, chosenResource)) {
-      excludeList.push(chosenResource)
+      excludeList = _.uniq(excludeList.concat(ABSTRACT_RESOURCE_ARRAY))
     }
 
-    // each special resource should be called a max of 2 per card
-    if (_.includes(SPECIAL_RESOURCE_ARRAY, chosenResource) && gainObj[chosenResource] === 2) {
-      excludeList.push(chosenResource)
+    // max of 3 money gain
+    if (chosenResource === 'money' && gainObj[chosenResource] === 3) {
+      excludeList = _.uniq(excludeList.concat(chosenResource))
+    }
+    // max of 2 'card' resource gain
+    if (chosenResource === 'card' && gainObj[chosenResource] === 2) {
+      excludeList = _.uniq(excludeList.concat(chosenResource))
     }
     
     // if it has at least 2 physical resources, don't add anymore physical resources
@@ -547,10 +446,6 @@ function getLossAndGain(cardObj) {
       hasLimitedPhysicalResource = true
     }
 
-    // can't have 2 of [retrieve, chainLevel1, chainLevel2] appear on the same card
-    if (_.includes(ACTION_RESOURCE_ARRAY, chosenResource)) {
-      excludeList = _.uniq(excludeList.concat(ACTION_RESOURCE_ARRAY))
-    }
 
     // if there's already 2 resources, and none of them are physical
     // make sure the 3rd one is physical
@@ -558,21 +453,23 @@ function getLossAndGain(cardObj) {
       !hasAlreadyEnforcedPhysical
       && _.keys(gainObj).concat(_.keys(lossObj)).length === 2
       && currentMaxValue >= 100
-      && _.intersection(_.keys(gainObj), PHYSICAL_RESOURCE_ARRAY).length === 0
+      && _.intersection(_.keys(gainObj).concat(_.keys(lossObj)), PHYSICAL_RESOURCE_ARRAY).length === 0
     ) {
       hasAlreadyEnforcedPhysical = true
       // exclude all non-physical resource
       excludeList = _.uniq(excludeList.concat(ABSTRACT_RESOURCE_ARRAY).concat(SPECIAL_RESOURCE_ARRAY))
     }
 
-    // if there's already 3 total resources involved, don't add anymore
+    // if there's already 3 total resources involved
+    // and there's not too much space left, don't add anymore
     if (
       !hasLimitedTotalResource
       && _.keys(gainObj).concat(_.keys(lossObj)).length === 3
+      && currentMaxValue <= 100
     ) {
       onlyInclude = _.keys(gainObj)
       
-      // so that there isn't too much of "element: 3", and spreads it out
+      // so that there isn't too much of "element: 3", and spreads it out. this is an exception.
       if (currentMaxValue > 300) {
         onlyInclude = _.uniq(_.keys(gainObj).concat(PHYSICAL_RESOURCE_ARRAY))  
       }
@@ -582,8 +479,13 @@ function getLossAndGain(cardObj) {
       hasLimitedTotalResource = true
     }
 
+    // if there's 3 total resources involved in the gain, absolutely don't add anymore
+    if (_.keys(gainObj).length === 3) {
+      onlyInclude = _.keys(gainObj)
+    }
+
     // UPDATE THE CURRENT MAX VALUE
-    const valueGained = RESOURCE_GAIN_VALUE[chosenResource](cardObj.type)
+    const valueGained = RESOURCE_GAIN_VALUE[chosenResource](cardObj)
     currentValue += valueGained
     currentMaxValue = currentMaxValue - valueGained
 
@@ -605,7 +507,7 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
   // add chainLevel2 once you're on spotLevel = 2
   if (!hasAddedChainLevel1 && cardObj.type === SPOT && cardObj.spotLevel !== LEVELS.LEVEL_1) {
     // resourceGainRoller.add({chainLevel1: 2})
-    resourceGainRoller.add({chainLevel2: 1.6})
+    resourceGainRoller.add({chainLevel2: proportionsForChainLevel2})
     hasAddedChainLevel1 = true
   }
   if (!hasAddedChainLevel2 && cardObj.type === SPOT && cardObj.spotLevel === LEVELS.LEVEL_3) {
@@ -614,19 +516,20 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
   }
 
 
-  // adjust the resourceGainRoller
+  // adjust the resourceGainRoller when staring the HOME and TAP cards
   if (currentCardType !== cardObj.type) {
     if (cardObj.type === HOME) {
       currentCardType = HOME
       resourceGainRoller.remove('retrieve')
       resourceGainRoller.remove('chainLevel1')
       resourceGainRoller.remove('chainLevel2')
-      resourceGainRoller.update({untap: 2})
+      resourceGainRoller.update({untap: proportionsForUntapOnHomeCards})
     }
     else if (cardObj.type === TAP) {
       currentCardType = TAP
       resourceGainRoller.remove('untap')
-      resourceGainRoller.add({retrieve: 2})
+      lossResourceRoller.update({tapAnother: proportionsForTapAnotherOnTapCards})
+      resourceGainRoller.add({retrieve: proportionsForRetrieveOnTapCards})
     }
   }
 
@@ -634,6 +537,10 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
   // checkSimilarity(cardsArray.slice(0, cardsArrayIndex), _.cloneDeep(cardObj))
 
   let timesTriedToSetResources = 0
+  let acceptableRatio = 0.70
+  const maxRatioAllowed = 0.90
+  const timesUntilGivingUp = 50
+
   while (true) {
     timesTriedToSetResources++
     const {undoChainArray, lossObj, gainObj} = getLossAndGain(cardObj)
@@ -645,22 +552,24 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
     newCardObj.gain = gainObj
 
     const {similarityRatio, mostSimilarCardObj} = checkSimilarity(
-      cardsArray.slice(0, cardsArrayIndex), newCardObj)
+      cardsArray.slice(0, cardsArrayIndex), newCardObj
+    )
     
-    if (similarityRatio < 0.8 || timesTriedToSetResources > 10) {
+    if (similarityRatio < acceptableRatio || timesTriedToSetResources > timesUntilGivingUp) {
       if (!_.isEmpty(lossObj)) {
         cardObj.loss = lossObj
       }
       cardObj.gain = gainObj
 
-      if (similarityRatio >= 0.8 && timesTriedToSetResources > 10) {
+      if (similarityRatio >= acceptableRatio && timesTriedToSetResources > timesUntilGivingUp) {
         console.log('just gave up', similarityRatio, mostSimilarCardObj, cardObj)
       }
       break
     }
     else {
-      // undoes everything and retries
-      // console.log('failed!')
+      // undoes everything, increase acceptableRatio, retry
+
+      acceptableRatio = _.min([acceptableRatio + 0.005, maxRatioAllowed])
       _.over(undoChainArray)()
     }
   }
@@ -675,9 +584,9 @@ function roundToNearest25 (x) {
 
 
 const COST_MULTIPLIER = {}
-COST_MULTIPLIER[SPOT] = 1.4
-COST_MULTIPLIER[HOME] = 1.6
-COST_MULTIPLIER[TAP] = 1.5
+COST_MULTIPLIER[SPOT] = 1.5
+COST_MULTIPLIER[HOME] = 1.75
+COST_MULTIPLIER[TAP] = 1.75
 
 // RESOURCE COST
 _.forEach(cardsArray, (cardObj) => {
@@ -687,7 +596,7 @@ _.forEach(cardsArray, (cardObj) => {
   const lossValue = cardObj.loss ?
     RESOURCE_LOSS_VALUE[_.keys(cardObj.loss)[0]]*_.values(cardObj.loss)[0] : 0
   const gainValue = _.chain(cardObj.gain)
-    .map((val, key) => RESOURCE_GAIN_VALUE[key](cardObj.type) * val)
+    .map((val, key) => RESOURCE_GAIN_VALUE[key](cardObj) * val)
     .sum()
     .value()
   
@@ -716,9 +625,9 @@ console.log(_.chain(cardsArray).map('totalCostValue').mean().value())
 
 console.log(_.chain(cardsArray).map('totalCostValue').max().value())
 
-const cost12VarietyRoller = new Brng({1:1, 2:1}, {keepHistory: true, bias: 2})
-const cost123VarietyRoller = new Brng({1:1, 2:1, 3:1}, {keepHistory: true, bias: 2})
-const cost23VarietyRoller = new Brng({2:1, 3:1}, {keepHistory: true, bias: 2})
+const cost12VarietyRoller = new Brng({1:1, 2:1}, {keepHistory: true, bias: 4})
+const cost123VarietyRoller = new Brng({1:1, 2:1, 3:1}, {keepHistory: true, bias: 4})
+const cost23VarietyRoller = new Brng({2:2, 3:1}, {keepHistory: true, bias: 4})
 
 const costToVarietyMap = {
   0: _.constant(1),
@@ -726,9 +635,9 @@ const costToVarietyMap = {
   200: () => cost12VarietyRoller.roll(),
   300: () => cost12VarietyRoller.roll(),
   400: _.constant(2),
-  500: _.constant(2),
-  600: _.constant(2),
-  700: _.constant(2),
+  500: () => cost23VarietyRoller.roll(),
+  600: () => cost23VarietyRoller.roll(),
+  700: () => cost23VarietyRoller.roll(),
   800: _.constant(3),
   900: _.constant(3)
 }
@@ -737,7 +646,6 @@ const resourceCostRoller = new Brng({
   fire: 1,
   water: 1,
   earth: 1,
-  // air: 1
 }, {keepHistory: true, bias: 2})
 
 
@@ -819,14 +727,6 @@ _.times(5, (idx) => {
     points: {}
   })
 })
-
-// const momentsBonusRoller = new Brng({
-//   develop: 1,
-//   untap: 1,
-//   retrieve: 2,
-//   chainLevel1: 1,
-//   chainLevel2: 1,
-// }, {keepHistory: true, bias: 2})
 
 const momentHasBonusRoller = new Brng({
   hasBonus: 1,
@@ -923,138 +823,100 @@ console.log('HOME _usageValue avg')
 console.log(_.chain(cardsArray).filter({type:HOME}).map('_usageValue').value())
 console.log(_.chain(cardsArray).filter({type:HOME}).map('_usageValue').mean().value())
 
-let lossCount = 0
-_.forEach(
-  cardsArray, obj=> {
-    const objWithLoss = _.pick(obj.loss, ['wild', 'air', 'fire', 'water', 'earth'])
-    if (!_.isEmpty(objWithLoss)) {
-      lossCount++
+
+function countOccurences (key, resources) {
+  let countTotal = 0
+  _.forEach(
+    cardsArray, obj => {
+      const resourcesToCount = _.pick(obj[key], resources)
+      countTotal += _.sum(_.values(resourcesToCount))
+      return resourcesToCount
     }
-  }
-)
+  )
+  console.log(key, JSON.stringify(resources), countTotal)
+  return countTotal
+}
 
-let gainCount = 0
-const lol = _.map(
-  cardsArray, obj => {
-    const objGain = _.pick(obj.gain, ['wild', 'air', 'fire', 'water', 'earth'])
-    gainCount += _.sum(_.values(objGain))
-    return objGain
-  }
-)
 
-let airCount = 0
-_.map(
-  cardsArray, obj => {
-    const objGain = _.pick(obj.gain, ['air'])
-    airCount += _.sum(_.values(objGain))
-    return objGain
-  }
-)
-
-let fireCount = 0
-_.map(
-  cardsArray, obj => {
-    const objGain = _.pick(obj.gain, ['fire'])
-    fireCount += _.sum(_.values(objGain))
-    return objGain
-  }
-)
-
-let waterCount = 0
-_.map(
-  cardsArray, obj => {
-    const objGain = _.pick(obj.gain, ['water'])
-    waterCount += _.sum(_.values(objGain))
-    return objGain
-  }
-)
-
-let earthCount = 0
-_.map(
-  cardsArray, obj => {
-    const objGain = _.pick(obj.gain, ['earth'])
-    earthCount += _.sum(_.values(objGain))
-    return objGain
-  }
-)
-
-let wildCount = 0
-_.map(
-  cardsArray, obj => {
-    const objGain = _.pick(obj.gain, ['wild'])
-    wildCount += _.sum(_.values(objGain))
-    return objGain
-  }
-)
-
-let moneyCount = 0
-_.map(
-  cardsArray, obj => {
-    const objGain = _.pick(obj.gain, ['money'])
-    moneyCount += _.sum(_.values(objGain))
-    return objGain
-  }
-)
-
-let cardCount = 0
-_.map(
-  cardsArray, obj => {
-    const objGain = _.pick(obj.gain, ['card'])
-    cardCount += _.sum(_.values(objGain))
-    return objGain
-  }
-)
-
-let chainCount = 0
-_.map(
-  cardsArray, obj => {
-    const objGain = _.pick(obj.gain, ['chainLevel1', 'chainLevel2'])
-    chainCount += _.sum(_.values(objGain))
-    return objGain
-  }
-)
-
-let untapCount = 0
-_.map(
-  cardsArray, obj => {
-    const objGain = _.pick(obj.gain, ['untap'])
-    untapCount += _.sum(_.values(objGain))
-    return objGain
-  }
-)
-
-let retrieveCount = 0
-_.map(
-  cardsArray, obj => {
-    const objGain = _.pick(obj.gain, ['retrieve'])
-    retrieveCount += _.sum(_.values(objGain))
-    return objGain
-  }
-)
-
-console.log('lossCount', lossCount)
-console.log('gainCount', gainCount)
+const lossCount = countOccurences('loss', ['wild', 'fire', 'water', 'earth'])
+const gainCount = countOccurences('gain', ['wild', 'fire', 'water', 'earth'])
 console.log('net count', gainCount - lossCount)
-console.log('moneyCount', moneyCount)
-console.log('cardCount', cardCount)
-console.log('chainCount', chainCount)
-console.log('untapCount', untapCount)
-console.log('retrieveCount', retrieveCount)
-console.log('net resource gain / cardCount', (gainCount - lossCount)/cardCount)
-console.log('net resource gain / moneyCount', (gainCount - lossCount)/moneyCount)
 
-console.log('airCount', airCount)
-console.log('fireCount', fireCount)
-console.log('waterCount', waterCount)
-console.log('earthCount', earthCount)
-console.log('wildCount', wildCount)
+countOccurences('gain', ['fire'])
+countOccurences('gain', ['water'])
+countOccurences('gain', ['earth'])
+countOccurences('gain', ['wild'])
+
+const moneyCount = countOccurences('gain', ['money'])
+const cardCount = countOccurences('gain', ['card'])
+
+const chainLevel1Count = countOccurences('gain', ['chainLevel1'])
+const chainLevel2Count = countOccurences('gain', ['chainLevel2'])
+
+const tapAnotherCount = countOccurences('loss', ['tapAnother'])
+const untapCount = countOccurences('gain', ['untap'])
+
+console.log('----------------------')
+console.log('chainLevel1Count + chainLevel2Count', chainLevel1Count + chainLevel2Count)
+console.log('tapAnotherCount + untapCount', tapAnotherCount + untapCount)
+countOccurences('gain', ['retrieve'])
+
 
 ////////////////////////////////////////////
 ////////////////////////////////////////////
+// add the starter spots
+
+const starterSpots = [
+  {
+    "uuid": "STARTER SPOT: WILD (1)",
+    "type": SPOT,
+    "spotLevel": "LEVEL_1",
+    "loss": {
+      "money": 1
+    },
+    "gain": {
+      "wild": 1
+    },
+    "_usageValue": 75
+  },
+  {
+    "uuid": "STARTER SPOT: WILD (2)",
+    "type": SPOT,
+    "spotLevel": "LEVEL_1",
+    "loss": {
+      "money": 1
+    },
+    "gain": {
+      "wild": 1
+    },
+    "_usageValue": 75
+  },
+  {
+    "uuid": "STARTER SPOT: MONEY",
+    "type": SPOT,
+    "spotLevel": "LEVEL_1",
+    "gain": {
+      "money": 3
+    },
+    "_usageValue": 75
+  },
+  {
+    "uuid": "STARTER SPOT: CARD",
+    "type": SPOT,
+    "spotLevel": "LEVEL_1",
+    "gain": {
+      "card": 1,
+      "money": 1
+    },
+    "_usageValue": 75
+  },
+]
+
+cardsArray = cardsArray.concat(starterSpots)
 
 
-// momentsArray
-// cardsArray
+////////////////////////////////////////////
+////////////////////////////////////////////
 
 const importantKeys = [
   'uuid',
@@ -1083,6 +945,7 @@ function Cards () {
       })}
 
       <pre>
+        {JSON.stringify(_.chain(cardsArray).map((obj) => _.pick(obj, importantKeys)).value(), null, 2)}
         {/*{JSON.stringify(momentsArray, null, 2)}*/}
       </pre>
     </div>

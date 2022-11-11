@@ -18,7 +18,7 @@
 
 @media print {
   .card {
-    margin:  0.5px;  
+    margin: 1px;
   }
 }
 /*
@@ -72,6 +72,9 @@ tap: yellow. - B3A500
 .cost .icon {
   height: 20px;
   width: 20px;
+}
+.resource-cost-group {
+  margin-right: 4px;
 }
 
 .icon.untap {
@@ -146,4 +149,8 @@ tap: yellow. - B3A500
   padding: 0 4px;
   border: 1px solid rgba(0,0,0,10%);
   border-radius: 10px;
+}
+.loss .icon.money {
+  background-color: rgba(255,255,255,70%);
+  bottom: auto;
 }
