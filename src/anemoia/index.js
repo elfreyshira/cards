@@ -100,14 +100,14 @@ const RESOURCE_GAIN_VALUE = {
   money: _.constant(25),
   card: _.constant(50),
   fire: _.constant(100),
-  firelater: _.constant(45),
+  firelater: _.constant(40),
   water: _.constant(100),
-  waterlater: _.constant(45),
+  waterlater: _.constant(40),
   earth: _.constant(100),
-  earthlater: _.constant(45),
+  earthlater: _.constant(40),
   wild: _.constant(120),
-  wildlater: _.constant(60),
-  grabanother: _.constant(70),
+  wildlater: _.constant(50),
+  grabanother: _.constant(60),
   untap: ({type} = {}) => {
     // if (!_.isEmpty(cardObj) && cardObj.type === HOME) {
     if (type === HOME) {
