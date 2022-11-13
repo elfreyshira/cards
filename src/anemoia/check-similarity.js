@@ -58,6 +58,10 @@ export default function checkSimilarity(cardsArray, newCardObj) {
       similarityPoints += 1
     }
 
+    // maxValue comparison
+    comparisonSpace += 1
+    similarityPoints += 1 - (Math.abs(prevCardObj.maxValue - newCardObj.maxValue) / 200)
+
     // console.log(similarityPoints/comparisonSpace)
     if (similarityPoints/comparisonSpace >= 0.8) {
       // console.log(prevCardObj, newCardObj, similarityPoints, comparisonSpace)
