@@ -73,7 +73,6 @@ function Cost ({resourceCost}) {
       {resourceArray}
     </div>
   )
-  // return <ICONS.Earth />
 }
 
 function Loss({loss}) {
@@ -87,6 +86,40 @@ function Loss({loss}) {
   )
 }
 
+function LaterResources ({gain}) {
+  const resourceArray = []
+  _.forEach(gain, (amount, resource) => {
+    // ignore the normal resources
+    if (!_.includes(resource, 'later')) {
+      return
+    }
+
+    const resourceDiv = (
+      <span key={resource}>
+        {_.times(amount, (idx) => {
+          return <ResourceIcon key={idx} resource={resource.replace(/later$/, '')} />
+        })}
+      </span>
+      
+    )
+    resourceArray.push(resourceDiv)
+  })
+
+  if (_.isEmpty(resourceArray)) {
+    return null
+  }
+
+  return (
+    <div className="later-resources-group">
+      <ICONS.ThisCard />
+      <span className="later-colon">&nbsp;:&nbsp;</span>
+      {resourceArray}
+      <span className="later-colon">&nbsp;/&nbsp;</span>
+      <ICONS.Grab />
+      <span className="later-colon">&nbsp;</span>
+    </div>
+  )
+}
 
 function Gain({gain}) {
   if (_.isEmpty(gain)) {
@@ -95,10 +128,16 @@ function Gain({gain}) {
 
   const resourceArray = []
   _.forEach(gain, (amount, resource) => {
+    // ignore the 'later' resources
+    if (_.includes(resource, 'later')) {
+      return
+    }
+
     const resourceDiv = (
       <div className="gain-family" key={resource}>
         {_.times(amount, (idx) => {
           if (resource === 'money' && idx >= 1) {
+            // money is all at once, so don't do it multiple times
             return null
           }
           return <ResourceIcon key={idx} resource={resource} amount={amount} />
@@ -110,6 +149,7 @@ function Gain({gain}) {
 
   return (
     <div className="gain">
+      <LaterResources gain={gain} />
       {resourceArray}
     </div>
   )
@@ -144,8 +184,8 @@ function Card (props) {
       <div>{uuid}</div>
       <div>{_usageValue}</div>
 
-      {/*<div>{JSON.stringify(loss)}</div>
-      <div>{JSON.stringify(gain)}</div>*/}
+      {/*<div>{JSON.stringify(loss)}</div>*/}
+      {/*<div>{JSON.stringify(gain, null, 1)}</div>*/}
       <pre>
         {/*{JSON.stringify(props.cardObj, null, 2)}*/}
         {/*{JSON.stringify(cardsArray, null, 2)}*/}

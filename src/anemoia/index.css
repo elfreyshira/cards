@@ -11,6 +11,8 @@
   vertical-align: bottom;
   position: relative;
 
+  overflow-wrap: break-word;
+
   /* 0.5px for printing */
   margin:  10px;
 }
@@ -43,7 +45,7 @@ tap: yellow. - B3A500
 }
 .type .icon {
   height: 40px !important;
-  width: 40px !important;
+  width: auto !important;
 }
 
 
@@ -71,7 +73,7 @@ tap: yellow. - B3A500
 }
 .cost .icon {
   height: 20px;
-  width: 20px;
+  width: auto;
 }
 .resource-cost-group {
   margin-right: 4px;
@@ -79,7 +81,11 @@ tap: yellow. - B3A500
 
 .icon.untap {
   height: 50px;
-  width: 50px;
+  width: auto;
+}
+svg.icon.gaincard {
+  height: 30px !important;
+  width: 30px !important;
 }
 .icon.gaincard + .icon.gaincard {
   margin-left: -5px;
@@ -92,7 +98,7 @@ tap: yellow. - B3A500
 
 .effect .icon {
   height: 30px !important;
-  width: 30px  !important;
+  width: auto  !important;
 }
 .effect .gain-family {
   display: inline-block;
@@ -118,7 +124,7 @@ tap: yellow. - B3A500
 
 .effect .icon.untap {
   height: 40px !important;
-  width: 40px !important;
+  width: auto !important;
 }
 
 .retrieve {
@@ -128,7 +134,7 @@ tap: yellow. - B3A500
 
 .icon.wild {
   height: 32px !important;
-  width: 32px !important;
+  width: auto !important;
 }
 .chain {
   font-size: 2em;
@@ -153,4 +159,16 @@ tap: yellow. - B3A500
 .loss .icon.money {
   background-color: rgba(255,255,255,70%);
   bottom: auto;
+}
+
+.later-resources-group {
+  margin-bottom: 10px;
+  position: relative;
+}
+.later-colon {
+  display: inline-block;
+  position: relative;
+  font-size: 2em;
+  vertical-align: bottom;
+  bottom: 2px;
 }

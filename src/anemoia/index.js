@@ -100,14 +100,14 @@ const RESOURCE_GAIN_VALUE = {
   money: _.constant(25),
   card: _.constant(50),
   fire: _.constant(100),
-  firelater: _.constant(50),
+  firelater: _.constant(45),
   water: _.constant(100),
-  waterlater: _.constant(50),
+  waterlater: _.constant(45),
   earth: _.constant(100),
-  earthlater: _.constant(50),
+  earthlater: _.constant(45),
   wild: _.constant(120),
   wildlater: _.constant(60),
-  grabanother: _.constant(75),
+  grabanother: _.constant(70),
   untap: ({type} = {}) => {
     // if (!_.isEmpty(cardObj) && cardObj.type === HOME) {
     if (type === HOME) {
@@ -175,13 +175,6 @@ const RESOURCE_LOSS_VALUE = {
   wild: 80,
   tapAnother: 140
 }
-
-const ABSTRACT_RESOURCE_ARRAY = ['untap', 'retrieve','chainLevel1','chainLevel2', 'grabanother']
-const ACTION_RESOURCE_ARRAY = ['retrieve','chainLevel1','chainLevel2']
-const SPECIAL_RESOURCE_ARRAY = ['money', 'card']
-const PHYSICAL_RESOURCE_ARRAY = ['fire', 'water', 'earth', 'wild',
-  'firelater', 'waterlater', 'earthlater', 'wildlater']
-const LATER_RESOURCE_ARRAY = ['firelater', 'waterlater', 'earthlater', 'wildlater']
 
 function excludeValuesAbove (value, cardObj) {
   return _.keys(
@@ -273,7 +266,7 @@ const proportionsChainLevel2 = 2.2 // only added starting in level 2 spots
 const proportionsUntapOnHomeCards = 1.5 // changed for home cards
 const proportionsRetrieveOnTapCards = 2.0 // changed for tap cards
 
-const proportionsGrabAnotherOnNonSpotCards = 0.9
+const proportionsGrabAnotherOnNonSpotCards = 1.1
 const proportionsNowResourcesOnNonSpotCards = 2
 const proportionsLaterResources = 1
 
@@ -305,6 +298,15 @@ rules for the resource loss and gain:
 - for the abstract resources, max of 1 per resource
 */
 
+
+const ABSTRACT_RESOURCE_ARRAY = ['untap', 'retrieve','chainLevel1','chainLevel2', 'grabanother']
+// const ABSTRACT_RESOURCE_ARRAY = ['untap', 'retrieve','chainLevel1','chainLevel2']
+
+const ACTION_RESOURCE_ARRAY = ['retrieve','chainLevel1','chainLevel2']
+const SPECIAL_RESOURCE_ARRAY = ['money', 'card']
+const PHYSICAL_RESOURCE_ARRAY = ['fire', 'water', 'earth', 'wild',
+  'firelater', 'waterlater', 'earthlater', 'wildlater']
+const LATER_RESOURCE_ARRAY = ['firelater', 'waterlater', 'earthlater', 'wildlater']
 
 // returns undoChainArray
 function getLossAndGain(cardObj) {
@@ -347,6 +349,10 @@ function getLossAndGain(cardObj) {
       currentMaxValue = currentMaxValue + valueLoss
 
       excludeList.push(chosenResourceLoss)
+
+      if (_.includes(PHYSICAL_RESOURCE_ARRAY, chosenResourceLoss)) {
+        excludeList.push(chosenResourceLoss + 'later')
+      }
 
       // don't have tapAnother and untap on the same card
       if (chosenResourceLoss === 'tapAnother') {
@@ -411,7 +417,6 @@ function getLossAndGain(cardObj) {
       excludeList = _.uniq(excludeList.concat(ABSTRACT_RESOURCE_ARRAY))
     }
 
-
     // max of 3 money gain
     if (chosenResource === 'money' && gainObj[chosenResource] === 3) {
       excludeList = _.uniq(excludeList.concat(chosenResource))
@@ -454,7 +459,7 @@ function getLossAndGain(cardObj) {
       excludeList = _.uniq(excludeList.concat(LATER_RESOURCE_ARRAY))
     }
 
-    // make sure there's no more than 3 `later` in a single card
+    // make sure there's no more than 4 `later` resource in a single card
     if (_.sumBy(LATER_RESOURCE_ARRAY, (laterKey) => {return gainObj[laterKey] || 0}) >= 4 ) {
       excludeList = _.uniq(excludeList.concat(LATER_RESOURCE_ARRAY))
     }
@@ -567,6 +572,7 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
   let acceptableRatio = 0.70
   const maxRatioAllowed = 0.90
   const timesUntilGivingUp = 100
+  const similarityRatioIncrement = (maxRatioAllowed-acceptableRatio)/timesUntilGivingUp
 
   const acceptableDifference = {}
   acceptableDifference[SPOT] = 100
@@ -610,7 +616,7 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
     else {
       // undoes everything, increase acceptableRatio, retry
 
-      acceptableRatio = _.min([acceptableRatio + 0.002, maxRatioAllowed])
+      acceptableRatio = _.min([acceptableRatio + similarityRatioIncrement, maxRatioAllowed])
       _.over(undoChainArray)()
     }
   }
@@ -702,8 +708,9 @@ const resourceCostRoller = new Brng({
 // RESOURCE COST
 cardsArray = _.sortBy(cardsArray, ['type', 'maxValue', 'totalCostValue', 'points', 'discardEffect'])
 
-// returns resourceCostObj = {fire: 2, water: 1}
+// returns {resourceCost, undoChainArray} -- resourceCost = {fire: 2, water: 1, ...}
 function getResourceCost (totalCostValue) {
+  const undoChainArray = []
   
   const costVariety = _.toNumber(costToVarietyMap[totalCostValue]())
 
@@ -714,6 +721,7 @@ function getResourceCost (totalCostValue) {
     const chosenResourceToPay = resourceCostRoller.roll(
       {only: _.isEmpty(onlyResourceCost) ? undefined : onlyResourceCost}
     )
+    undoChainArray.push(() => resourceCostRoller.undo())
     resourceCostObj[chosenResourceToPay] = (resourceCostObj[chosenResourceToPay] + 1) || 1
 
     if (_.isEmpty(onlyResourceCost) && costVariety === _.keys(resourceCostObj).length) {
@@ -721,12 +729,46 @@ function getResourceCost (totalCostValue) {
     }
   }
 
-  return resourceCostObj
+  return {resourceCost: resourceCostObj, undoChainArray}
 
 }
 
-_.forEach(cardsArray, (cardObj) => {
-  cardObj.resourceCost = getResourceCost(cardObj.totalCostValue)
+_.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
+  
+  let timesTriedToSetResources = 0
+  let acceptableRatio = 0.85
+  const maxRatioAllowed = 0.95
+  const timesUntilGivingUp = 20
+  const similarityRatioIncrement = (maxRatioAllowed-acceptableRatio)/timesUntilGivingUp
+
+  while (true) {
+    timesTriedToSetResources++
+    const {resourceCost, undoChainArray} = getResourceCost(cardObj.totalCostValue)
+
+    const newCardObj = _.cloneDeep(cardObj)
+    newCardObj.resourceCost = resourceCost
+
+
+    const {similarityRatio, mostSimilarCardObj} = checkSimilarity(
+      cardsArray.slice(0, cardsArrayIndex), newCardObj
+    )
+    
+    if (similarityRatio < acceptableRatio || timesTriedToSetResources > timesUntilGivingUp) {
+      cardObj.resourceCost = resourceCost // !!!!!!!!!!!!!!!!!!!!
+
+      if (similarityRatio >= acceptableRatio && timesTriedToSetResources > timesUntilGivingUp) {
+        console.log('just gave up! resource cost', similarityRatio, mostSimilarCardObj, cardObj)
+      }
+      break
+    }
+    else {
+      // undoes everything, increase acceptableRatio, retry
+
+      acceptableRatio = _.min([acceptableRatio + similarityRatioIncrement, maxRatioAllowed])
+      _.over(undoChainArray)()
+    }
+  }
+  
 })
 
 console.log(cardsArray)
@@ -991,7 +1033,7 @@ function Cards () {
       </pre>
 
       {_.map(cardsArray, (obj) => {
-        {/*return <Card cardObj={_.pick(obj, importantKeys)} key={obj.uuid} />*/}
+        {return <Card cardObj={_.pick(obj, importantKeys)} key={obj.uuid} />}
       })}
 
       <pre>

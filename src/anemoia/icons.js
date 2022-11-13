@@ -9,6 +9,8 @@ import waterIcon from './images/water.png'
 import wildIcon from './images/wild.png'
 import tapanotherIcon from './images/tapanother.png'
 import untapIcon from './images/untap.png'
+import grabIcon from './images/grab.png'
+import thisCardIcon from './images/this-card.png'
 
 function Spot () {
   return <SpotSvg className="icon" />
@@ -44,6 +46,15 @@ function Untap () {
   return <img className="icon untap" src={untapIcon} />
 }
 
+function Grabanother () {
+  return <img className="icon grab" src={grabIcon} />
+}
+const Grab = Grabanother
+
+function ThisCard () {
+  return <img className="icon this-card" src={thisCardIcon} />
+}
+
 function Retrieve () {
   return <div className="retrieve"> <Home /> </div>
 }
@@ -74,4 +85,7 @@ export default {
   Chainlevel1,
   Chainlevel2,
   Money,
+  Grab,
+  Grabanother,
+  ThisCard
 }
