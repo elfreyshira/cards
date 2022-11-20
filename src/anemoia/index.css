@@ -172,3 +172,19 @@ svg.icon.gaincard {
   vertical-align: bottom;
   bottom: 2px;
 }
+
+.anytime-container {
+  margin: 10px 10px;
+}
+.anytime-arrow {
+  font-size: 2em;
+}
+.anytime-row {
+  margin-top: 15px;
+  zoom: 1.2;
+}
+.anytime-title {
+  font-size: 1.5em;
+  text-align: center;
+  margin-bottom: 10px;
+}

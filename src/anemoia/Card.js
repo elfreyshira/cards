@@ -8,8 +8,26 @@
 import ICONS from './icons.js'
 import _ from 'lodash'
 
+function getStrippedType (rawTypeString) {
+  return rawTypeString ? rawTypeString.replaceAll('_', '') : ''
+}
+
+function Type ({type, spotLevel}) {
+
+  if (_.isEmpty(type)) {
+    return null
+  }
+  return (
+    <div className="type">
+      <TypeIcon type={type} />
+      <SpotLevel spotLevel={spotLevel} />
+    </div>
+  )
+  
+}
+
 function TypeIcon ({type}) {
-  const typeStripped = type.replaceAll('_', '')
+  const typeStripped = getStrippedType(type)
 
   if (typeStripped === 'SPOT') {
     return <ICONS.Spot />
@@ -22,16 +40,16 @@ function TypeIcon ({type}) {
   }
 }
 
-function SpotLevel ({level}) {
-  if (!level) { return null}
+function SpotLevel ({spotLevel}) {
+  if (!spotLevel) { return null}
   else {
-    return <div className="level">{level.replace('LEVEL_', '')}</div>
+    return <div className="level">{spotLevel.replace('LEVEL_', '')}</div>
   }
 }
 
 function Points ({pointsOnCard}) {
 
-  if (!pointsOnCard) {
+  if (!_.isNumber(pointsOnCard)) {
     return null
   }
 
@@ -51,6 +69,7 @@ function ResourceIcon ({resource, amount}) {
 }
 
 function Cost ({resourceCost}) {
+
   const resourceArray = []
 
   const resourceCostOrder = _.sortBy(
@@ -166,15 +185,26 @@ function Effect ({loss, gain}) {
 }
 
 function Card (props) {
-  const {type, spotLevel, pointsOnCard, resourceCost, loss, gain, uuid, _usageValue} = props.cardObj
+  const {
+    type, spotLevel,
+    pointsOnCard, resourceCost,
+    loss, gain, uuid,
+    totalCostValue, _usageValue,
+    ExtraStuff
+  } = props.cardObj
+
+  if (!_.isEmpty(ExtraStuff)) {
+    return (
+      <div className="card">
+        {ExtraStuff}
+      </div>
+    )
+  }
 
   return (
-    <div className={'card ' + _.lowerCase(type.replaceAll('_', ''))}>
+    <div className={'card ' + _.lowerCase(getStrippedType(type))}>
 
-      <div className="type">
-        <TypeIcon type={type} />
-        <SpotLevel level={spotLevel} />
-      </div>
+      <Type type={type} spotLevel={spotLevel} />
       
       <Points pointsOnCard={pointsOnCard} />
 
@@ -183,6 +213,8 @@ function Card (props) {
       <Effect loss={loss} gain={gain} />
       <div>{uuid}</div>
       <div>{_usageValue}</div>
+
+
 
       {/*<div>{JSON.stringify(loss)}</div>*/}
       {/*<div>{JSON.stringify(gain, null, 1)}</div>*/}
