@@ -27,16 +27,16 @@ function Card () {
 }
 
 function Earth () {
-  return <img className="icon" src={earthIcon} />
+  return <img className="icon with-shadow" src={earthIcon} />
 }
 function Fire () {
-  return <img className="icon" src={fireIcon} />
+  return <img className="icon with-shadow" src={fireIcon} />
 }
 function Water () {
-  return <img className="icon" src={waterIcon} />
+  return <img className="icon with-shadow" src={waterIcon} />
 }
 function Wild () {
-  return <img className="icon wild" src={wildIcon} />
+  return <img className="icon with-shadow wild" src={wildIcon} />
 }
 
 function Tapanother () {

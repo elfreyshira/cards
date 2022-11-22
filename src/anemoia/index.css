@@ -132,6 +132,10 @@ svg.icon.gaincard {
   display: inline-block;
 }
 
+.gain-family .icon.with-shadow {
+  filter: drop-shadow(1.2px 1.2px 1.2px rgba(0,0,0,80%));
+}
+
 .icon.wild {
   height: 32px !important;
   width: auto !important;
@@ -141,7 +145,7 @@ svg.icon.gaincard {
   display: inline-block;
 
   padding: 4px 4px 0;
-  border: 1px solid rgba(0,0,0,10%);
+  border: 2px solid rgba(0,0,0,15%);
   border-radius: 10px;
 }
 .chain .level {
@@ -153,7 +157,7 @@ svg.icon.gaincard {
   bottom: 3px;
   position: relative;
   padding: 0 4px;
-  border: 1px solid rgba(0,0,0,10%);
+  border: 2px solid rgba(0,0,0,15%);
   border-radius: 10px;
 }
 .loss .icon.money {
@@ -162,8 +166,12 @@ svg.icon.gaincard {
 }
 
 .later-resources-group {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   position: relative;
+  zoom: 0.9;
+  padding: 0.1em 0.3em;
+  border: 1px solid rgba(0,0,0,15%);
+  border-radius: 0.4em;
 }
 .later-colon {
   display: inline-block;

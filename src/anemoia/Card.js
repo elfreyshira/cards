@@ -135,9 +135,22 @@ function LaterResources ({gain}) {
       {resourceArray}
       <span className="later-colon">&nbsp;/&nbsp;</span>
       <ICONS.Grab />
-      <span className="later-colon">&nbsp;</span>
     </div>
   )
+}
+
+const RESOURCE_ORDER_MAP = {
+  untap: 1,
+  retrieve: 1,
+  chainLevel1: 1,
+  chainLevel2: 1,
+  grabanother: 1,
+  fire: 2,
+  water: 2,
+  earth: 2,
+  wild: 3,
+  card: 4,
+  money: 5,
 }
 
 function Gain({gain}) {
@@ -145,8 +158,10 @@ function Gain({gain}) {
     return null
   }
 
+  const gainKeys = _.sortBy(_.keys(gain), (key) => RESOURCE_ORDER_MAP[key])
+
   const resourceArray = []
-  _.forEach(gain, (amount, resource) => {
+  _.forEach(gainKeys, (resource) => {
     // ignore the 'later' resources
     if (_.includes(resource, 'later')) {
       return
@@ -154,12 +169,12 @@ function Gain({gain}) {
 
     const resourceDiv = (
       <div className="gain-family" key={resource}>
-        {_.times(amount, (idx) => {
+        {_.times(gain[resource], (idx) => {
           if (resource === 'money' && idx >= 1) {
             // money is all at once, so don't do it multiple times
             return null
           }
-          return <ResourceIcon key={idx} resource={resource} amount={amount} />
+          return <ResourceIcon key={idx} resource={resource} amount={gain[resource]} />
         })}
       </div>
     )

@@ -23,7 +23,7 @@ function calculateRetrieveCost ({home=[0], tap=[0], normalSpots, retrieveSpot}) 
 }
 
 
-const defaultSetup = {home: [300, 200, 100], tap: [300, 200, 100]}
+const defaultSetup = {home: [300, 200, 100], tap: []}
 // const defaultSetup = {}
 
 const setupArray = [
