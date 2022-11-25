@@ -65,6 +65,9 @@ function Chainlevel1 () {
 function Chainlevel2 () {
   return <div className="chain"> <Spot /><span className="level">2</span> </div>
 }
+function Chainlevel3 () {
+  return <div className="chain"> <Spot /><span className="level">3</span> </div>
+}
 
 function Money ({amount}) {
   return <span className="icon money">${amount}</span>
@@ -84,6 +87,7 @@ export default {
   Retrieve,
   Chainlevel1,
   Chainlevel2,
+  Chainlevel3,
   Money,
   Grab,
   Grabanother,

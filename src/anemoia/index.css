@@ -133,7 +133,7 @@ svg.icon.gaincard {
 }
 
 .gain-family .icon.with-shadow {
-  filter: drop-shadow(1.2px 1.2px 1.2px rgba(0,0,0,80%));
+  filter: drop-shadow(1.2px 1.2px 1.2px rgba(0,0,0,60%));
 }
 
 .icon.wild {

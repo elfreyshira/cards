@@ -1,9 +1,11 @@
 import _ from 'lodash'
 
-const ABSTRACT_RESOURCE_ARRAY = ['untap', 'retrieve','chainLevel1','chainLevel2', 'grabanother']
+const ABSTRACT_RESOURCE_ARRAY = ['untap', 'retrieve', 'grabanother',
+  'chainLevel1','chainLevel2', 'chainLevel3']
 
-// const ACTION_RESOURCE_ARRAY = ['retrieve','chainLevel1','chainLevel2']
 const SPECIAL_RESOURCE_ARRAY = ['money', 'card']
+
+// ALSO IN index.js
 const PHYSICAL_RESOURCE_ARRAY = ['fire', 'water', 'earth', 'wild',
   'firelater', 'waterlater', 'earthlater', 'wildlater']
 

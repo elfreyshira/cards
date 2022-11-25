@@ -144,6 +144,7 @@ const RESOURCE_ORDER_MAP = {
   retrieve: 1,
   chainLevel1: 1,
   chainLevel2: 1,
+  chainLevel3: 1,
   grabanother: 1,
   fire: 2,
   water: 2,

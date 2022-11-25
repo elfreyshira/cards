@@ -57,9 +57,9 @@ const setupArray = [
 ]
 
 
-_.forEach(setupArray, (obj, idx) => {
-  console.log(idx, 'retrieveCost', calculateRetrieveCost(_.merge(obj, defaultSetup)))
-})
+// _.forEach(setupArray, (obj, idx) => {
+//   console.log(idx, 'retrieveCost', calculateRetrieveCost(_.merge(obj, defaultSetup)))
+// })
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ const setupForChain = {
 
 
 const defaultChainSetup = {home: [300, 200, 100], tap: [300, 200, 100]}
-const setupChainArray = [
+const setupChainArray_OLD = [
   {normalSpots: [100, 100], chainSpot: 100, chainTo: 100},
   
   {normalSpots: [100, 200], chainSpot: 100, chainTo: 100},
@@ -108,7 +108,8 @@ const setupChainArray = [
   // {normalSpots: [300, 300], chainSpot: 300}, // not possible
 ]
 
-function calculateChainCost ({home=[0], tap=[0], normalSpots, chainSpot, chainTo}) {
+
+function calculateChainCost_OLD ({home=[0], tap=[0], normalSpots, chainSpot, chainTo}) {
   const avgValue = (_.sum(normalSpots) + chainSpot + _.sum(home) + _.sum(tap)) / 4
 
   const leftOverSpot = [].concat(normalSpots)
@@ -124,8 +125,98 @@ function calculateChainCost ({home=[0], tap=[0], normalSpots, chainSpot, chainTo
   return chainCost
 }
 
+// _.forEach(setupChainArray_OLD, (obj, idx) => {
+//   console.log(idx, 'chainCost', calculateChainCost_OLD(_.merge(obj, defaultChainSetup)))
+// })
+
+/////////////////////////////////
+/////////////////////////////////
+
+const baseLevel1Spots = [100, 100, 100, 100]
+const setupChainArray = [
+  {builtSpots: [200], chainSpot: 200, chainTo: 100},
+
+  {builtSpots: [300], chainSpot: 300, chainTo: 100},
+
+  {builtSpots: [200, 200], chainSpot: 200, chainTo: 200},
+  {builtSpots: [200, 200], chainSpot: 200, chainTo: 100},
+
+  {builtSpots: [200, 300], chainSpot: 300, chainTo: 200},
+  {builtSpots: [200, 300], chainSpot: 300, chainTo: 100},
+  {builtSpots: [200, 300], chainSpot: 200, chainTo: 100},
+
+  {builtSpots: [300, 300], chainSpot: 300, chainTo: 300},
+  {builtSpots: [300, 300], chainSpot: 300, chainTo: 100},
+
+  {builtSpots: [200, 200, 200], chainSpot: 200, chainTo: 100},
+  {builtSpots: [200, 200, 200], chainSpot: 200, chainTo: 200},
+
+  {builtSpots: [200, 200, 300], chainSpot: 300, chainTo: 100},
+  {builtSpots: [200, 200, 300], chainSpot: 300, chainTo: 200},
+  {builtSpots: [200, 200, 300], chainSpot: 200, chainTo: 200},
+  {builtSpots: [200, 200, 300], chainSpot: 200, chainTo: 100},
+
+  {builtSpots: [200, 300, 300], chainSpot: 300, chainTo: 100},
+  {builtSpots: [200, 300, 300], chainSpot: 300, chainTo: 200},
+  {builtSpots: [200, 300, 300], chainSpot: 300, chainTo: 300},
+  {builtSpots: [200, 300, 300], chainSpot: 200, chainTo: 100},
+
+  {builtSpots: [300, 300, 300], chainSpot: 300, chainTo: 100},
+  {builtSpots: [300, 300, 300], chainSpot: 300, chainTo: 300},
+
+  {builtSpots: [200, 200, 200, 200], chainSpot: 200, chainTo: 200},
+  {builtSpots: [200, 200, 200, 200], chainSpot: 200, chainTo: 100},
+
+  {builtSpots: [200, 200, 200, 300], chainSpot: 300, chainTo: 100},
+  {builtSpots: [200, 200, 200, 300], chainSpot: 300, chainTo: 200},
+  {builtSpots: [200, 200, 200, 300], chainSpot: 200, chainTo: 200},
+  {builtSpots: [200, 200, 200, 300], chainSpot: 200, chainTo: 100},
+
+  {builtSpots: [200, 200, 300, 300], chainSpot: 300, chainTo: 100},
+  {builtSpots: [200, 200, 300, 300], chainSpot: 300, chainTo: 200},
+  {builtSpots: [200, 200, 300, 300], chainSpot: 300, chainTo: 300},
+  {builtSpots: [200, 200, 300, 300], chainSpot: 200, chainTo: 200},
+  {builtSpots: [200, 200, 300, 300], chainSpot: 200, chainTo: 100},
+
+
+  {builtSpots: [200, 300, 300, 300], chainSpot: 300, chainTo: 100},
+  {builtSpots: [200, 300, 300, 300], chainSpot: 300, chainTo: 200},
+  {builtSpots: [200, 300, 300, 300], chainSpot: 300, chainTo: 300},
+
+  {builtSpots: [300, 300, 300, 300], chainSpot: 300, chainTo: 100},
+  {builtSpots: [300, 300, 300, 300], chainSpot: 300, chainTo: 300},
+]
+
+function descSortFunc (val) {
+  return 300 - val
+}
+
+
+function calculateChainCost ({builtSpots, chainSpot, chainTo}) {
+
+  const builtSpotsCombined = _.cloneDeep(builtSpots).concat(baseLevel1Spots)
+
+  const avgValue = _.sum(_.sortBy(builtSpotsCombined, descSortFunc).slice(0,3)) / 4
+
+
+  const idxChainSpot = builtSpotsCombined.findIndex(val => val === chainSpot)
+  builtSpotsCombined.splice(idxChainSpot, 1)
+
+  const idxChainTo = builtSpotsCombined.findIndex(val => val === chainTo)
+  builtSpotsCombined.splice(idxChainTo, 1)
+
+  const xValue = avgValue * 4
+    - chainTo
+    - _.sum(_.sortBy(builtSpotsCombined, descSortFunc).slice(0,2))
+
+  const chainCost = chainSpot - xValue
+  return chainCost
+}
+
 _.forEach(setupChainArray, (obj, idx) => {
-  console.log(idx, 'chainCost', calculateChainCost(_.merge(obj, defaultChainSetup)))
+  // console.log(idx, obj, 'chainCost', calculateChainCost(obj))
+  console.log(idx, calculateChainCost(obj))
 })
 
 window.calculateRetrieveCost = calculateRetrieveCost
+window.calculateChainCost = calculateChainCost

@@ -37,11 +37,6 @@ const LEVELS = {
   LEVEL_2: 'LEVEL_2',
   LEVEL_3: 'LEVEL_3',
 }
-const LEVELS_MAX_VALUE = {
-  LEVEL_1: 100,
-  LEVEL_2: 200,
-  LEVEL_3: 300
-}
 
 const RESOURCE_GAIN_VALUE = {
   money: _.constant(25),
@@ -54,10 +49,10 @@ const RESOURCE_GAIN_VALUE = {
   earthlater: _.constant(40),
   wild: _.constant(120),
   wildlater: _.constant(50),
-  grabanother: _.constant(60),
-  untap: ({type} = {}) => {
+  grabanother: _.constant(55),
+  untap: (cardObj = {}) => {
     // if (!_.isEmpty(cardObj) && cardObj.type === HOME) {
-    if (type === HOME) {
+    if (cardObj.type === HOME) {
       // untap for home doesn't have any effect when activated on rest.
       // therefore it's less valuable on a HOME card.
       return 100
@@ -66,55 +61,10 @@ const RESOURCE_GAIN_VALUE = {
       return 150
     }
   },
-  retrieve: (cardObj = {}) => {
-    const spotLevel = cardObj.spotLevel
-    if (spotLevel === LEVELS.LEVEL_1) {
-      return 75
-    }
-    else if (spotLevel === LEVELS.LEVEL_2) {
-      return 50
-    }
-    else if (spotLevel === LEVELS.LEVEL_3) {
-      return 25
-    }
-    else {
-      return 50 // on tap cards
-    }
-  },
-  chainLevel1: (cardObj = {}) => {
-    return 90
-
-    const spotLevel = cardObj.spotLevel
-    if (spotLevel === LEVELS.LEVEL_1) {
-      return 99
-    }
-    else if (spotLevel === LEVELS.LEVEL_2) {
-      return 125
-    }
-    else if (spotLevel === LEVELS.LEVEL_3) {
-      return 150
-    }
-    else {
-      return 125 // default avg value
-    }
-  },
-  chainLevel2: (cardObj = {}) => {
-    return 180
-
-    const spotLevel = cardObj.spotLevel
-    if (spotLevel === LEVELS.LEVEL_1) {
-      return 99999 // should not be happening
-    }
-    else if (spotLevel === LEVELS.LEVEL_2) {
-      return 150
-    }
-    else if (spotLevel === LEVELS.LEVEL_3) {
-      return 175
-    }
-    else {
-      return 160 // default avg value
-    }
-  },
+  retrieve: _.constant(50),
+  chainLevel1: _.constant(50),
+  chainLevel2: _.constant(100),
+  chainLevel3: _.constant(150),
 }
 
 const RESOURCE_LOSS_VALUE = {
@@ -204,6 +154,17 @@ _.forEach(cardsArray, (cardObj) => {
   
 })
 
+const proportionsChainLevel1 = 0.55
+const proportionsChainLevel2 = 0.55
+const proportionsChainLevel3 = 0.5
+
+const proportionsUntapOnHomeCards = 1.8 // changed for home cards
+const proportionsRetrieveOnTapCards = 2.0 // changed for tap cards
+
+const proportionsGrabAnotherOnNonSpotCards = 0.8
+const proportionsNowResourcesOnNonSpotCards = 2
+const proportionsLaterResources = 1
+
 const resourceGainRoller = new Brng({
   money: 3.5,
   card: 2.3,
@@ -218,22 +179,14 @@ const resourceGainRoller = new Brng({
   grabanother: 0.8, // changed later via proportionsGrabAnotherOnNonSpotCards
   untap: 1.5, // changed later via proportionsUntapOnHomeCards
   retrieve: 1.8, // changed later via proportionsRetrieveOnTapCards
-  // chainLevel1: 2.0, // proportionsChainLevel1
-  // chainLevel2: 1.8 // proportionsChainLevel2
+  chainLevel1: proportionsChainLevel1,
+  chainLevel2: proportionsChainLevel2,
+  chainLevel3: proportionsChainLevel3,
 }, {
   keepHistory: true,
   bias: 4
 })
 
-const proportionsChainLevel1 = 0.9
-const proportionsChainLevel2 = 0.9
-
-const proportionsUntapOnHomeCards = 1.9 // changed for home cards
-const proportionsRetrieveOnTapCards = 2.0 // changed for tap cards
-
-const proportionsGrabAnotherOnNonSpotCards = 1.1
-const proportionsNowResourcesOnNonSpotCards = 2
-const proportionsLaterResources = 1
 
 const spotLossNumRoller = new Brng({0: 3, 1: 2}, {keepHistory: true, bias: 4})
 
@@ -247,7 +200,7 @@ const lossResourceRoller = new Brng({
   keepHistory: true,
   bias: 4
 })
-const proportionsTapAnotherOnTapCards = 1
+const proportionsTapAnotherOnTapCards = 0.9
 
 const tapLossNumRoller = new Brng({1: 1}, {keepHistory: true, bias: 2})
 
@@ -372,21 +325,30 @@ let currentCardType = SPOT
 let hasAddedChainLevel1 = false
 let hasAddedChainLevel2 = false
 
+function hasLossSortFunc (cardObj) {
+  return !cardObj.hasLoss // hasLoss first
+  // return cardObj.hasLoss // hasLoss last
+}
+function maxValueSortFunc (cardObj) {
+  return 400 - cardObj.maxValue // large to small
+  // return cardObj.maxValue // small to large
+}
+
 // order: SPOT, HOME, TAP
-cardsArray = _.sortBy(cardsArray, ['type', 'maxValue', 'hasLoss'])
+cardsArray = _.sortBy(cardsArray, ['type', maxValueSortFunc, hasLossSortFunc])
 _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
 
-  // add chainLevel1 once you're on spotLevel = 2
-  if (!hasAddedChainLevel1 && cardObj.type === SPOT && cardObj.spotLevel !== LEVELS.LEVEL_1) {
-    resourceGainRoller.add({chainLevel1: proportionsChainLevel1})
-    // resourceGainRoller.add({chainLevel2: proportionsChainLevel2})
-    hasAddedChainLevel1 = true
-  }
-  // add chainLevel2 once you're on spotLevel = 3
-  if (!hasAddedChainLevel2 && cardObj.type === SPOT && cardObj.spotLevel === LEVELS.LEVEL_3) {
-    resourceGainRoller.add({chainLevel2: proportionsChainLevel2})
-    hasAddedChainLevel2 = true
-  }
+  // // add chainLevel1 once you're on spotLevel = 2
+  // if (!hasAddedChainLevel1 && cardObj.type === SPOT && cardObj.spotLevel !== LEVELS.LEVEL_1) {
+  //   resourceGainRoller.add({chainLevel1: proportionsChainLevel1})
+  //   // resourceGainRoller.add({chainLevel2: proportionsChainLevel2})
+  //   hasAddedChainLevel1 = true
+  // }
+  // // add chainLevel2 once you're on spotLevel = 3
+  // if (!hasAddedChainLevel2 && cardObj.type === SPOT && cardObj.spotLevel === LEVELS.LEVEL_3) {
+  //   resourceGainRoller.add({chainLevel2: proportionsChainLevel2})
+  //   hasAddedChainLevel2 = true
+  // }
 
 
   // adjust the resourceGainRoller when staring the HOME and TAP cards
@@ -600,7 +562,7 @@ function getResourceCost (totalCostValue) {
 
 }
 
-cardsArray = _.sortBy(cardsArray, ['type', 'maxValue', 'hasLoss', 'totalCostValue'])
+cardsArray = _.sortBy(cardsArray, ['type', maxValueSortFunc, hasLossSortFunc, 'totalCostValue'])
 _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
   
   let timesTriedToSetResources = 0
@@ -814,12 +776,14 @@ const cardCount = countOccurences('gain', ['card'])
 
 const chainLevel1Count = countOccurences('gain', ['chainLevel1'])
 const chainLevel2Count = countOccurences('gain', ['chainLevel2'])
+const chainLevel3Count = countOccurences('gain', ['chainLevel3'])
 
 const tapAnotherCount = countOccurences('loss', ['tapAnother'])
 const untapCount = countOccurences('gain', ['untap'])
 
 console.log('----------------------')
-console.log('chainLevel1Count + chainLevel2Count', chainLevel1Count + chainLevel2Count)
+console.log('chainLevel1Count + chainLevel2Count + chainLevel3Count',
+  chainLevel1Count + chainLevel2Count + chainLevel3Count)
 console.log('tapAnotherCount + untapCount', tapAnotherCount + untapCount)
 countOccurences('gain', ['retrieve'])
 countOccurences('gain', ['grabanother'])
