@@ -823,7 +823,7 @@ function Cards () {
       </pre>
 
       {_.map(cardsArray, (obj) => {
-        return <Card cardObj={_.pick(obj, cardsImportantKeys)} key={obj.uuid} />
+        {/*return <Card cardObj={_.pick(obj, cardsImportantKeys)} key={obj.uuid} />*/}
       })}
 
       {_.map(contractsArray, (obj, idx) => {
@@ -834,7 +834,7 @@ function Cards () {
         {/*{JSON.stringify(_.chain(cardsArray).map((obj) => _.pick(obj, cardsImportantKeys)).value(), null, 2)}*/}
         
         {/*{JSON.stringify(momentsArray, null, 2)}*/}
-        {JSON.stringify(_.chain(contractsArray).map((obj) => _.pick(obj, contractsImportantKeys)).value(), null, 2)}
+        {/*{JSON.stringify(_.chain(contractsArray).map((obj) => _.pick(obj, contractsImportantKeys)).value(), null, 2)}*/}
       </pre>
 
       

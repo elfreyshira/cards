@@ -71,6 +71,9 @@ tap: yellow. - B3A500
   position: absolute;
   margin: 10px;
 }
+.points > .negative {
+  color: rgba(150, 0, 0, 100%);
+}
 
 .cost {
   padding: 5px;
@@ -85,6 +88,12 @@ tap: yellow. - B3A500
 }
 .resource-cost-group {
   margin-right: 0.3em;
+}
+.resource-cost-group.wildsame {
+  border-bottom: 2px solid rgba(0,0,0,30%);
+  padding: 0 .1em;
+  border-radius: .3em;
+  display: inline-block;
 }
 
 .icon.untap {
@@ -224,16 +233,76 @@ svg.icon.gaincard {
 }
 .contract-type {
   font-size: 3em;
+  margin-top: 0.1em;
+  margin-left: 0.1em;
 }
 .contract .icon {
   height: 1em;
   width: 1em;
 }
 .contract-type-text {
-  bottom: 5px;
+  bottom: 0.1em;
+  margin-left: 0.1em;
   position: relative;
 } 
 .contract .cost .icon {
   height: 2em !important;
   width: 2em !important;
+}
+
+
+
+.tag-container {
+  border: 1px solid black;
+  border-radius: 0.5em 0.5em 0 0;
+  height: 4em;
+  width: 2em;
+  background-color: black;
+}
+.tag-in-corner {
+  position: absolute;
+  bottom: -1px;
+  left: 1em;
+}
+.tag-in-corner:nth-child(2) {
+  left: 4em;
+}
+.tag-single {
+  font-size: 1.3em;
+  margin-left:0;
+  transform: translate(15%, 80%);
+  position: relative;
+}
+.tag-single .icon {
+  filter: drop-shadow(1px 1px 2px rgba(255, 255, 255, 90%));  
+}
+
+.tag-container.tag-in-conditional {
+  background-color: rgba(50,50,50,100%);
+  height: 3em;
+  display: inline-block;
+  zoom: .4;
+  position: relative;
+  bottom: 1em;
+}
+.tag-in-conditional > .tag-single {
+  transform: translate(15%, 40%);  
+}
+
+
+.conditional-top-container {
+  margin: .2em;
+  font-size: 2em;
+}
+.conditional-top-container .icon {
+  height: 1em !important;
+  width: 1em !important;
+  transform: translateY(18%);
+}
+.conditional-card-text {
+  display: inline-block;
+  margin-left: .1em;
+  padding: 0 .2em;
+  border-bottom: 2px solid rgba(0,0,0,30%);
+  border-radius: .2em;
 }

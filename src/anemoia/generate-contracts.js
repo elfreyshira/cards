@@ -21,23 +21,24 @@ const CONTRACT_C = 'CONTRACT_C'
 // number of resources it costs: 2 (1), 3 (1), 4 (1 or 2), 5 (2)
 
 const numberOfResourcesRoller = new Brng({3:1, 4:1, 5:1}, {bias: 4})
-const sameOrNotRoller = new Brng({same:1, free:1}, {bias: 2})
+const sameOrNotRoller = new Brng({same:1, free:1}, {bias: 3})
 
 // for 4 resources
-const numberOfSpecificElementRoller = new Brng({1:1, 2:1}, {bias: 2})
+const numberOfSpecificElementRoller = new Brng({1:1, 2:1}, {bias: 3})
 
 const tagNumberRoller = new Brng({0:1, 1:1, 2:1}, {bias: 4})
 const tagElementRoller = new Brng({fire: 1, water:1, earth:1}, {bias: 4})
 
 
-const hasConditionalRoller = new Brng({yes:2, no:1}, {bias: 3})
-const conditionalTypeRoller = new Brng({card: 1, cardcost:1, tag:2}, {bias: 2})
+// const hasConditionalRoller = new Brng({yes:2, no:1}, {bias: 3})
+const hasConditionalRoller = new Brng({yes:2, no:0}, {bias: 3})
+const conditionalTypeRoller = new Brng({card: 1, cardcost:1, tag:2}, {bias: 4})
 
 // single: 2.5. double: 5.0
 // cardcost. single: 9. double: 17
 const conditionalCardPerRoller = new Brng({SPOT: 1, HOME:1, TAP:1}, {bias: 4})
 
-// single: 7. double: 4.5*2 = 9
+// single: 6. double: 4.5*2 = 9
 const conditionalTagPerRoller = new Brng({fire: 1, water:1, earth:1}, {bias: 4})
 
 
@@ -182,8 +183,9 @@ _.forEach(contractsArray, (contractObj) => {
 })
 
 
-const pointsPerTag = 4.2
+const pointsPerTag = 4
 const pointsForWinningTagComparison = 3
+const avgTagsForSpecificElement = 6
 
 contractsArray = _.sortBy(contractsArray, sortOrderArray)
 _.forEach(contractsArray, (contractObj) => {
@@ -193,7 +195,9 @@ _.forEach(contractsArray, (contractObj) => {
   
   // for tag comparison at the end
   // if first place gets 3 points
-  totalCostValue -= contractObj.tagNumber * (pointsForWinningTagComparison*2/6) * 25
+  totalCostValue -= contractObj.tagNumber
+  * (pointsForWinningTagComparison * 2 / avgTagsForSpecificElement)
+  * 25
 
 
   if (contractObj.tagNumber > 0) {
@@ -207,16 +211,16 @@ _.forEach(contractsArray, (contractObj) => {
     contractObj.basePoints = Math.round(totalCostValue / 25)
   }
   else if (contractObj.conditionalType === 'cardcost') {
-    contractObj.conditionalPoints = Math.floor(totalCostValue/25/3.33/2.5)
+    contractObj.conditionalPoints = _.max([1, Math.floor(totalCostValue/25/3.33/2.5)])
 
     totalCostValue -= contractObj.conditionalPoints*25*3.33*2.5
     
     contractObj.basePoints = Math.round(totalCostValue / 25)
   }
   else if (contractObj.conditionalType === 'tag') {
-    contractObj.conditionalPoints = Math.floor(totalCostValue/25/7)
+    contractObj.conditionalPoints = Math.floor(totalCostValue/25/avgTagsForSpecificElement)
 
-    totalCostValue -= contractObj.conditionalPoints*25*7
+    totalCostValue -= contractObj.conditionalPoints*25*avgTagsForSpecificElement
     
     contractObj.basePoints = Math.round(totalCostValue / 25)
   }

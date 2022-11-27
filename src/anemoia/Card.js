@@ -7,6 +7,7 @@
 
 import ICONS from './icons.js'
 import _ from 'lodash'
+import classnames from 'classnames'
 
 function Type ({type, spotLevel}) {
 
@@ -49,7 +50,7 @@ function Points ({pointsOnCard}) {
 
   return (
     <div className="points">
-      &#x274B;{pointsOnCard}
+      &#x274B;<span className={classnames({negative: pointsOnCard < 0})}>{pointsOnCard}</span>
     </div>
   )
 }
@@ -87,7 +88,7 @@ function Cost ({resourceCost}) {
 
   _.forEach(resourceCostOrder, (resource) => {
     const resourceDiv = (
-      <span className="resource-cost-group" key={resource}>
+      <span className={classnames("resource-cost-group", resource)} key={resource}>
         {_.times(resourceCost[resource], (idx) => {
           return <ResourceIcon key={idx} resource={resource} />
         })}
@@ -208,6 +209,74 @@ function Effect ({loss, gain}) {
   // return null
 }
 
+function Tags ({tagNumber, tagElement}) {
+  const tagsArray = []
+
+  _.times(tagNumber, (idx) => {
+    tagsArray.push(
+      <div className="tag-container tag-in-corner" key={idx}>
+        <div className="tag-single">
+          <ResourceIcon resource={tagElement} />
+        </div>
+      </div>
+    )
+  })
+
+  return (
+    <div>{tagsArray}
+    </div>
+  )
+}
+
+
+const conditionalPerMapping = {
+  earth: (
+    <div className="tag-container tag-in-conditional">
+      <div className="tag-single">
+        <ResourceIcon resource="earth" />
+      </div>
+    </div>
+  ),
+  fire: (
+    <div className="tag-container tag-in-conditional">
+      <div className="tag-single">
+        <ResourceIcon resource="fire" />
+      </div>
+    </div>
+  ),
+  water: (
+    <div className="tag-container tag-in-conditional">
+      <div className="tag-single">
+        <ResourceIcon resource="water" />
+      </div>
+    </div>
+  ),
+  HOME: <ICONS.Home />,
+  TAP: <ICONS.Tap />,
+  SPOT: <ICONS.Spot />,
+}
+
+function ConditionalPoints ({conditionalType, conditionalPoints, conditionalPer}) {
+  console.log(conditionalType, conditionalPoints, conditionalPer)
+  if (_.isUndefined(conditionalType) || _.isUndefined(conditionalPoints) || _.isUndefined(conditionalPer)) {
+    return null
+  }
+
+  return (
+    <div className="conditional-top-container">
+      &#x274B;{conditionalPoints} for each {conditionalPerMapping[conditionalPer]}
+      {_.includes(['card','cardcost'], conditionalType) ?
+        <span className="conditional-card-text">
+          {conditionalType === 'card' ? "built" : null}
+          {conditionalType === 'cardcost' ? "cost" : null}
+        </span>
+        : null
+      }
+      
+    </div>
+  )
+}
+
 function Contract (props) {
   const {
     type, resourceCost, totalCostValue, tagNumber, tagElement, conditionalType,
@@ -220,8 +289,15 @@ function Contract (props) {
         <ICONS.Moment />
         <span className="contract-type-text">{type.slice(-1)}</span>
       </div>
+      <Points pointsOnCard={basePoints} />
       <Cost resourceCost={resourceCostObj} />
-      {JSON.stringify(props.contractObj)}
+      <ConditionalPoints
+        conditionalType={conditionalType}
+        conditionalPoints={conditionalPoints}
+        conditionalPer={conditionalPer}
+      />
+      <Tags tagNumber={tagNumber} tagElement={tagElement} />
+      {/*{JSON.stringify(props.contractObj)}*/}
     </div>
   )
 }
