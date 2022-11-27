@@ -23,12 +23,14 @@ import {
 import getNewIncludeExcludeList from './get-new-include-exclude-list.js'
 
 import checkSimilarity from './check-similarity.js'
-import Card from './Card.js'
+import {Card, Contract} from './Card.js'
 import ICONS from './icons.js'
 
 
 // import endGameCards from './end-game-cards.js'
 // import './calculate-retrieve-cost.js'
+import contractsArray from './generate-contracts.js'
+import './calculate-avg-tag-value.js'
 
 import './index.css';
 
@@ -42,7 +44,7 @@ function excludeValuesAbove (value, cardObj) {
 
 
 let cardsArray = []
-const cardsMultiply = 1 // 1 = 45 cards, 2 = 90 cards
+const cardsMultiply = 0 // 1 = 45 cards, 2 = 90 cards
 
 // SPOT
 const spotMaxValues =         [225,  325]
@@ -640,8 +642,8 @@ _.forEach(momentsArray, (momentObj) => {
   
 })
 
-console.log('momentsArray')
-console.log(momentsArray)
+// console.log('momentsArray')
+// console.log(momentsArray)
 
 console.log('----------------------')
 console.log('TAP _usageValue avg')
@@ -784,7 +786,7 @@ cardsArray = cardsArray.concat(starterSpots)
 ////////////////////////////////////////////
 ////////////////////////////////////////////
 
-const importantKeys = [
+const cardsImportantKeys = [
   'uuid',
   'type',
   'spotLevel',
@@ -799,22 +801,43 @@ const importantKeys = [
   'ExtraStuff'
 ]
 
+const contractsImportantKeys = [
+  'type',
+  'resourceCost',
+  'totalCostValue',
+  'tagNumber',
+  'tagElement',
+  'conditionalType',
+  'conditionalPer',
+  'conditionalPoints',
+  'resourceCostObj',
+  'basePoints',
+]
+
 function Cards () {
   return (
     <div>
       <pre>
-        {/*{JSON.stringify(_.chain(cardsArray).map((obj) => _.pick(obj, importantKeys)).value(), null, 2)}*/}
+        {/*{JSON.stringify(_.chain(cardsArray).map((obj) => _.pick(obj, cardsImportantKeys)).value(), null, 2)}*/}
         {/*{JSON.stringify(cardsArray, null, 2)}*/}
       </pre>
 
       {_.map(cardsArray, (obj) => {
-        {return <Card cardObj={_.pick(obj, importantKeys)} key={obj.uuid} />}
+        return <Card cardObj={_.pick(obj, cardsImportantKeys)} key={obj.uuid} />
+      })}
+
+      {_.map(contractsArray, (obj, idx) => {
+        return <Contract contractObj={_.pick(obj, contractsImportantKeys)} key={idx} />
       })}
 
       <pre>
-        {JSON.stringify(_.chain(cardsArray).map((obj) => _.pick(obj, importantKeys)).value(), null, 2)}
+        {/*{JSON.stringify(_.chain(cardsArray).map((obj) => _.pick(obj, cardsImportantKeys)).value(), null, 2)}*/}
+        
         {/*{JSON.stringify(momentsArray, null, 2)}*/}
+        {JSON.stringify(_.chain(contractsArray).map((obj) => _.pick(obj, contractsImportantKeys)).value(), null, 2)}
       </pre>
+
+      
     </div>
   )
 }

@@ -11,6 +11,7 @@ import tapanotherIcon from './images/tapanother.png'
 import untapIcon from './images/untap.png'
 import grabIcon from './images/grab.png'
 import thisCardIcon from './images/this-card.png'
+import momentIcon from './images/moment.png'
 
 function Spot () {
   return <SpotSvg className="icon" />
@@ -20,6 +21,9 @@ function Home () {
 }
 function Tap () {
   return <TapSvg className="icon" />
+}
+function Moment () {
+  return <img className="icon" src={momentIcon} />
 }
 
 function Card () {
@@ -37,6 +41,14 @@ function Water () {
 }
 function Wild () {
   return <img className="icon with-shadow wild" src={wildIcon} />
+}
+function Wildsame () {
+  return (
+    <span>
+      <img className="icon with-shadow wild" src={wildIcon} />
+      <span className="wildsame-equal-sign">=</span>
+    </span>
+  )
 }
 
 function Tapanother () {
@@ -81,6 +93,7 @@ export default {
   Fire,
   Water,
   Wild,
+  Wildsame,
   Card,
   Tapanother,
   Untap,
@@ -91,5 +104,6 @@ export default {
   Money,
   Grab,
   Grabanother,
-  ThisCard
+  ThisCard,
+  Moment,
 }

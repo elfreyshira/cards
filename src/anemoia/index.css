@@ -17,6 +17,14 @@
   margin:  10px;
 }
 
+.contract {
+  width: 88mm;
+  max-width: 88mm;
+  height:  63mm;
+  max-height:  63mm;
+}
+
+
 
 @media print {
   .card {
@@ -76,7 +84,7 @@ tap: yellow. - B3A500
   width: auto;
 }
 .resource-cost-group {
-  margin-right: 4px;
+  margin-right: 0.3em;
 }
 
 .icon.untap {
@@ -140,6 +148,19 @@ svg.icon.gaincard {
   height: 32px !important;
   width: auto !important;
 }
+
+.wildsame-equal-sign {
+  position: absolute;
+  transform: translate(-50%, 0%);
+  text-shadow: 1px 0 #fff, -1px 0 #fff, 0 1px #fff, 0 -1px #fff,
+             1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff;
+  filter: drop-shadow(1px 1px 1px rgba(0,0,0,40%));
+  font-size: 1.5em;
+}
+.resource-cost-group span:last-child .wildsame-equal-sign {
+  display: none;
+}
+
 .chain {
   font-size: 2em;
   display: inline-block;
@@ -195,4 +216,24 @@ svg.icon.gaincard {
   font-size: 1.5em;
   text-align: center;
   margin-bottom: 10px;
+}
+
+
+.contract {
+  font-size: 1em;
+}
+.contract-type {
+  font-size: 3em;
+}
+.contract .icon {
+  height: 1em;
+  width: 1em;
+}
+.contract-type-text {
+  bottom: 5px;
+  position: relative;
+} 
+.contract .cost .icon {
+  height: 2em !important;
+  width: 2em !important;
 }

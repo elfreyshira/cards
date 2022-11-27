@@ -62,14 +62,28 @@ function ResourceIcon ({resource, amount}) {
   return <ChosenIcon amount={amount}/>
 }
 
+// mostly for moments/contracts
+const costOrderFunc = (resource) => {
+  if (resource === 'wildsame') {
+    return 1
+  }
+  else if (resource === 'wild') {
+    return 2
+  }
+  else {
+    return 0
+  }
+}
+
 function Cost ({resourceCost}) {
 
   const resourceArray = []
 
-  const resourceCostOrder = _.sortBy(
+  let resourceCostOrder = _.sortBy(
     _.keys(resourceCost),
     (resource) => -resourceCost[resource]
   )
+  resourceCostOrder = _.sortBy(resourceCostOrder, costOrderFunc)
 
   _.forEach(resourceCostOrder, (resource) => {
     const resourceDiv = (
@@ -194,6 +208,24 @@ function Effect ({loss, gain}) {
   // return null
 }
 
+function Contract (props) {
+  const {
+    type, resourceCost, totalCostValue, tagNumber, tagElement, conditionalType,
+    conditionalPer, conditionalPoints, resourceCostObj, basePoints,
+  } = props.contractObj
+
+  return (
+    <div className="card contract">
+      <div className="contract-type">
+        <ICONS.Moment />
+        <span className="contract-type-text">{type.slice(-1)}</span>
+      </div>
+      <Cost resourceCost={resourceCostObj} />
+      {JSON.stringify(props.contractObj)}
+    </div>
+  )
+}
+
 function Card (props) {
   const {
     type, spotLevel,
@@ -236,4 +268,4 @@ function Card (props) {
   )
 }
 
-export default Card
+export {Card, Contract}
