@@ -1,13 +1,24 @@
 import Brng from 'brng'
 import _ from 'lodash'
 
-
 import {
   generateConsistentMoment,
   generateRandomMoment,
   generateIncreaseMoment,
   generateDecreaseMoment
 } from './generate-moment-cards.js'
+
+import {
+  SPOT,
+  HOME,
+  TAP,
+  MIN_POINTS_MAP,
+  LEVELS,
+  RESOURCE_GAIN_VALUE,
+  RESOURCE_LOSS_VALUE,
+  /////////////
+  PHYSICAL_RESOURCE_ARRAY,
+} from './CONSTANTS.js'
 
 import getNewIncludeExcludeList from './get-new-include-exclude-list.js'
 
@@ -21,68 +32,12 @@ import ICONS from './icons.js'
 
 import './index.css';
 
-
-const SPOT = '_SPOT'
-const UPGRADE = 'UPGRADE'
-const HOME = '__HOME'
-const TAP = '___TAP'
-
-const MIN_POINTS_MAP = {
-  POINTS_0_3: 0,
-  POINTS_1_4: 1,
-  POINTS_5_8: 5
-}
-const LEVELS = {
-  LEVEL_1: 'LEVEL_1',
-  LEVEL_2: 'LEVEL_2',
-  LEVEL_3: 'LEVEL_3',
-}
-
-const RESOURCE_GAIN_VALUE = {
-  money: _.constant(25),
-  card: _.constant(50),
-  fire: _.constant(100),
-  firelater: _.constant(40),
-  water: _.constant(100),
-  waterlater: _.constant(40),
-  earth: _.constant(100),
-  earthlater: _.constant(40),
-  wild: _.constant(120),
-  wildlater: _.constant(50),
-  grabanother: _.constant(55),
-  untap: (cardObj = {}) => {
-    // if (!_.isEmpty(cardObj) && cardObj.type === HOME) {
-    if (cardObj.type === HOME) {
-      // untap for home doesn't have any effect when activated on rest.
-      // therefore it's less valuable on a HOME card.
-      return 100
-    }
-    else {
-      return 150
-    }
-  },
-  retrieve: _.constant(50),
-  chainLevel1: _.constant(50),
-  chainLevel2: _.constant(100),
-  chainLevel3: _.constant(150),
-}
-
-const RESOURCE_LOSS_VALUE = {
-  // money: 50,
-  // card: 37.5, // discarding unwanted cards doesn't hurt as much
-  fire: 100,
-  water: 100,
-  earth: 100,
-  wild: 80,
-  tapAnother: 140
-}
-
 function excludeValuesAbove (value, cardObj) {
   return _.keys(
     _.omitBy(RESOURCE_GAIN_VALUE, (func) => {
       return func(cardObj) <= value
     })
-  )  
+  )
 }
 
 
@@ -154,9 +109,9 @@ _.forEach(cardsArray, (cardObj) => {
   
 })
 
-const proportionsChainLevel1 = 0.55
+const proportionsChainLevel1 = 0.50
 const proportionsChainLevel2 = 0.55
-const proportionsChainLevel3 = 0.5
+const proportionsChainLevel3 = 0.47
 
 const proportionsUntapOnHomeCards = 1.8 // changed for home cards
 const proportionsRetrieveOnTapCards = 2.0 // changed for tap cards
@@ -166,7 +121,7 @@ const proportionsNowResourcesOnNonSpotCards = 2
 const proportionsLaterResources = 1
 
 const resourceGainRoller = new Brng({
-  money: 3.5,
+  money: 3.7,
   card: 2.3,
   fire: 1.9,
   firelater: 1,
@@ -187,22 +142,17 @@ const resourceGainRoller = new Brng({
   bias: 4
 })
 
-
-const spotLossNumRoller = new Brng({0: 3, 1: 2}, {keepHistory: true, bias: 4})
-
+const proportionsTapAnotherOnTapCards = 0.9
 const lossResourceRoller = new Brng({
   fire: 2,
   water: 2,
   earth: 2,
   wild: 5,
-  tapAnother: 3, // changed later for tap cards
+  tapAnother: 3, // changed later via proportionsTapAnotherOnTapCards
 }, {
   keepHistory: true,
   bias: 4
 })
-const proportionsTapAnotherOnTapCards = 0.9
-
-const tapLossNumRoller = new Brng({1: 1}, {keepHistory: true, bias: 2})
 
 
 /*
@@ -213,11 +163,6 @@ rules for the resource loss and gain:
 - max of 1 chainLevel per card
 - for the abstract resources, max of 1 per resource
 */
-
-
-// ALSO IN get-new-include-exclude-list.js
-const PHYSICAL_RESOURCE_ARRAY = ['fire', 'water', 'earth', 'wild',
-  'firelater', 'waterlater', 'earthlater', 'wildlater']
 
 
 // returns undoChainArray
@@ -333,9 +278,16 @@ function maxValueSortFunc (cardObj) {
   return 400 - cardObj.maxValue // large to small
   // return cardObj.maxValue // small to large
 }
+const TYPE_SORT_MAPPING = {}
+TYPE_SORT_MAPPING[SPOT] = 1
+TYPE_SORT_MAPPING[HOME] = 2
+TYPE_SORT_MAPPING[TAP] = 3
+function typeSortFunc (cardObj) {
+  return TYPE_SORT_MAPPING[cardObj.type]
+}
 
 // order: SPOT, HOME, TAP
-cardsArray = _.sortBy(cardsArray, ['type', maxValueSortFunc, hasLossSortFunc])
+cardsArray = _.sortBy(cardsArray, [typeSortFunc, maxValueSortFunc, hasLossSortFunc])
 _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
 
   // // add chainLevel1 once you're on spotLevel = 2
@@ -562,7 +514,7 @@ function getResourceCost (totalCostValue) {
 
 }
 
-cardsArray = _.sortBy(cardsArray, ['type', maxValueSortFunc, hasLossSortFunc, 'totalCostValue'])
+cardsArray = _.sortBy(cardsArray, [typeSortFunc, maxValueSortFunc, hasLossSortFunc, 'totalCostValue'])
 _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
   
   let timesTriedToSetResources = 0
@@ -667,36 +619,7 @@ _.forEach(momentsArray, (momentObj) => {
   // 5 steps
   _.times(5, (idx) => {
     if (momentHasBonusRoller.roll() === 'hasBonus') {
-      
-      // just use cardBonusRoller because it's the same resources
       momentObj.bonus[idx+1] = momentBonusRoller.roll()
-
-      // brainstorm: could make it where each point not rightfully given, add 1/4 points until it's rightfully spent. essentially interest over a debt.
-      /*
-        for example: a 2 resource moments card, giving 0 points until the 6th step.
-        1st step: 0 points (hold 8 points + 2 points)
-        2nd: 0 points (hold 8 + 2 points)
-        ...
-        6th: = 8 (for this step) + 8*5 (held) + 2*5 (from points interest) = 58 (vs 48)
-      */
-
-      // or could make it a compounding interest almost? like: points held * 1.25? not sure how it would work though...
-      /*
-        maybe: points held * 1.2 * ratio of resources spent to claim it
-        where ratio = 1+(resources/X) (where X=10 or something)
-          -- maybe gotta add 0.5 to resources, since it requires a develop
-        example: 2 resources, if X=10
-        1: 0 points (8 held)
-        2: 0 points (8 held + 8*(1+2/10) = 8 held + 9.6 to claim but not given)
-        3: 0 points -- 8 held + 17.6*(1+2/10) = 8 + 21.12
-        4: 0 points -- 8 held + 29.12*(1+2/10) = 8 + 34.944
-        5: 0 points -- 8 held + 42.944*(1+2/10) = 8 + 51.53
-        6: 8 + (59.53)*(1+2/10) = 79
-        ***** maybe too strong? can tone it down. although, it IS a lot investing.
-      */
-
-      // WHAT IF: i have a separate thing for resource cost and rank points/bonus.
-      // but then it'd require all resource costs to be the same. not sure if I want that.
     }
   })
 

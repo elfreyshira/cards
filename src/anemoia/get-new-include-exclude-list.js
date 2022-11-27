@@ -1,16 +1,12 @@
 import _ from 'lodash'
+import {
+  ABSTRACT_RESOURCE_ARRAY,
+  SPECIAL_RESOURCE_ARRAY,
+  PHYSICAL_RESOURCE_ARRAY,
+  LATER_RESOURCE_ARRAY,
+  NOW_RESOURCE_ARRAY
+} from './CONSTANTS.js'
 
-const ABSTRACT_RESOURCE_ARRAY = ['untap', 'retrieve', 'grabanother',
-  'chainLevel1','chainLevel2', 'chainLevel3']
-
-const SPECIAL_RESOURCE_ARRAY = ['money', 'card']
-
-// ALSO IN index.js
-const PHYSICAL_RESOURCE_ARRAY = ['fire', 'water', 'earth', 'wild',
-  'firelater', 'waterlater', 'earthlater', 'wildlater']
-
-const LATER_RESOURCE_ARRAY = ['firelater', 'waterlater', 'earthlater', 'wildlater']
-const NOW_RESOURCE_ARRAY = ['fire', 'water', 'earth', 'wild']
 
 function getNewIncludeExcludeList (gainObj, chosenResource, includeList, excludeList) {
 

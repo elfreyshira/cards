@@ -8,10 +8,6 @@
 import ICONS from './icons.js'
 import _ from 'lodash'
 
-function getStrippedType (rawTypeString) {
-  return rawTypeString ? rawTypeString.replaceAll('_', '') : ''
-}
-
 function Type ({type, spotLevel}) {
 
   if (_.isEmpty(type)) {
@@ -27,15 +23,13 @@ function Type ({type, spotLevel}) {
 }
 
 function TypeIcon ({type}) {
-  const typeStripped = getStrippedType(type)
-
-  if (typeStripped === 'SPOT') {
+  if (type === 'SPOT') {
     return <ICONS.Spot />
   }
-  if (typeStripped === 'HOME') {
+  if (type === 'HOME') {
     return <ICONS.Home />
   }
-  if (typeStripped === 'TAP') {
+  if (type === 'TAP') {
     return <ICONS.Tap />
   }
 }
@@ -218,7 +212,7 @@ function Card (props) {
   }
 
   return (
-    <div className={'card ' + _.lowerCase(getStrippedType(type))}>
+    <div className={'card ' + _.lowerCase(type)}>
 
       <Type type={type} spotLevel={spotLevel} />
       
