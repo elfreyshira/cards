@@ -66,10 +66,10 @@ function ResourceIcon ({resource, amount}) {
 // mostly for moments/contracts
 const costOrderFunc = (resource) => {
   if (resource === 'wildsame') {
-    return 1
+    return 2
   }
   else if (resource === 'wild') {
-    return 2
+    return 1
   }
   else {
     return 0
@@ -107,9 +107,13 @@ function Loss({loss}) {
   if (_.isEmpty(loss)) {
     return null
   }
+
+  const lossKeysInOrder = _.sortBy(_.keys(loss), costOrderFunc)
+
   return (
     <div className="loss">
-    {_.map(loss, (val, key) => {
+    {_.map(lossKeysInOrder, (key) => {
+      const val = loss[key]
       return _.times(val, (idx) => <ResourceIcon resource={key} amount={1} key={key+idx}/>)
     })}
     </div>
@@ -165,7 +169,7 @@ const RESOURCE_ORDER_MAP = {
   money: 5,
 }
 
-const RESOURCES_THAT_HAS_DIGITS = ['money', 'point']
+const RESOURCES_WITH_DIGITS = ['money', 'point']
 
 function Gain({gain}) {
   if (_.isEmpty(gain)) {
@@ -184,7 +188,7 @@ function Gain({gain}) {
     const resourceDiv = (
       <div className="gain-family" key={resource}>
         {_.times(gain[resource], (idx) => {
-          if (_.includes(RESOURCES_THAT_HAS_DIGITS, resource) && idx >= 1) {
+          if (_.includes(RESOURCES_WITH_DIGITS, resource) && idx >= 1) {
             // money is all at once, so don't do it multiple times
             return null
           }
@@ -331,6 +335,7 @@ function Card (props) {
     pointsOnCard, resourceCost,
     loss, gain, uuid,
     totalCostValue, _usageValue,
+    isPointGenerator,
     ExtraStuff
   } = props.cardObj
 
@@ -343,7 +348,7 @@ function Card (props) {
   }
 
   return (
-    <div className={'card ' + _.lowerCase(type)}>
+    <div className={classnames('card', _.lowerCase(type), isPointGenerator ? 'point-generator' : false)}>
 
       <Type type={type} spotLevel={spotLevel} />
       

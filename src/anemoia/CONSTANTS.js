@@ -52,7 +52,8 @@ const RESOURCE_LOSS_VALUE = {
   water: 100,
   earth: 100,
   wild: 80,
-  tapAnother: 140
+  wildsame: 85,
+  tapAnother: 140,
 }
 
 ////////////////////////////////////////////

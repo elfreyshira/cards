@@ -22,9 +22,17 @@ export default function checkSimilarity(cardsArray, newCardObj) {
     // amount of resources gained
     _.forEach(sameGainResources, (resourceGained) => {
       comparisonSpace += 1.5
-      if (prevCardObj.gain[resourceGained] === newCardObj.gain[resourceGained]) {
-        similarityPoints += 1.5
-      }
+      
+      const prevAmount = prevCardObj.gain[resourceGained]
+      const newAmount = newCardObj.gain[resourceGained]
+      similarityPoints += (
+        1
+        - (Math.abs(prevAmount - newAmount) / _.mean([prevAmount, newAmount]))
+      ) * 1.5
+
+      // if (prevCardObj.gain[resourceGained] === newCardObj.gain[resourceGained]) {
+      //   similarityPoints += 1.5
+      // }
     })
     
     // to check if they have the same exact resources involved
@@ -36,16 +44,37 @@ export default function checkSimilarity(cardsArray, newCardObj) {
       similarityPoints += 2
     }
 
-    // for loss comparison
-    comparisonSpace += 2
-    const bothHasLoss = !_.isEmpty(prevCardObj.loss) && !_.isEmpty(newCardObj.loss)
-    if (bothHasLoss && (_.keys(prevCardObj.loss)[0] === _.keys(newCardObj.loss)[0])) {
-      similarityPoints += 2
-    }
-    const bothHasOnlyGains = _.isEmpty(prevCardObj.loss) && _.isEmpty(newCardObj.loss)
-    if (bothHasOnlyGains) {
-      similarityPoints += 2
-    }
+    // // for loss comparison
+    // comparisonSpace += 2
+    // const bothHasLoss = !_.isEmpty(prevCardObj.loss) && !_.isEmpty(newCardObj.loss)
+    // if (bothHasLoss && (_.keys(prevCardObj.loss)[0] === _.keys(newCardObj.loss)[0])) {
+    //   similarityPoints += 2
+    // }
+    // const bothHasOnlyGains = _.isEmpty(prevCardObj.loss) && _.isEmpty(newCardObj.loss)
+    // if (bothHasOnlyGains) {
+    //   similarityPoints += 2
+    // }
+
+    const sameLossResources = _.intersection(
+      _.keys(prevCardObj.loss),
+      _.keys(newCardObj.loss)
+    )
+
+    // whether the resources gained are the same
+    comparisonSpace += _.max([_.keys(prevCardObj.loss).length, _.keys(newCardObj.loss).length])
+    similarityPoints += sameLossResources.length
+
+    // amount of resources gained
+    _.forEach(sameLossResources, (resourceGained) => {
+      comparisonSpace += 1.5
+      
+      const prevAmount = prevCardObj.loss[resourceGained]
+      const newAmount = newCardObj.loss[resourceGained]
+      similarityPoints += (
+        1
+        - (Math.abs(prevAmount - newAmount) / _.mean([prevAmount, newAmount]))
+      ) * 1.5
+    })
 
     // for type comparison
     comparisonSpace += 3

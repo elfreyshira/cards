@@ -209,10 +209,10 @@ const lossResourceRoller = new Brng({
 })
 
 const lossResourceForPointGeneratorRoller = new Brng({
-  fire: 1,
-  water: 1,
-  earth: 1,
-  wild: 1
+  fire: 2,
+  water: 2,
+  earth: 2,
+  wildsame: 3
 }, {
   keepHistory: true,
   bias: 4
@@ -250,7 +250,6 @@ function getLossAndGain(cardObj) {
 
     /////
     let lossRollerToUse
-    let valueLoss = 0
     let lossCount = 1
 
     if (cardObj.isPointGenerator) {
@@ -266,7 +265,6 @@ function getLossAndGain(cardObj) {
 
       undoChainArray.push(() => lossRollerToUse.undo())
       lossObj[chosenResourceLoss] = lossObj[chosenResourceLoss] ? lossObj[chosenResourceLoss]+1 : 1
-      valueLoss += RESOURCE_LOSS_VALUE[chosenResourceLoss]
 
 
       ////////////////////////
@@ -282,7 +280,7 @@ function getLossAndGain(cardObj) {
       }
     })
 
-
+    const valueLoss = getLossValue(lossObj)
     currentValue = currentValue - valueLoss
     currentMaxValue = currentMaxValue + valueLoss
 
@@ -447,7 +445,7 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
     }
     newCardObj.gain = gainObj
 
-    const currentUsageValue = getGainValue(newCardObj) - getLossValue(newCardObj)
+    const currentUsageValue = getGainValue(newCardObj) - getLossValue(newCardObj.loss)
 
     const {similarityRatio, mostSimilarCardObj} = checkSimilarity(
       cardsArray.slice(0, cardsArrayIndex), newCardObj
@@ -494,12 +492,12 @@ function getGainValue (cardObj) {
     .value()
 }
 
-function getLossValue (cardObj) {
-  if (_.isEmpty(cardObj.loss)) {
+function getLossValue (lossObj) {
+  if (_.isEmpty(lossObj)) {
     return 0
   }
   else {
-    return _.chain(cardObj.loss)
+    return _.chain(lossObj)
       .map((val, key) => RESOURCE_LOSS_VALUE[key] * val)
       .sum()
       .value()
@@ -544,7 +542,7 @@ _.forEach(cardsArray, (cardObj) => {
   // == (gain-loss)*multiplier + points - (default card cost)
 
   const gainValue = getGainValue(cardObj)
-  const lossValue = getLossValue(cardObj)
+  const lossValue = getLossValue(cardObj.loss)
   const usageValue = gainValue - lossValue
 
   totalCostValue = getTotalCostValue(cardObj.type, usageValue)

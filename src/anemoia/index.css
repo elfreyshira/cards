@@ -166,7 +166,10 @@ svg.icon.gaincard {
   filter: drop-shadow(1px 1px 1px rgba(0,0,0,40%));
   font-size: 1.5em;
 }
-.resource-cost-group span:last-child .wildsame-equal-sign {
+/*.resource-cost-group span:last-child .wildsame-equal-sign {
+  display: none;
+}*/
+span:last-child .wildsame-equal-sign {
   display: none;
 }
 
