@@ -165,6 +165,8 @@ const RESOURCE_ORDER_MAP = {
   money: 5,
 }
 
+const RESOURCES_THAT_HAS_DIGITS = ['money', 'point']
+
 function Gain({gain}) {
   if (_.isEmpty(gain)) {
     return null
@@ -182,7 +184,7 @@ function Gain({gain}) {
     const resourceDiv = (
       <div className="gain-family" key={resource}>
         {_.times(gain[resource], (idx) => {
-          if (resource === 'money' && idx >= 1) {
+          if (_.includes(RESOURCES_THAT_HAS_DIGITS, resource) && idx >= 1) {
             // money is all at once, so don't do it multiple times
             return null
           }

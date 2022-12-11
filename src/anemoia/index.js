@@ -194,6 +194,8 @@ const resourceGainRoller = new Brng({
   bias: 4
 })
 
+const resourceGainPointsRoller = new Brng({point: 1}, {keepHistory: true})
+
 const proportionsTapAnotherOnTapCards = 0.0
 const lossResourceRoller = new Brng({
   fire: 2,
@@ -216,7 +218,7 @@ const lossResourceForPointGeneratorRoller = new Brng({
   bias: 4
 })
 const lossCountForPointGeneratorRoller = new Brng({
-  1: 1,
+  // 1: 1,
   2: 1,
   3: 1,
 }, {
@@ -251,7 +253,6 @@ function getLossAndGain(cardObj) {
     let valueLoss = 0
     let lossCount = 1
 
-    console.log(cardObj.isPointGenerator)
     if (cardObj.isPointGenerator) {
       lossRollerToUse = lossResourceForPointGeneratorRoller
       lossCount = _.toNumber(lossCountForPointGeneratorRoller.roll())
@@ -293,19 +294,22 @@ function getLossAndGain(cardObj) {
   // START: RESOURCE GAIN
   // START: RESOURCE GAIN
   const gainObj = {}
-  while (currentValue < (fixedMaxValue - 25) && loopTimes <= 10) {
+  while (currentValue < (fixedMaxValue - 25) && loopTimes <= 42) {
     loopTimes++
-    if (loopTimes === 10) {
+    if (loopTimes === 42) {
       console.log(loopTimes)
       console.log(gainObj)
     }
 
-    // don't have chainLevel2 on level 1 cards
-    // if (cardObj.spotLevel === LEVELS.LEVEL_1) {
-    //   excludeList = _.uniq(excludeList.concat('chainLevel2'))
-    // }
+    let gainRollerToUse
+    if (cardObj.isPointGenerator) {
+      gainRollerToUse = resourceGainPointsRoller
+    }
+    else {
+      gainRollerToUse = resourceGainRoller
+    }
 
-    const chosenResource = _.attempt(() => resourceGainRoller.roll({
+    const chosenResource = _.attempt(() => gainRollerToUse.roll({
       only: _.isEmpty(includeList) ? undefined : includeList,
       exclude: _.uniq(excludeValuesAbove(currentMaxValue, cardObj).concat(excludeList))
     }))
@@ -322,7 +326,7 @@ function getLossAndGain(cardObj) {
       break
     }
 
-    undoChainArray.push(() => resourceGainRoller.undo())
+    undoChainArray.push(() => gainRollerToUse.undo())
 
     // ADD CHOSEN RESOURCE TO THE CARD OBJ
     gainObj[chosenResource] = (gainObj[chosenResource] || 0) + 1 // !!!!!!!!!!!!!!!

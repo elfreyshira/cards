@@ -88,6 +88,10 @@ function Money ({amount}) {
   return <span className="icon money">${amount}</span>
 }
 
+function Point ({amount}) {
+  return <span className="icon money">❋{amount}</span>
+}
+
 export default {
   Spot,
   Home,
@@ -110,4 +114,5 @@ export default {
   Grabanother,
   ThisCard,
   Moment,
+  Point
 }

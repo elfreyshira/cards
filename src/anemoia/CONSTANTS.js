@@ -42,7 +42,7 @@ const RESOURCE_GAIN_VALUE = {
   chainLevel1: _.constant(75),
   chainLevel2: _.constant(100),
   chainLevel3: _.constant(150),
-  points: _.constant(25),
+  point: _.constant(25),
 }
 
 const RESOURCE_LOSS_VALUE = {
