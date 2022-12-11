@@ -498,7 +498,19 @@ function getLossValue (lossObj) {
   }
   else {
     return _.chain(lossObj)
-      .map((val, key) => RESOURCE_LOSS_VALUE[key] * val)
+      .map((val, key) => {
+        if (key === 'wildsame') {
+          const lossValuePerResource = RESOURCE_LOSS_VALUE[key]
+          let totalLossValue = 0
+          _.times(val, (idx) => {
+            totalLossValue += _.min([lossValuePerResource + 10*idx, 100])
+          })
+          return totalLossValue
+        }
+        else {
+          return RESOURCE_LOSS_VALUE[key] * val
+        }
+      })
       .sum()
       .value()
   }
