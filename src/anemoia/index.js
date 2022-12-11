@@ -83,52 +83,52 @@ _.forEach(tapMaxValues, (val, idx) => {
   })
 })
 
-// ////////////////////////
-// /// POINT GENERATORS
-// ////////////////////////
-// // SPOT
-// const spotPointsMaxValues =         [125, 225,  325]
-// const spotPointsCardsPerMaxValue =  [2,   2,    2]
-// const spotPointsLevels = [LEVELS.LEVEL_1, LEVELS.LEVEL_2,  LEVELS.LEVEL_3]
-// _.forEach(spotPointsMaxValues, (val, idx) => {
-//   _.times(spotPointsCardsPerMaxValue[idx] * cardsMultiply, () => {
-//     cardsArray.push({
-//       type: SPOT,
-//       isPointGenerator: true,
-//       maxValue: val,
-//       spotLevel: spotPointsLevels[idx]
-//     })
-//   })
-// })
+////////////////////////
+/// POINT GENERATORS
+////////////////////////
+// SPOT
+const spotPointsMaxValues =         [125, 225,  325]
+const spotPointsCardsPerMaxValue =  [2,   2,    2]
+const spotPointsLevels = [LEVELS.LEVEL_1, LEVELS.LEVEL_2,  LEVELS.LEVEL_3]
+_.forEach(spotPointsMaxValues, (val, idx) => {
+  _.times(spotPointsCardsPerMaxValue[idx] * cardsMultiply, () => {
+    cardsArray.push({
+      type: SPOT,
+      isPointGenerator: true,
+      maxValue: val,
+      spotLevel: spotPointsLevels[idx]
+    })
+  })
+})
 
-// // HOME
-// const homePointsMaxValues =         [125, 150,  175,  200,  225,  250]
-// const homePointsCardsPerMaxValue =  [1,   1,    1,    1,    1,    1]
-// _.forEach(homePointsMaxValues, (val, idx) => {
-//   _.times(homePointsCardsPerMaxValue[idx] * cardsMultiply, () => {
-//     cardsArray.push({
-//       type: HOME,
-//       isPointGenerator: true,
-//       maxValue: val
-//     })
-//   })
-// })
+// HOME
+const homePointsMaxValues =         [125, 150,  175,  200,  225,  250]
+const homePointsCardsPerMaxValue =  [1,   1,    1,    1,    1,    1]
+_.forEach(homePointsMaxValues, (val, idx) => {
+  _.times(homePointsCardsPerMaxValue[idx] * cardsMultiply, () => {
+    cardsArray.push({
+      type: HOME,
+      isPointGenerator: true,
+      maxValue: val
+    })
+  })
+})
 
-// // TAP
-// const tapPointsMaxValues =         [125, 175,  225]
-// const tapPointsCardsPerMaxValue =  [2,   2,    2,]
-// _.forEach(tapPointsMaxValues, (val, idx) => {
-//   _.times(tapPointsCardsPerMaxValue[idx] * cardsMultiply, () => {
-//     cardsArray.push({
-//       type: TAP,
-//       isPointGenerator: true,
-//       maxValue: val
-//     })
-//   })
-// })
-// ////////////////////////
-// /// END POINT GENERATORS
-// ////////////////////////
+// TAP
+const tapPointsMaxValues =         [125, 175,  225]
+const tapPointsCardsPerMaxValue =  [2,   2,    2,]
+_.forEach(tapPointsMaxValues, (val, idx) => {
+  _.times(tapPointsCardsPerMaxValue[idx] * cardsMultiply, () => {
+    cardsArray.push({
+      type: TAP,
+      isPointGenerator: true,
+      maxValue: val
+    })
+  })
+})
+////////////////////////
+/// END POINT GENERATORS
+////////////////////////
 
 
 const cardPointsRoller = new Brng({
@@ -216,7 +216,6 @@ const lossResourceForPointGeneratorRoller = new Brng({
   bias: 4
 })
 const lossCountForPointGeneratorRoller = new Brng({
-  0: 1,
   1: 1,
   2: 1,
   3: 1,
@@ -244,48 +243,45 @@ function getLossAndGain(cardObj) {
   /// START: RESOURCE LOSS
   /// START: RESOURCE LOSS
   let lossObj = {}
-  
+
   if (cardObj.hasLoss || cardObj.isPointGenerator) {
 
     /////
-    // let rollerToUse
-    // let valueLoss = 0
-    // let lossCount = 1
-    // if (cardObj.isPointGenerator) {
-    //   rollerToUse = lossResourceForPointGeneratorRoller
-    //   lossCount = _.toNumber(lossCountForPointGeneratorRoller.roll())
-    // }
-    // else {
-    //   rollerToUse = lossResourceRoller
-    // }
+    let lossRollerToUse
+    let valueLoss = 0
+    let lossCount = 1
 
-    // _.times(lossCount, () => {
-    //   const chosenResourceLoss = rollerToUse.roll()
+    console.log(cardObj.isPointGenerator)
+    if (cardObj.isPointGenerator) {
+      lossRollerToUse = lossResourceForPointGeneratorRoller
+      lossCount = _.toNumber(lossCountForPointGeneratorRoller.roll())
+    }
+    else {
+      lossRollerToUse = lossResourceRoller
+    }
 
-    //   undoChainArray.push(() => rollerToUse.undo())
-    //   lossObj[chosenResourceLoss] = lossObj[chosenResourceLoss] ? 1 : lossObj[chosenResourceLoss]+1
-    //   valueLoss += RESOURCE_LOSS_VALUE[chosenResourceLoss]
+    _.times(lossCount, () => {
+      const chosenResourceLoss = lossRollerToUse.roll()
+
+      undoChainArray.push(() => lossRollerToUse.undo())
+      lossObj[chosenResourceLoss] = lossObj[chosenResourceLoss] ? lossObj[chosenResourceLoss]+1 : 1
+      valueLoss += RESOURCE_LOSS_VALUE[chosenResourceLoss]
 
 
-    //   ////////////////////////
-    //   // update the exclude/inlude list
-    //   ////////////////////////
-    //   excludeList.push(chosenResourceLoss)
-    //   if (_.includes(PHYSICAL_RESOURCE_ARRAY, chosenResourceLoss)) {
-    //     excludeList.push(chosenResourceLoss + 'later')
-    //   }
-    //   // don't have tapAnother and untap on the same card
-    //   if (chosenResourceLoss === 'tapAnother') {
-    //     excludeList.push('untap')
-    //   }
-    // })
-    /////
+      ////////////////////////
+      // update the exclude/inlude list
+      ////////////////////////
+      excludeList.push(chosenResourceLoss)
+      if (_.includes(PHYSICAL_RESOURCE_ARRAY, chosenResourceLoss)) {
+        excludeList.push(chosenResourceLoss + 'later')
+      }
+      // don't have tapAnother and untap on the same card
+      if (chosenResourceLoss === 'tapAnother') {
+        excludeList.push('untap')
+      }
+    })
 
-    const chosenResourceLoss = lossResourceRoller.roll()
-    undoChainArray.push(() => lossResourceRoller.undo())
-    lossObj[chosenResourceLoss] = 1
 
-    const valueLoss = RESOURCE_LOSS_VALUE[chosenResourceLoss]
     currentValue = currentValue - valueLoss
     currentMaxValue = currentMaxValue + valueLoss
 
@@ -380,7 +376,7 @@ const sortCardsByArray = [
 cardsArray = _.sortBy(cardsArray, sortCardsByArray)
 _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
 
-  if (cardObj.isPointGenerator) {return}
+  // if (cardObj.isPointGenerator) {return}
 
   // // add chainLevel1 once you're on spotLevel = 2
   // if (!hasAddedChainLevel1 && cardObj.type === SPOT && cardObj.spotLevel !== LEVELS.LEVEL_1) {
@@ -660,21 +656,6 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
 
 console.log(resourceGainRoller.proportions)
 
-////////////////////////////////////////////
-////////////////////////////////////////////
-////////////////////////////////////////////
-////////////////////////////////////////////
-// add point generators
-
-const pointCardsArray = []
-
-
-
-////////////////////////////////////////////
-////////////////////////////////////////////
-////////////////////////////////////////////
-////////////////////////////////////////////
-
 
 // console.log('momentsArray')
 // console.log(momentsArray)
@@ -832,6 +813,7 @@ cardsArray = cardsArray.concat(starterSpots)
 const cardsImportantKeys = [
   'uuid',
   'type',
+  'isPointGenerator',
   'spotLevel',
   'pointsOnCard',
   'maxValue',

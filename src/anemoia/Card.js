@@ -109,7 +109,9 @@ function Loss({loss}) {
   }
   return (
     <div className="loss">
-      <ResourceIcon resource={_.keys(loss)[0]} amount={1}/>
+    {_.map(loss, (val, key) => {
+      return _.times(val, (idx) => <ResourceIcon resource={key} amount={1} key={key+idx}/>)
+    })}
     </div>
   )
 }
