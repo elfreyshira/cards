@@ -23,12 +23,16 @@ const CONTRACT_C = 'CONTRACT_C'
 const numberOfResourcesRoller = new Brng({3:1, 4:1, 5:1}, {bias: 4})
 const sameOrNotRoller = new Brng({same:1, free:1}, {bias: 3})
 
-// for 4 resources
-const numberOfSpecificElementRoller = new Brng({1:1, 2:1}, {bias: 3})
+// for 3 and 5 resources
+const extraSpecificElementRoller = new Brng({0:1, 1:1}, {bias: 3})
 
-const tagNumberRoller = new Brng({0:1, 1:1, 2:1}, {bias: 4})
-const tagElementRoller = new Brng({fire: 1, water:1, earth:1}, {bias: 4})
 
+const tagElementRoller = new Brng({none: 3, fire: 2, water: 2, earth: 2}, {bias: 4})
+const tagNumberRollerMapping = {
+  fire: new Brng({1:1, 2:1}, {bias: 4}),
+  water: new Brng({1:1, 2:1}, {bias: 4}),
+  earth: new Brng({1:1, 2:1}, {bias: 4}),
+}
 
 // const hasConditionalRoller = new Brng({yes:2, no:1}, {bias: 3})
 const hasConditionalRoller = new Brng({yes:2, no:0}, {bias: 3})
@@ -65,15 +69,15 @@ _.times(perType, () => {
   })
 })
 
-function descSortResourceCostFunc (contractObj) {
+function sortResourceCostFunc (contractObj) {
   return contractObj.resourceCost
 }
 
 const sortOrderArray = [
   'type',
-  descSortResourceCostFunc,
-  'tagNumber',
+  sortResourceCostFunc,
   'tagElement',
+  'tagNumber',
   'conditionalType',
   'specificElementCost',
   'same',
@@ -83,13 +87,14 @@ const sortOrderArray = [
 
 contractsArray = _.sortBy(contractsArray, sortOrderArray)
 _.forEach(contractsArray, (contractObj) => {
-  if (contractObj.resourceCost <= 3) {
-    // tagNumberRoller.update({2:0})
+  const tagElementChosen = tagElementRoller.roll()
+  if (tagElementChosen === 'none') {
+    contractObj.tagNumber = 0
   }
-  else if (contractObj.resourceCost >= 4) {
-    // tagNumberRoller.update({2:1.5})
+  else {
+    contractObj.tagNumber = _.toNumber(tagNumberRollerMapping[tagElementChosen].roll())
+    contractObj.tagElement = tagElementChosen
   }
-  contractObj.tagNumber = _.toNumber(tagNumberRoller.roll())
 })
 
 
@@ -108,46 +113,31 @@ _.forEach(contractsArray, (contractObj) => {
   }
 })
 
-
+const specificElementCostMapping = {
+  3: () => 1 + _.toNumber(extraSpecificElementRoller.roll()),
+  4: _.constant(2),
+  5: () => 2 + _.toNumber(extraSpecificElementRoller.roll()),
+}
 contractsArray = _.sortBy(contractsArray, sortOrderArray)
 _.forEach(contractsArray, (contractObj) => {
-  if (contractObj.tagNumber >= 1 && contractObj.resourceCost === 4) {
-    contractObj.specificElementCost = _.toNumber(numberOfSpecificElementRoller.roll())
+  if (contractObj.tagNumber >= 1) {
+    contractObj.specificElementCost = specificElementCostMapping[contractObj.resourceCost]()
   }
-  else if (contractObj.tagNumber >= 1 && contractObj.resourceCost === 5) {
-    contractObj.specificElementCost = 2
-  }
-  else if (contractObj.tagNumber >= 1) {
-    contractObj.specificElementCost = 1
-  }
-
 })
 
 contractsArray = _.sortBy(contractsArray, sortOrderArray)
 _.forEach(contractsArray, (contractObj) => {
   const wildsToPay = contractObj.resourceCost - (contractObj.specificElementCost || 0)
-  if (wildsToPay >= 2 && wildsToPay <= 5) {
+  if (wildsToPay >= 2) {
     contractObj.same = (sameOrNotRoller.roll() === 'same')
   }
 })
 
-
-contractsArray = _.sortBy(contractsArray, sortOrderArray)
-_.forEach(contractsArray, (contractObj) => {
-  if (contractObj.tagNumber >= 1) {
-    const chosenTagElement = tagElementRoller.roll()
-    contractObj.tagElement = chosenTagElement // !!!!!!!!!!
-    if (contractObj.specificElementCost >= 2) {
-      _.times(contractObj.specificElementCost - 1, () => tagElementRoller.roll(chosenTagElement))
-    }
-  }
-})
-
 const costValueOfSame = [80, 90, 100, 100]
-const costAdjustmentMapping = {}
-costAdjustmentMapping[CONTRACT_A] = 1.35
-costAdjustmentMapping[CONTRACT_B] = 1.0
-costAdjustmentMapping[CONTRACT_C] = 0.74
+const valueMultiplierMapping = {}
+valueMultiplierMapping[CONTRACT_A] = 1.3
+valueMultiplierMapping[CONTRACT_B] = 1.0
+valueMultiplierMapping[CONTRACT_C] = 0.77
 
 contractsArray = _.sortBy(contractsArray, sortOrderArray)
 _.forEach(contractsArray, (contractObj) => {
@@ -178,14 +168,18 @@ _.forEach(contractsArray, (contractObj) => {
   }
 
   contractObj.resourceCostObj = _.cloneDeep(resourceCostObj) // !!!!!!!!!!
-  contractObj.totalCostValue = totalCostValue * costAdjustmentMapping[contractObj.type]
+  contractObj.totalCostValue = totalCostValue * valueMultiplierMapping[contractObj.type]
 
 })
 
 
-const pointsPerTag = 4
-const pointsForWinningTagComparison = 3
-const avgTagsForSpecificElement = 6
+// includes points for winning comparison, if winning it is 5/2, compared to 2 neighbors.
+// this is a little higher than calculated avg, because we assume human players are smarter than RNG
+const pointsPerTag = 4.5
+
+const avgMaxTagCount = 6.1
+const avgCardsOfEachTypePlayed = 2.5
+const avgResourceCostPerCard = 3.4
 
 contractsArray = _.sortBy(contractsArray, sortOrderArray)
 _.forEach(contractsArray, (contractObj) => {
@@ -195,9 +189,9 @@ _.forEach(contractsArray, (contractObj) => {
   
   // for tag comparison at the end
   // if first place gets 3 points
-  totalCostValue -= contractObj.tagNumber
-  * (pointsForWinningTagComparison * 2 / avgTagsForSpecificElement)
-  * 25
+  // totalCostValue -= contractObj.tagNumber
+  // * (pointsForWinningTagComparison * 2 / avgMaxTagCount)
+  // * 25
 
 
   if (contractObj.tagNumber > 0) {
@@ -205,22 +199,25 @@ _.forEach(contractsArray, (contractObj) => {
   }
   else if (contractObj.conditionalType === 'card') {
     const avgPointsGained = 
-    contractObj.conditionalPoints = _.max([Math.floor(totalCostValue/25/2.5 * .7), 1])
-    totalCostValue -= contractObj.conditionalPoints*25*2.5
+    contractObj.conditionalPoints = _.max([Math.floor(totalCostValue/25/avgCardsOfEachTypePlayed * .7), 1])
+    totalCostValue -= contractObj.conditionalPoints*25*avgCardsOfEachTypePlayed
 
     contractObj.basePoints = Math.round(totalCostValue / 25)
   }
   else if (contractObj.conditionalType === 'cardcost') {
-    contractObj.conditionalPoints = _.max([1, Math.floor(totalCostValue/25/3.33/2.5)])
+    contractObj.conditionalPoints = _.max([
+      1,
+      Math.floor(totalCostValue/25/avgResourceCostPerCard/avgCardsOfEachTypePlayed)
+    ])
 
-    totalCostValue -= contractObj.conditionalPoints*25*3.33*2.5
+    totalCostValue -= contractObj.conditionalPoints*25*avgResourceCostPerCard*avgCardsOfEachTypePlayed
     
     contractObj.basePoints = Math.round(totalCostValue / 25)
   }
   else if (contractObj.conditionalType === 'tag') {
-    contractObj.conditionalPoints = Math.floor(totalCostValue/25/avgTagsForSpecificElement)
+    contractObj.conditionalPoints = _.max([Math.floor(totalCostValue/25/avgMaxTagCount * .8), 1])
 
-    totalCostValue -= contractObj.conditionalPoints*25*avgTagsForSpecificElement
+    totalCostValue -= contractObj.conditionalPoints*25*avgMaxTagCount
     
     contractObj.basePoints = Math.round(totalCostValue / 25)
   }
@@ -230,22 +227,6 @@ _.forEach(contractsArray, (contractObj) => {
 })
 
 
-
-// CONTRACT_A
-// _.times(20, (idx) => {
-//   const contractObj = {
-//     type: CONTRACT_A,
-//     tagNumber: tagNumberRoller.roll()
-//   }
-
-//   if (contractObj.tagNumber > 0) {
-//     const chosenTagElement = tagElementRoller.roll()
-//     tagElementRoller.roll(chosenTagElement)
-//     contractObj.tagElement = chosenTagElement
-//   }
-
-
-// })
 
 contractsArray = _.sortBy(contractsArray, sortOrderArray)
 console.log('contractsArray')

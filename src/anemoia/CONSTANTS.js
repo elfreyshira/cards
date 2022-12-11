@@ -13,7 +13,7 @@ const MIN_POINTS_MAP = {
 const LEVELS = {
   LEVEL_1: 'LEVEL_1',
   LEVEL_2: 'LEVEL_2',
-  LEVEL_3: 'LEVEL_3',
+  LEVEL_3: 'LEVEL_3'
 }
 
 const RESOURCE_GAIN_VALUE = {
@@ -27,22 +27,22 @@ const RESOURCE_GAIN_VALUE = {
   earthlater: _.constant(40),
   wild: _.constant(120),
   // wildlater: _.constant(50),
-  grabanother: _.constant(55),
+  grabanother: _.constant(60),
   untap: (cardObj = {}) => {
     // if (!_.isEmpty(cardObj) && cardObj.type === HOME) {
     if (cardObj.type === HOME) {
-      // untap for home doesn't have any effect when activated on rest.
-      // therefore it's less valuable on a HOME card.
-      return 100
+      // only valuable when you have more tapped cards than workers you rested
+      return 90
     }
     else {
-      return 150
+      return 140
     }
   },
   retrieve: _.constant(50),
-  chainLevel1: _.constant(50),
+  chainLevel1: _.constant(75),
   chainLevel2: _.constant(100),
   chainLevel3: _.constant(150),
+  points: _.constant(25),
 }
 
 const RESOURCE_LOSS_VALUE = {

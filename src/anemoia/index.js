@@ -2,13 +2,6 @@ import Brng from 'brng'
 import _ from 'lodash'
 
 import {
-  generateConsistentMoment,
-  generateRandomMoment,
-  generateIncreaseMoment,
-  generateDecreaseMoment
-} from './generate-moment-cards.js'
-
-import {
   SPOT,
   HOME,
   TAP,
@@ -29,8 +22,14 @@ import ICONS from './icons.js'
 
 // import endGameCards from './end-game-cards.js'
 // import './calculate-retrieve-cost.js'
-import contractsArray from './generate-contracts.js'
-import './calculate-avg-tag-value.js'
+
+// import contractsArray from './generate-contracts.js'
+// import './calculate-avg-tag-value.js'
+
+// import './generate-hex-spaces.js'
+
+// import './generate-moments.js'
+
 
 import './index.css';
 
@@ -44,7 +43,7 @@ function excludeValuesAbove (value, cardObj) {
 
 
 let cardsArray = []
-const cardsMultiply = 0 // 1 = 45 cards, 2 = 90 cards
+const cardsMultiply = 1 // 1 = 45 cards, 2 = 90 cards
 
 // SPOT
 const spotMaxValues =         [225,  325]
@@ -118,13 +117,13 @@ const proportionsChainLevel3 = 0.47
 const proportionsUntapOnHomeCards = 1.8 // changed for home cards
 const proportionsRetrieveOnTapCards = 2.0 // changed for tap cards
 
-const proportionsGrabAnotherOnNonSpotCards = 0.8
+const proportionsGrabAnotherOnNonSpotCards = 0.9
 const proportionsNowResourcesOnNonSpotCards = 2
 const proportionsLaterResources = 1
 
 const resourceGainRoller = new Brng({
-  money: 3.7,
-  card: 2.3,
+  money: 3.5,
+  card: 2.4,
   fire: 1.9,
   firelater: 1,
   water: 1.9,
@@ -134,7 +133,7 @@ const resourceGainRoller = new Brng({
   wild: 3.3,
   // wildlater: 1,
   grabanother: 0.8, // changed later via proportionsGrabAnotherOnNonSpotCards
-  untap: 1.5, // changed later via proportionsUntapOnHomeCards
+  untap: 1.6, // changed later via proportionsUntapOnHomeCards
   retrieve: 1.8, // changed later via proportionsRetrieveOnTapCards
   chainLevel1: proportionsChainLevel1,
   chainLevel2: proportionsChainLevel2,
@@ -144,13 +143,13 @@ const resourceGainRoller = new Brng({
   bias: 4
 })
 
-const proportionsTapAnotherOnTapCards = 0.9
+const proportionsTapAnotherOnTapCards = 0.0
 const lossResourceRoller = new Brng({
   fire: 2,
   water: 2,
   earth: 2,
   wild: 5,
-  tapAnother: 3, // changed later via proportionsTapAnotherOnTapCards
+  tapAnother: 3.7, // removed later for tap cards
 }, {
   keepHistory: true,
   bias: 4
@@ -331,13 +330,10 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
     else if (cardObj.type === TAP) {
       currentCardType = TAP
       resourceGainRoller.remove('untap')
-      lossResourceRoller.update({tapAnother: proportionsTapAnotherOnTapCards})
+      lossResourceRoller.remove('tapAnother')
       resourceGainRoller.add({retrieve: proportionsRetrieveOnTapCards})
     }
   }
-
-  // getLossAndGain(cardObj, cardsArrayIndex)
-  // checkSimilarity(cardsArray.slice(0, cardsArrayIndex), _.cloneDeep(cardObj))
 
   let timesTriedToSetResources = 0
   let acceptableRatio = 0.70
@@ -408,32 +404,52 @@ function getGainValue (cardObj) {
 }
 
 function getLossValue (cardObj) {
-  return cardObj.loss ?
-    RESOURCE_LOSS_VALUE[_.keys(cardObj.loss)[0]] * _.values(cardObj.loss)[0]
-    : 0
+  if (_.isEmpty(cardObj.loss)) {
+    return 0
+  }
+  else {
+    return _.chain(cardObj.loss)
+      .keys()
+      .map((lossKey) => RESOURCE_LOSS_VALUE[lossKey] * cardObj.loss[lossKey])
+      .sum()
+      .value()
+  }
+  // return cardObj.loss ?
+  //   RESOURCE_LOSS_VALUE[_.keys(cardObj.loss)[0]] * _.values(cardObj.loss)[0]
+  //   : 0
 }
 
-const BASE_SPOT_MULTIPLIER = 1.6
-const BASE_HOME_MULTIPLIER = 1.75
-const HOME_EXPONENTIAL_MULTIPLIER = 1.19
-const BASE_TAP_MULTIPLIER = 1.75
+const BASE_CARD_MULTIPLIER = 1.75
 const DEFAULT_CARD_COST = 50 // every card built has this inherent value
 
-function getTotalCostValue (cardType, usageValue) {
-  if (cardType === SPOT) {
-    return usageValue*BASE_SPOT_MULTIPLIER - DEFAULT_CARD_COST
-  }
-  if (cardType === HOME) {
-    return 100*BASE_HOME_MULTIPLIER
-      + (usageValue-100)**HOME_EXPONENTIAL_MULTIPLIER
-      - DEFAULT_CARD_COST
-  }
-  if (cardType === TAP) {
-    return usageValue*BASE_TAP_MULTIPLIER - DEFAULT_CARD_COST
-  }
-}
+// const BASE_SPOT_MULTIPLIER = 1.75
+// const BASE_HOME_MULTIPLIER = 1.75
+// const HOME_EXPONENTIAL_MULTIPLIER = 1.12
+// const BASE_TAP_MULTIPLIER = 1.75
 
-global.getTotalCostValue = getTotalCostValue
+
+function getTotalCostValue (cardType, usageValue) {
+  return usageValue*BASE_CARD_MULTIPLIER - DEFAULT_CARD_COST
+
+  // if (cardType === SPOT) {
+  //   return usageValue*BASE_SPOT_MULTIPLIER - DEFAULT_CARD_COST
+  // }
+  // if (cardType === HOME) {
+
+  //   return usageValue*BASE_HOME_MULTIPLIER - DEFAULT_CARD_COST
+
+  //   // return ((usageValue - 100)**HOME_EXPONENTIAL_MULTIPLIER)*BASE_HOME_MULTIPLIER
+  //   //   + 100*BASE_HOME_MULTIPLIER
+  //   //   - DEFAULT_CARD_COST
+
+  //   // return 100*BASE_HOME_MULTIPLIER
+  //   //   + (usageValue-100)**HOME_EXPONENTIAL_MULTIPLIER
+  //   //   - DEFAULT_CARD_COST
+  // }
+  // if (cardType === TAP) {
+  //   return usageValue*BASE_TAP_MULTIPLIER - DEFAULT_CARD_COST
+  // }
+}
 
 // RESOURCE COST
 _.forEach(cardsArray, (cardObj) => {
@@ -555,92 +571,23 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
   
 })
 
-console.log(cardsArray)
-
 console.log(resourceGainRoller.proportions)
 
 ////////////////////////////////////////////
 ////////////////////////////////////////////
 ////////////////////////////////////////////
 ////////////////////////////////////////////
+// add point generators
+
+const pointCardsArray = []
 
 
-// MOMENTS (rank cards)
-let momentsArray = []
 
-// SPOT
-// const momentsConsistentCost = [2,2,3,3,3,4,4,4,5,5]
-const momentsCost = [2,2,3,3,4]
-_.times(5, (idx) => {
-  momentsArray.push({
-    type: 'CONSISTENT',
-    cost: momentsCost[idx],
-    bonus: {}, // {2: 'develop', 4: 'chainLevel1', 6: 'untap'}
-    points: {} // {1: 10, 2: 10, 3: 10, ...}
-  })
-})
-_.times(5, (idx) => {
-  momentsArray.push({
-    type: 'RANDOM',
-    cost: momentsCost[idx],
-    bonus: {},
-    points: {}
-  })
-})
-_.times(5, (idx) => {
-  momentsArray.push({
-    type: 'INCREASE',
-    cost: momentsCost[idx],
-    bonus: {},
-    points: {}
-  })
-})
-_.times(5, (idx) => {
-  momentsArray.push({
-    type: 'DECREASE', // make it barely decrease throughout the steps
-    cost: momentsCost[idx],
-    bonus: {},
-    points: {}
-  })
-})
+////////////////////////////////////////////
+////////////////////////////////////////////
+////////////////////////////////////////////
+////////////////////////////////////////////
 
-const momentHasBonusRoller = new Brng({
-  hasBonus: 1,
-  noBonus: 1
-}, {keepHistory: true})
-const momentBonusRoller = new Brng({
-  untap: 2,
-  retrieve: 2,
-  chainLevel1: 1.2,
-  chainLevel2: 0.8
-})
-
-
-_.forEach(momentsArray, (momentObj) => {
-  
-  // 5 steps
-  _.times(5, (idx) => {
-    if (momentHasBonusRoller.roll() === 'hasBonus') {
-      momentObj.bonus[idx+1] = momentBonusRoller.roll()
-    }
-  })
-
-  if (momentObj.type === 'CONSISTENT') {
-    generateConsistentMoment(momentObj, RESOURCE_GAIN_VALUE)
-  }
-  else if (momentObj.type === 'RANDOM') {
-    generateRandomMoment(momentObj, RESOURCE_GAIN_VALUE)
-  }
-  else if (momentObj.type === 'INCREASE') {
-    generateIncreaseMoment(momentObj, RESOURCE_GAIN_VALUE)
-  }
-  else if (momentObj.type === 'DECREASE') {
-    generateDecreaseMoment(momentObj, RESOURCE_GAIN_VALUE)
-  }
-
-  momentObj.resourceCost = getResourceCost(momentObj.cost * 100)
-  
-})
 
 // console.log('momentsArray')
 // console.log(momentsArray)
@@ -724,20 +671,29 @@ function Arrow () {
 
 const starterSpots = [
   {
-    "uuid": "STARTER SPOT: WILD (1)",
+    "uuid": "STARTER SPOT: FIRE",
     "type": SPOT,
     "spotLevel": "LEVEL_1",
     "gain": {
-      "wild": 1
+      "fire": 1
     },
     "_usageValue": 100
   },
   {
-    "uuid": "STARTER SPOT: WILD (2)",
+    "uuid": "STARTER SPOT: WATER",
     "type": SPOT,
     "spotLevel": "LEVEL_1",
     "gain": {
-      "wild": 1
+      "water": 1
+    },
+    "_usageValue": 100
+  },
+  {
+    "uuid": "STARTER SPOT: EARTH",
+    "type": SPOT,
+    "spotLevel": "LEVEL_1",
+    "gain": {
+      "earth": 1
     },
     "_usageValue": 100
   },
@@ -817,21 +773,14 @@ const contractsImportantKeys = [
 function Cards () {
   return (
     <div>
-      <pre>
-        {/*{JSON.stringify(_.chain(cardsArray).map((obj) => _.pick(obj, cardsImportantKeys)).value(), null, 2)}*/}
-        {/*{JSON.stringify(cardsArray, null, 2)}*/}
-      </pre>
 
       {_.map(cardsArray, (obj) => {
-        {/*return <Card cardObj={_.pick(obj, cardsImportantKeys)} key={obj.uuid} />*/}
+        return <Card cardObj={_.pick(obj, cardsImportantKeys)} key={obj.uuid} />
       })}
 
-      {_.map(contractsArray, (obj, idx) => {
-        return <Contract contractObj={_.pick(obj, contractsImportantKeys)} key={idx} />
-      })}
 
       <pre>
-        {/*{JSON.stringify(_.chain(cardsArray).map((obj) => _.pick(obj, cardsImportantKeys)).value(), null, 2)}*/}
+        {JSON.stringify(_.chain(cardsArray).map((obj) => _.pick(obj, cardsImportantKeys)).value(), null, 2)}
         
         {/*{JSON.stringify(momentsArray, null, 2)}*/}
         {/*{JSON.stringify(_.chain(contractsArray).map((obj) => _.pick(obj, contractsImportantKeys)).value(), null, 2)}*/}
@@ -843,5 +792,6 @@ function Cards () {
 }
 
 
+console.log('cardsArray !!', cardsArray)
 
 export default Cards

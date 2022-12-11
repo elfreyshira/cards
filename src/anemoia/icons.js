@@ -72,13 +72,16 @@ function Retrieve () {
 }
 
 function Chainlevel1 () {
-  return <div className="chain"> <Spot /><span className="level">1</span> </div>
+  return <div className="chain"><Spot /><span className="level">1</span></div>
 }
 function Chainlevel2 () {
-  return <div className="chain"> <Spot /><span className="level">2</span> </div>
+  return <div className="chain"><Spot /><span className="level">2</span></div>
 }
 function Chainlevel3 () {
-  return <div className="chain"> <Spot /><span className="level">3</span> </div>
+  return <div className="chain"><Spot /><span className="level">3</span></div>
+}
+function Chainlevel4 () {
+  return <div className="chain"><Spot /><span className="level">4</span></div>
 }
 
 function Money ({amount}) {
@@ -101,6 +104,7 @@ export default {
   Chainlevel1,
   Chainlevel2,
   Chainlevel3,
+  Chainlevel4,
   Money,
   Grab,
   Grabanother,

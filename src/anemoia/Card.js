@@ -257,7 +257,6 @@ const conditionalPerMapping = {
 }
 
 function ConditionalPoints ({conditionalType, conditionalPoints, conditionalPer}) {
-  console.log(conditionalType, conditionalPoints, conditionalPer)
   if (_.isUndefined(conditionalType) || _.isUndefined(conditionalPoints) || _.isUndefined(conditionalPer)) {
     return null
   }
@@ -273,6 +272,26 @@ function ConditionalPoints ({conditionalType, conditionalPoints, conditionalPer}
         : null
       }
       
+    </div>
+  )
+}
+
+function Moment(props) {
+
+  const {
+    type, resourceCost, totalCostValue, resourceCostObj, basePoints,
+  } = props.momentObj
+
+
+  return (
+    <div className="card contract">
+      <div className="contract-type">
+        <ICONS.Moment />
+        <span className="contract-type-text">{type.slice(-1)}</span>
+      </div>
+      <Points pointsOnCard={basePoints} />
+      <Cost resourceCost={resourceCostObj} />
+      {/*{JSON.stringify(props.contractObj)}*/}
     </div>
   )
 }

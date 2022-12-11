@@ -325,11 +325,81 @@ function generateDecreaseMoment (momentObj, RESOURCE_GAIN_VALUE) {
   }
 }
 
+// MOMENTS (rank cards)
+let momentsArray = []
+
+// SPOT
+// const momentsConsistentCost = [2,2,3,3,3,4,4,4,5,5]
+const momentsCost = [2,2,3,3,4]
+_.times(5, (idx) => {
+  momentsArray.push({
+    type: 'CONSISTENT',
+    cost: momentsCost[idx],
+    bonus: {}, // {2: 'develop', 4: 'chainLevel1', 6: 'untap'}
+    points: {} // {1: 10, 2: 10, 3: 10, ...}
+  })
+})
+_.times(5, (idx) => {
+  momentsArray.push({
+    type: 'RANDOM',
+    cost: momentsCost[idx],
+    bonus: {},
+    points: {}
+  })
+})
+_.times(5, (idx) => {
+  momentsArray.push({
+    type: 'INCREASE',
+    cost: momentsCost[idx],
+    bonus: {},
+    points: {}
+  })
+})
+_.times(5, (idx) => {
+  momentsArray.push({
+    type: 'DECREASE', // make it barely decrease throughout the steps
+    cost: momentsCost[idx],
+    bonus: {},
+    points: {}
+  })
+})
+
+const momentHasBonusRoller = new Brng({
+  hasBonus: 1,
+  noBonus: 1
+}, {keepHistory: true})
+const momentBonusRoller = new Brng({
+  untap: 2,
+  retrieve: 2,
+  chainLevel1: 1.2,
+  chainLevel2: 0.8
+})
 
 
-export {
-  generateConsistentMoment,
-  generateRandomMoment,
-  generateIncreaseMoment,
-  generateDecreaseMoment
-}
+_.forEach(momentsArray, (momentObj) => {
+  
+  // 5 steps
+  _.times(5, (idx) => {
+    if (momentHasBonusRoller.roll() === 'hasBonus') {
+      momentObj.bonus[idx+1] = momentBonusRoller.roll()
+    }
+  })
+
+  if (momentObj.type === 'CONSISTENT') {
+    generateConsistentMoment(momentObj, RESOURCE_GAIN_VALUE)
+  }
+  else if (momentObj.type === 'RANDOM') {
+    generateRandomMoment(momentObj, RESOURCE_GAIN_VALUE)
+  }
+  else if (momentObj.type === 'INCREASE') {
+    generateIncreaseMoment(momentObj, RESOURCE_GAIN_VALUE)
+  }
+  else if (momentObj.type === 'DECREASE') {
+    generateDecreaseMoment(momentObj, RESOURCE_GAIN_VALUE)
+  }
+
+  momentObj.resourceCost = getResourceCost(momentObj.cost * 100)
+  
+})
+
+export default momentsArray
