@@ -43,7 +43,7 @@ function excludeValuesAbove (value, cardObj) {
 
 
 let cardsArray = []
-const cardsMultiply = 1 // 1 = 45 cards, 2 = 90 cards
+const cardsMultiply = 2 // 1 = 45 cards, 2 = 90 cards
 
 // SPOT
 const spotMaxValues =         [225,  325]
@@ -72,8 +72,8 @@ _.forEach(homeMaxValues, (val, idx) => {
 })
 
 // TAP
-const tapMaxValues =         [125, 175,  225]
-const tapCardsPerMaxValue =  [5,   5,    5,]
+const tapMaxValues =         [125,  150,  175,  200,  225]
+const tapCardsPerMaxValue =  [3,    3,    3,    3,    3]
 _.forEach(tapMaxValues, (val, idx) => {
   _.times(tapCardsPerMaxValue[idx] * cardsMultiply, () => {
     cardsArray.push({
@@ -86,12 +86,15 @@ _.forEach(tapMaxValues, (val, idx) => {
 ////////////////////////
 /// POINT GENERATORS
 ////////////////////////
+
+const pointCardsMultiply = 2 // 1 = 12 cards, 2 = 24 cards
+
 // SPOT
 const spotPointsMaxValues =         [125, 225,  325]
 const spotPointsCardsPerMaxValue =  [2,   2,    2]
 const spotPointsLevels = [LEVELS.LEVEL_1, LEVELS.LEVEL_2,  LEVELS.LEVEL_3]
 _.forEach(spotPointsMaxValues, (val, idx) => {
-  _.times(spotPointsCardsPerMaxValue[idx] * cardsMultiply, () => {
+  _.times(spotPointsCardsPerMaxValue[idx] * pointCardsMultiply, () => {
     cardsArray.push({
       type: SPOT,
       isPointGenerator: true,
@@ -105,7 +108,7 @@ _.forEach(spotPointsMaxValues, (val, idx) => {
 const homePointsMaxValues =         [125, 150,  175,  200,  225,  250]
 const homePointsCardsPerMaxValue =  [1,   1,    1,    1,    1,    1]
 _.forEach(homePointsMaxValues, (val, idx) => {
-  _.times(homePointsCardsPerMaxValue[idx] * cardsMultiply, () => {
+  _.times(homePointsCardsPerMaxValue[idx] * pointCardsMultiply, () => {
     cardsArray.push({
       type: HOME,
       isPointGenerator: true,
@@ -115,10 +118,10 @@ _.forEach(homePointsMaxValues, (val, idx) => {
 })
 
 // TAP
-const tapPointsMaxValues =         [125, 175,  225]
-const tapPointsCardsPerMaxValue =  [2,   2,    2,]
+const tapPointsMaxValues =         [125,  150,  175,  200,  225]
+const tapPointsCardsPerMaxValue =  [1,    1,    2,    1,    1]
 _.forEach(tapPointsMaxValues, (val, idx) => {
-  _.times(tapPointsCardsPerMaxValue[idx] * cardsMultiply, () => {
+  _.times(tapPointsCardsPerMaxValue[idx] * pointCardsMultiply, () => {
     cardsArray.push({
       type: TAP,
       isPointGenerator: true,
@@ -174,7 +177,7 @@ const proportionsLaterResources = 1
 
 const resourceGainRoller = new Brng({
   money: 3.5,
-  card: 2.4,
+  card: 2.5,
   fire: 1.9,
   firelater: 1,
   water: 1.9,
@@ -209,18 +212,19 @@ const lossResourceRoller = new Brng({
 })
 
 const lossResourceForPointGeneratorRoller = new Brng({
-  fire: 2,
-  water: 2,
-  earth: 2,
-  wildsame: 3
+  fire: 1,
+  water: 1,
+  earth: 1,
+  wildsame: 2,
+  card: 1,
+  money: 1,
 }, {
   keepHistory: true,
   bias: 4
 })
 const lossCountForPointGeneratorRoller = new Brng({
-  // 1: 1,
+  1: 1,
   2: 1,
-  3: 1,
 }, {
   keepHistory: true,
   bias: 4
@@ -431,9 +435,9 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
   const similarityRatioIncrement = (maxRatioAllowed-acceptableRatio)/timesUntilGivingUp
 
   const acceptableDifference = {}
-  acceptableDifference[SPOT] = 100
-  acceptableDifference[TAP] = 50
-  acceptableDifference[HOME] = 50
+  acceptableDifference[SPOT] = 75
+  acceptableDifference[TAP] = 40
+  acceptableDifference[HOME] = 40
 
   while (true) {
     timesTriedToSetResources++
@@ -526,26 +530,18 @@ const DEFAULT_CARD_COST = 50 // every card built has this inherent value
 
 
 function getTotalCostValue (cardType, usageValue) {
-  return usageValue*BASE_CARD_MULTIPLIER - DEFAULT_CARD_COST
+  // return usageValue*BASE_CARD_MULTIPLIER - DEFAULT_CARD_COST
 
-  // if (cardType === SPOT) {
-  //   return usageValue*BASE_SPOT_MULTIPLIER - DEFAULT_CARD_COST
-  // }
-  // if (cardType === HOME) {
+  if (cardType === SPOT) {
+    return usageValue * (1.70 + (usageValue-100)/750) - DEFAULT_CARD_COST
+  }
+  if (cardType === HOME) {
 
-  //   return usageValue*BASE_HOME_MULTIPLIER - DEFAULT_CARD_COST
-
-  //   // return ((usageValue - 100)**HOME_EXPONENTIAL_MULTIPLIER)*BASE_HOME_MULTIPLIER
-  //   //   + 100*BASE_HOME_MULTIPLIER
-  //   //   - DEFAULT_CARD_COST
-
-  //   // return 100*BASE_HOME_MULTIPLIER
-  //   //   + (usageValue-100)**HOME_EXPONENTIAL_MULTIPLIER
-  //   //   - DEFAULT_CARD_COST
-  // }
-  // if (cardType === TAP) {
-  //   return usageValue*BASE_TAP_MULTIPLIER - DEFAULT_CARD_COST
-  // }
+    return usageValue * (1.65 + (usageValue-100)/600) - DEFAULT_CARD_COST
+  }
+  if (cardType === TAP) {
+    return usageValue * (1.70 + (usageValue-100)/600) - DEFAULT_CARD_COST
+  }
 }
 
 // RESOURCE COST

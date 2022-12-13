@@ -155,18 +155,18 @@ function LaterResources ({gain}) {
 }
 
 const RESOURCE_ORDER_MAP = {
-  untap: 1,
-  retrieve: 1,
-  chainLevel1: 1,
-  chainLevel2: 1,
-  chainLevel3: 1,
-  grabanother: 1,
-  fire: 2,
-  water: 2,
-  earth: 2,
-  wild: 3,
-  card: 4,
-  money: 5,
+  card: 1,
+  money: 2,
+  fire: 3,
+  water: 3,
+  earth: 3,
+  wild: 4,
+  grabanother: 5,
+  untap: 5,
+  retrieve: 5,
+  chainLevel1: 5,
+  chainLevel2: 5,
+  chainLevel3: 5,
 }
 
 const RESOURCES_WITH_DIGITS = ['money', 'point']
@@ -188,8 +188,8 @@ function Gain({gain}) {
     const resourceDiv = (
       <div className="gain-family" key={resource}>
         {_.times(gain[resource], (idx) => {
-          if (_.includes(RESOURCES_WITH_DIGITS, resource) && idx >= 1) {
-            // money is all at once, so don't do it multiple times
+          if (idx >= 1 && _.includes(RESOURCES_WITH_DIGITS, resource)) {
+            // money/point is all at once, so don't do it multiple times
             return null
           }
           return <ResourceIcon key={idx} resource={resource} amount={gain[resource]} />

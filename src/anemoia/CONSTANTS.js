@@ -46,8 +46,8 @@ const RESOURCE_GAIN_VALUE = {
 }
 
 const RESOURCE_LOSS_VALUE = {
-  // money: 50,
-  // card: 37.5, // discarding unwanted cards doesn't hurt as much
+  money: 25,
+  card: 40, // discarding unwanted cards doesn't hurt as much
   fire: 100,
   water: 100,
   earth: 100,
