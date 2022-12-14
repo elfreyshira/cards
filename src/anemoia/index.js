@@ -199,12 +199,12 @@ const resourceGainRoller = new Brng({
 
 const resourceGainPointsRoller = new Brng({point: 1}, {keepHistory: true})
 
-const proportionsTapAnotherOnTapCards = 0.0
 const lossResourceRoller = new Brng({
-  fire: 2,
-  water: 2,
-  earth: 2,
-  wild: 5,
+  fire: 1.9,
+  water: 1.9,
+  earth: 1.9,
+  wild: 3.3,
+  points4: 2,
   tapAnother: 3.7, // removed later for tap cards
 }, {
   keepHistory: true,
@@ -533,7 +533,7 @@ function getTotalCostValue (cardType, usageValue) {
   // return usageValue*BASE_CARD_MULTIPLIER - DEFAULT_CARD_COST
 
   if (cardType === SPOT) {
-    return usageValue * (1.70 + (usageValue-100)/750) - DEFAULT_CARD_COST
+    return usageValue * (1.70 + (usageValue-100)/1000) - DEFAULT_CARD_COST
   }
   if (cardType === HOME) {
 
@@ -803,9 +803,11 @@ const starterSpots = [
         {/*<div className="anytime-row">
           <ICONS.Card /><ICONS.Card /><ICONS.Card /> <Arrow/> <ICONS.Wild />
         </div>*/}
-        <div className="anytime-row"><ICONS.Card /><ICONS.Card /> <Arrow/> <ICONS.Money amount={3}/></div>
-        {/*<div className="anytime-row"><ICONS.Wild/> <Arrow/> <ICONS.Card/></div>*/}
+        <div className="anytime-row"><ICONS.Card /> <Arrow/> <ICONS.Money amount={1}/></div>
+        <div className="anytime-row"><ICONS.Card /> <ICONS.Card /> <Arrow/> <ICONS.Money amount={3}/></div>
+        <div className="anytime-row"><ICONS.Card /> <ICONS.Money amount={1}/> <Arrow/> <ICONS.Card /></div>
         <div className="anytime-row"><ICONS.Wild/> <Arrow/> <ICONS.Money amount={3}/></div>
+        <div className="anytime-row"><ICONS.Wild/> <ICONS.Money amount={2}/> <Arrow/> <ICONS.Wild/></div>
         {/*<div className="anytime-row"><ICONS.Wild/><ICONS.Wild/> <Arrow/> <ICONS.Wild/><ICONS.Money amount={1}/></div>*/}
 
       </div>

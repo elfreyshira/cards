@@ -54,6 +54,7 @@ const RESOURCE_LOSS_VALUE = {
   wild: 80,
   wildsame: 80, // increases the more you add
   tapAnother: 140,
+  points4: 125,
 }
 
 ////////////////////////////////////////////

@@ -177,9 +177,9 @@ span:last-child .wildsame-equal-sign {
   font-size: 2em;
   display: inline-block;
 
-  padding: 4px 4px 0;
+  padding: 0.13em 0.13em 0;
   border: 2px solid rgba(0,0,0,15%);
-  border-radius: 10px;
+  border-radius: 0.3em;
 }
 .chain .level {
   font-size: inherit;
@@ -187,11 +187,11 @@ span:last-child .wildsame-equal-sign {
 
 .icon.money {
   font-size: 2em;
-  bottom: 3px;
+  bottom: 0.1em;
   position: relative;
-  padding: 0 4px;
+  padding: 0 0.15em;;
   border: 2px solid rgba(0,0,0,15%);
-  border-radius: 10px;
+  border-radius: 0.3em;
 }
 .loss .icon.money {
   background-color: rgba(255,255,255,70%);
@@ -219,10 +219,13 @@ span:last-child .wildsame-equal-sign {
 }
 .anytime-arrow {
   font-size: 2em;
+  display: inline-block;
+  bottom: 0.1em;
+  position: relative;
 }
 .anytime-row {
-  margin-top: 15px;
-  zoom: 1.2;
+  margin-top: 0.4em;
+  zoom: .87;
 }
 .anytime-title {
   font-size: 1.5em;
