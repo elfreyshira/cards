@@ -158,8 +158,8 @@ svg.icon.gaincard {
 }
 
 .icon.wild, .icon.fire, .icon.water, .icon.earth {
-  height: 2em;
-  width: auto;
+/*  height: 2em;*/
+/*  width: auto;*/
 }
 
 .wildsame-equal-sign {
