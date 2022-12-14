@@ -157,9 +157,10 @@ svg.icon.gaincard {
   filter: drop-shadow(1.2px 1.2px 1.2px rgba(0,0,0,60%));
 }
 
-.icon.wild, .icon.fire, .icon.water, .icon.earth {
-/*  height: 2em;*/
-/*  width: auto;*/
+/*.icon.wild, .icon.fire, .icon.water, .icon.earth {*/
+.icon.wild {
+  height: 2em;
+  width: auto;
 }
 
 .wildsame-equal-sign {

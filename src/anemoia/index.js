@@ -745,7 +745,7 @@ const starterSpots = [
     ExtraStuff: (
       <div className="anytime-container">
         <div className="anytime-title">REFERENCE</div>
-        <div className="anytime-row"><ICONS.Wild/> : <ICONS.Fire/> / <ICONS.Water/> / <ICONS.Earth/></div>
+        {/*<div className="anytime-row"><ICONS.Wild/> : <ICONS.Fire/> / <ICONS.Water/> / <ICONS.Earth/></div>*/}
         {/*<div className="anytime-row"><ICONS.Untap/> : refresh one of your <ICONS.Tap/> cards</div>*/}
       </div>
     )
