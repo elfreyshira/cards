@@ -54,7 +54,8 @@ const RESOURCE_LOSS_VALUE = {
   wild: 80,
   wildsame: 80, // increases the more you add
   tapAnother: 140,
-  points4: 125,
+  points4: 130,
+  points2: 65,
 }
 
 ////////////////////////////////////////////
@@ -70,6 +71,69 @@ const PHYSICAL_RESOURCE_ARRAY = ['fire', 'water', 'earth', 'wild',
 const LATER_RESOURCE_ARRAY = ['firelater', 'waterlater', 'earthlater']
 const NOW_RESOURCE_ARRAY = ['fire', 'water', 'earth', 'wild']
 
+
+////////////////////////////////////////////
+////////////////////////////////////////////
+/// PROPORTIONS GAIN
+
+const baseResourceGainProportions = {
+  money: 3.5,
+  card: 2.5,
+  fire: 1.9,
+  firelater: 1,
+  water: 1.9,
+  waterlater: 1,
+  earth: 1.9,
+  earthlater: 1,
+  wild: 3.3,
+  chainLevel1: 0.50,
+  chainLevel2: 0.55,
+  chainLevel3: 0.47,
+}
+
+const spotResourceGainProportions = _.merge({}, baseResourceGainProportions, {
+  grabanother: 0.8, // changed later
+  untap: 1.6, // changed later
+  retrieve: 1.8, // changed later
+})
+const homeResourceGainProportions = _.merge({}, baseResourceGainProportions, {
+  grabanother: 0.9, // changed
+  untap: 1.8, // changed
+  // retrieve: 1.8, // removed
+})
+
+const tapResourceGainProportions = _.merge({}, baseResourceGainProportions, {
+  grabanother: 0.9, // changed
+  // untap: 1.6, // removed
+  retrieve: 2.0, // changed
+})
+
+//////// LOSS
+
+const baseResourceLossProportions = {
+  fire: 1.9,
+  water: 1.9,
+  earth: 1.9,
+  wild: 3.3,
+  points4: 2,
+}
+const spotResourceLossProportions = _.merge({}, baseResourceLossProportions, {
+  tapAnother: 3.7
+})
+const homeResourceLossProportions = {points4: 2, points2: 2}
+const tapResourceLossProportions = _.cloneDeep(baseResourceLossProportions)
+
+const pointGeneratorResourceLossProportions = {
+  fire: 1,
+  water: 1,
+  earth: 1,
+  wildsame: 2,
+  card: 1,
+  money: 1,
+}
+
+////////////////////////////////////////////
+
 export {
   SPOT,
   HOME,
@@ -84,4 +148,13 @@ export {
   PHYSICAL_RESOURCE_ARRAY,
   LATER_RESOURCE_ARRAY,
   NOW_RESOURCE_ARRAY,
+  //////////////
+  spotResourceGainProportions,
+  homeResourceGainProportions,
+  tapResourceGainProportions,
+  //////////
+  spotResourceLossProportions,
+  homeResourceLossProportions,
+  tapResourceLossProportions,
+  pointGeneratorResourceLossProportions
 }

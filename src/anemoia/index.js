@@ -11,6 +11,15 @@ import {
   RESOURCE_LOSS_VALUE,
   /////////////
   PHYSICAL_RESOURCE_ARRAY,
+  ///////////////
+  spotResourceGainProportions,
+  homeResourceGainProportions,
+  tapResourceGainProportions,
+  ////////////
+  spotResourceLossProportions,
+  homeResourceLossProportions,
+  tapResourceLossProportions,
+  pointGeneratorResourceLossProportions,
 } from './CONSTANTS.js'
 
 import getNewIncludeExcludeList from './get-new-include-exclude-list.js'
@@ -18,6 +27,7 @@ import getNewIncludeExcludeList from './get-new-include-exclude-list.js'
 import checkSimilarity from './check-similarity.js'
 import {Card, Contract} from './Card.js'
 import ICONS from './icons.js'
+import baseCards from './base-cards.js'
 
 
 // import endGameCards from './end-game-cards.js'
@@ -140,7 +150,8 @@ const cardPointsRoller = new Brng({
   // POINTS_5_8: 1,
 }, {bias: 4})
 
-const spotCardHasLossRoller = new Brng({0: 3, 1: 2}, {keepHistory: true, bias: 4})
+const spotCardHasLossRoller = new Brng({0: 1, 1: 1}, {keepHistory: true, bias: 4})
+const homeCardHasLossRoller = new Brng({0: 7, 1: 2}, {keepHistory: true, bias: 4})
 
 _.forEach(cardsArray, (cardObj) => {
   cardObj.points = cardPointsRoller.roll()
@@ -155,7 +166,7 @@ _.forEach(cardsArray, (cardObj) => {
     hasLoss = !!_.toNumber(spotCardHasLossRoller.roll())
   }
   else if (cardObj.type === HOME) {
-    hasLoss = false
+    hasLoss = !!_.toNumber(homeCardHasLossRoller.roll())
   }
   else if (cardObj.type === TAP) {
     hasLoss = true
@@ -164,61 +175,14 @@ _.forEach(cardsArray, (cardObj) => {
   
 })
 
-const proportionsChainLevel1 = 0.50
-const proportionsChainLevel2 = 0.55
-const proportionsChainLevel3 = 0.47
 
-const proportionsUntapOnHomeCards = 1.8 // changed for home cards
-const proportionsRetrieveOnTapCards = 2.0 // changed for tap cards
-
-const proportionsGrabAnotherOnNonSpotCards = 0.9
-const proportionsNowResourcesOnNonSpotCards = 2
-const proportionsLaterResources = 1
-
-const resourceGainRoller = new Brng({
-  money: 3.5,
-  card: 2.5,
-  fire: 1.9,
-  firelater: 1,
-  water: 1.9,
-  waterlater: 1,
-  earth: 1.9,
-  earthlater: 1,
-  wild: 3.3,
-  // wildlater: 1,
-  grabanother: 0.8, // changed later via proportionsGrabAnotherOnNonSpotCards
-  untap: 1.6, // changed later via proportionsUntapOnHomeCards
-  retrieve: 1.8, // changed later via proportionsRetrieveOnTapCards
-  chainLevel1: proportionsChainLevel1,
-  chainLevel2: proportionsChainLevel2,
-  chainLevel3: proportionsChainLevel3,
-}, {
-  keepHistory: true,
-  bias: 4
-})
+const resourceGainRoller = new Brng(spotResourceGainProportions, {keepHistory: true, bias: 4})
 
 const resourceGainPointsRoller = new Brng({point: 1}, {keepHistory: true})
 
-const lossResourceRoller = new Brng({
-  fire: 1.9,
-  water: 1.9,
-  earth: 1.9,
-  wild: 3.3,
-  points4: 2,
-  tapAnother: 3.7, // removed later for tap cards
-}, {
-  keepHistory: true,
-  bias: 4
-})
+const resourceLossRoller = new Brng(spotResourceLossProportions, {keepHistory: true, bias: 4})
 
-const lossResourceForPointGeneratorRoller = new Brng({
-  fire: 1,
-  water: 1,
-  earth: 1,
-  wildsame: 2,
-  card: 1,
-  money: 1,
-}, {
+const resourceLossForPointGeneratorRoller = new Brng(pointGeneratorResourceLossProportions, {
   keepHistory: true,
   bias: 4
 })
@@ -257,11 +221,11 @@ function getLossAndGain(cardObj) {
     let lossCount = 1
 
     if (cardObj.isPointGenerator) {
-      lossRollerToUse = lossResourceForPointGeneratorRoller
+      lossRollerToUse = resourceLossForPointGeneratorRoller
       lossCount = _.toNumber(lossCountForPointGeneratorRoller.roll())
     }
     else {
-      lossRollerToUse = lossResourceRoller
+      lossRollerToUse = resourceLossRoller
     }
 
     _.times(lossCount, () => {
@@ -382,49 +346,17 @@ const sortCardsByArray = [
 cardsArray = _.sortBy(cardsArray, sortCardsByArray)
 _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
 
-  // if (cardObj.isPointGenerator) {return}
-
-  // // add chainLevel1 once you're on spotLevel = 2
-  // if (!hasAddedChainLevel1 && cardObj.type === SPOT && cardObj.spotLevel !== LEVELS.LEVEL_1) {
-  //   resourceGainRoller.add({chainLevel1: proportionsChainLevel1})
-  //   // resourceGainRoller.add({chainLevel2: proportionsChainLevel2})
-  //   hasAddedChainLevel1 = true
-  // }
-  // // add chainLevel2 once you're on spotLevel = 3
-  // if (!hasAddedChainLevel2 && cardObj.type === SPOT && cardObj.spotLevel === LEVELS.LEVEL_3) {
-  //   resourceGainRoller.add({chainLevel2: proportionsChainLevel2})
-  //   hasAddedChainLevel2 = true
-  // }
-
-
   // adjust the resourceGainRoller when staring the HOME and TAP cards
   if (currentCardType !== cardObj.type) {
     if (cardObj.type === HOME) {
       currentCardType = HOME
-      resourceGainRoller.remove('retrieve')
-      // resourceGainRoller.remove('chainLevel1')
-      // resourceGainRoller.remove('chainLevel2')
-      resourceGainRoller.update({
-        untap: proportionsUntapOnHomeCards,
-
-        grabanother: proportionsGrabAnotherOnNonSpotCards
-
-        // water: proportionsNowResourcesOnNonSpotCards,
-        // earth: proportionsNowResourcesOnNonSpotCards,
-        // fire: proportionsNowResourcesOnNonSpotCards,
-        // wild: proportionsNowResourcesOnNonSpotCards,
-
-        // waterlater: proportionsLaterResources,
-        // earthlater: proportionsLaterResources,
-        // firelater: proportionsLaterResources,
-        // wildlater: proportionsLaterResources
-      })
+      resourceGainRoller.updateProportions(homeResourceGainProportions)
+      resourceLossRoller.updateProportions(homeResourceLossProportions)
     }
     else if (cardObj.type === TAP) {
       currentCardType = TAP
-      resourceGainRoller.remove('untap')
-      lossResourceRoller.remove('tapAnother')
-      resourceGainRoller.add({retrieve: proportionsRetrieveOnTapCards})
+      resourceGainRoller.updateProportions(tapResourceGainProportions)
+      resourceLossRoller.updateProportions(tapResourceLossProportions)
     }
   }
 
@@ -800,18 +732,22 @@ const starterSpots = [
         <div className="anytime-title">ANYTIME</div>
         <div className="anytime-row"><ICONS.Money amount={5}/> <Arrow/> <ICONS.Wild /></div>
         <div className="anytime-row"><ICONS.Money amount={3}/> <Arrow/> <ICONS.Card /></div>
-        {/*<div className="anytime-row">
-          <ICONS.Card /><ICONS.Card /><ICONS.Card /> <Arrow/> <ICONS.Wild />
-        </div>*/}
         <div className="anytime-row"><ICONS.Card /> <Arrow/> <ICONS.Money amount={1}/></div>
         <div className="anytime-row"><ICONS.Card /> <ICONS.Card /> <Arrow/> <ICONS.Money amount={3}/></div>
         <div className="anytime-row"><ICONS.Card /> <ICONS.Money amount={1}/> <Arrow/> <ICONS.Card /></div>
         <div className="anytime-row"><ICONS.Wild/> <Arrow/> <ICONS.Money amount={3}/></div>
         <div className="anytime-row"><ICONS.Wild/> <ICONS.Money amount={2}/> <Arrow/> <ICONS.Wild/></div>
-        {/*<div className="anytime-row"><ICONS.Wild/><ICONS.Wild/> <Arrow/> <ICONS.Wild/><ICONS.Money amount={1}/></div>*/}
-
       </div>
-      
+    )
+  },
+  {
+    uuid: "REFERENCE",
+    ExtraStuff: (
+      <div className="anytime-container">
+        <div className="anytime-title">REFERENCE</div>
+        <div className="anytime-row"><ICONS.Wild/> : <ICONS.Fire/> / <ICONS.Water/> / <ICONS.Earth/></div>
+        {/*<div className="anytime-row"><ICONS.Untap/> : refresh one of your <ICONS.Tap/> cards</div>*/}
+      </div>
     )
   }
 ]

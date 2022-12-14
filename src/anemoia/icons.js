@@ -12,6 +12,8 @@ import untapIcon from './images/untap.png'
 import grabIcon from './images/grab.png'
 import thisCardIcon from './images/this-card.png'
 import momentIcon from './images/moment.png'
+import tapIcon from './images/tap3.png'
+import retrieveIcon from './images/retrieve3.png'
 
 function Spot () {
   return <SpotSvg className="icon" />
@@ -21,6 +23,7 @@ function Home () {
 }
 function Tap () {
   return <TapSvg className="icon" />
+  // return <img className="icon" src={tapIcon} />
 }
 function Moment () {
   return <img className="icon" src={momentIcon} />
@@ -31,13 +34,13 @@ function Card () {
 }
 
 function Earth () {
-  return <img className="icon with-shadow" src={earthIcon} />
+  return <img className="icon with-shadow earth" src={earthIcon} />
 }
 function Fire () {
-  return <img className="icon with-shadow" src={fireIcon} />
+  return <img className="icon with-shadow fire" src={fireIcon} />
 }
 function Water () {
-  return <img className="icon with-shadow" src={waterIcon} />
+  return <img className="icon with-shadow water" src={waterIcon} />
 }
 function Wild () {
   return <img className="icon with-shadow wild" src={wildIcon} />
@@ -68,7 +71,8 @@ function ThisCard () {
 }
 
 function Retrieve () {
-  return <div className="retrieve"> <Home /> </div>
+  // return <div className="retrieve"> <Home /> </div>
+  return <img className="icon" src={retrieveIcon} />
 }
 
 function Chainlevel1 () {
@@ -95,6 +99,9 @@ function Point ({amount}) {
 function Points4 ({amount}) {
   return <Point amount={4} />
 }
+function Points2 ({amount}) {
+  return <Point amount={2} />
+}
 
 export default {
   Spot,
@@ -120,4 +127,5 @@ export default {
   Moment,
   Point,
   Points4,
+  Points2,
 }

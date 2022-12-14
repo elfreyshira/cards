@@ -1,3 +1,7 @@
+body {
+/*  font-size: 16px;*/
+}
+
 .card {
   /* 63 x 88 */
   width: 63mm;
@@ -153,9 +157,9 @@ svg.icon.gaincard {
   filter: drop-shadow(1.2px 1.2px 1.2px rgba(0,0,0,60%));
 }
 
-.icon.wild {
-  height: 32px !important;
-  width: auto !important;
+.icon.wild, .icon.fire, .icon.water, .icon.earth {
+  height: 2em;
+  width: auto;
 }
 
 .wildsame-equal-sign {
