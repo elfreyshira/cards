@@ -14,6 +14,7 @@ import thisCardIcon from './images/this-card.png'
 import momentIcon from './images/moment.png'
 import tapIcon from './images/tap3.png'
 import retrieveIcon from './images/retrieve3.png'
+import cardIcon from './images/card.png'
 
 function Spot () {
   return <SpotSvg className="icon" />
@@ -30,7 +31,8 @@ function Moment () {
 }
 
 function Card () {
-  return <CardSvg className="icon gaincard" />
+  // return <CardSvg className="icon gaincard" />
+  return <img className="icon card-icon" src={cardIcon} />
 }
 
 function Earth () {

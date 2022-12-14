@@ -111,6 +111,10 @@ svg.icon.gaincard {
 .icon.gaincard + .icon.gaincard {
   margin-left: -5px;
 }
+.icon .card-icon {
+  margin-right: 0.25em;
+}
+
 
 .effect {
   position: absolute;
@@ -123,7 +127,7 @@ svg.icon.gaincard {
 }
 .effect .gain-family {
   display: inline-block;
-  margin-right: 10px;
+  margin-right: 0.6em;
 }
 .loss {
   margin: 10px;
