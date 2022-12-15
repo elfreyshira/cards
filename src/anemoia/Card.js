@@ -9,7 +9,7 @@ import ICONS from './icons.js'
 import _ from 'lodash'
 import classnames from 'classnames'
 
-function Type ({type, spotLevel}) {
+function Type ({type, spotLevel, isPointGenerator}) {
 
   if (_.isEmpty(type)) {
     return null
@@ -350,7 +350,7 @@ function Card (props) {
   return (
     <div className={classnames('card', _.lowerCase(type), isPointGenerator ? 'point-generator' : false)}>
 
-      <Type type={type} spotLevel={spotLevel} />
+      <Type type={type} spotLevel={spotLevel} isPointGenerator={isPointGenerator} />
       
       <Points pointsOnCard={pointsOnCard} />
 

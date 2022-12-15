@@ -813,6 +813,7 @@ function Cards () {
   <ICONS.Chainlevel2 />
   <ICONS.Chainlevel3 />
   <ICONS.Untap />
+  <ICONS.Windmill />
 
 
       {_.map(cardsArray, (obj) => {

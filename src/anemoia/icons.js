@@ -11,6 +11,7 @@ import untapIcon from './images/untap.png'
 import grabIcon from './images/grab.png'
 import thisCardIcon from './images/this-card.png'
 import momentIcon from './images/moment.png'
+import windmillIcon from './images/windmill.png'
 
 import retrieveIcon from './images/retrieve.png'
 import cardIcon from './images/card.png'
@@ -75,6 +76,11 @@ function Retrieve () {
   return <img className="icon" src={homeIcon} />
 }
 
+function Windmill () {
+  return <img className="icon" src={windmillIcon} />
+}
+
+
 function Chainlevel1 () {
   return <div className="icon chain"><img src={spotIcon}/><span className="chain-level">1</span></div>
 }
@@ -133,4 +139,5 @@ export default {
   Point,
   Points4,
   Points2,
+  Windmill
 }
