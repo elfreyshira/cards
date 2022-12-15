@@ -151,7 +151,7 @@ const cardPointsRoller = new Brng({
 }, {bias: 4})
 
 const spotCardHasLossRoller = new Brng({0: 1, 1: 1}, {keepHistory: true, bias: 4})
-const homeCardHasLossRoller = new Brng({0: 7, 1: 2}, {keepHistory: true, bias: 4})
+const homeCardHasLossRoller = new Brng({0: 8, 1: 2}, {keepHistory: true, bias: 4})
 
 _.forEach(cardsArray, (cardObj) => {
   cardObj.points = cardPointsRoller.roll()
