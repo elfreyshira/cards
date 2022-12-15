@@ -791,6 +791,30 @@ function Cards () {
   return (
     <div>
 
+<ICONS.Spot />
+  <ICONS.Home />
+  <ICONS.Tap />
+  <ICONS.Earth />
+  <ICONS.Fire />
+  <ICONS.Water />
+  <ICONS.Wild />
+  <ICONS.Wildsame />
+  <ICONS.Card />
+  <ICONS.Tapanother />
+  <ICONS.Retrieve />
+  <ICONS.Money amount={3}/>
+  <ICONS.Grab />
+  <ICONS.Grabanother />
+  <ICONS.ThisCard />
+  <ICONS.Point amount={4}/>
+  <ICONS.Points4/>
+  <ICONS.Points2/>
+  <ICONS.Chainlevel1 />
+  <ICONS.Chainlevel2 />
+  <ICONS.Chainlevel3 />
+  <ICONS.Untap />
+
+
       {_.map(cardsArray, (obj) => {
         return <Card cardObj={_.pick(obj, cardsImportantKeys)} key={obj.uuid} />
       })}

@@ -30,20 +30,19 @@ html {
 }
 
 
-
 @media print {
   .card {
     margin: 1px;
   }
 }
 /*
-spot: purple - 530EA1
-home: orange.
+spot: purple - 6B0EA1
+home: orange. - b35500
 tap: yellow. - B3A500
 */
 
 .card.spot {
-  border-top-color: #530EA1;
+  border-top-color: #6B0EA1;
 }
 .card.home {
   border-top-color: #b35500;
@@ -52,13 +51,111 @@ tap: yellow. - B3A500
   border-top-color: #B3A500;
 }
 
+/******* vvv ICONS ************/
+/******* vvv ICONS ************/
+/******* vvv ICONS ************/
+.icon {
+  height: 2rem;
+}
+
+.icon.card-icon {
+  margin: auto 0.1rem;
+  zoom: .95;
+}
+.icon.wildsame {
+  position: relative;
+  display: inline-block;
+}
+.icon.wildsame > img {
+  height: 2rem;
+}
+.wildsame-equal-sign {
+  position: absolute;
+  z-index: 9;
+  transform: translate(-50%, 0%);
+  text-shadow: 1px 0 #fff, -1px 0 #fff, 0 1px #fff, 0 -1px #fff, 1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff;
+  filter: drop-shadow(1px 1px 1px rgba(0,0,0,40%));
+  font-size: 1.6rem;
+}
+span:last-child .wildsame-equal-sign {
+  display: none;
+}
+
+.icon.untap {
+  zoom: 1.4;
+/*  width: auto;*/
+}
+
+.icon.tapanother {
+  zoom: 1.1;
+}
+
+.icon.text-icon {
+  display: inline-block;
+  font-size: 1.5rem;
+  font-weight: 600;
+  padding: 0 0.15rem;
+  border: 2px solid rgba(0,0,0,15%);
+  border-radius: 0.4rem;
+}
+.icon.text-icon .text-icon-content {
+
+  float: left;
+}
+.loss .icon.text-icon {
+  background-color: rgba(255,255,255,80%);
+  bottom: auto;
+}
+
+.icon.chain {
+  display: inline-block;
+  padding: 0.13rem 0.13rem 0;
+  border: 2px solid rgba(0,0,0,15%);
+  border-radius: 0.3rem;
+}
+.icon.chain img {
+  height: 1.5rem;
+  float: left;
+}
+.icon.chain .chain-level {
+  float: right;
+  font-size: 1.5rem;
+  position: relative;
+  display: inline-block;
+  bottom: 0.15rem;
+  margin-left: 0.1rem;
+}
+
+.gain .icon {
+  box-shadow: 1.2px 1.2px 1.2px rgba(0,0,0,60%);
+}
+.gain img.icon {
+  box-shadow: none;
+  filter: drop-shadow(1.2px 1.2px 1.2px rgba(0,0,0,60%));
+  
+}
+
+/*************************/
+/* icon sizes in different contexts */
+
+.type .icon {
+  zoom: 1.2;
+}
+.cost .icon {
+  zoom: .65;
+}
+
+/******* ^^^ ICONS ************/
+/******* ^^^ ICONS ************/
+/******* ^^^ ICONS ************/
+
 .type {
   margin: 5px 10px;
   position: relative;
 }
 .type .icon {
-  height: 40px !important;
-  width: auto !important;
+/*  height: 40px !important;*/
+/*  width: auto !important;*/
 }
 
 
@@ -85,34 +182,16 @@ tap: yellow. - B3A500
   border-top: 1px dotted black;
   border-bottom: 3px solid black;
 }
-.cost .icon {
-  height: 20px;
-  width: auto;
-}
 .resource-cost-group {
   margin-right: 0.3em;
 }
-.resource-cost-group.wildsame {
+/*.resource-cost-group.wildsame {
   border-bottom: 2px solid rgba(0,0,0,30%);
   padding: 0 .1em;
   border-radius: .3em;
   display: inline-block;
-}
+}*/
 
-.icon.untap {
-  height: 50px;
-  width: auto;
-}
-svg.icon.gaincard {
-  height: 30px !important;
-  width: 30px !important;
-}
-.icon.gaincard + .icon.gaincard {
-  margin-left: -5px;
-}
-.icon .card-icon {
-  margin-right: 0.25em;
-}
 
 
 .effect {
@@ -120,10 +199,6 @@ svg.icon.gaincard {
   bottom: 0;
 }
 
-.effect .icon {
-  height: 30px !important;
-  width: auto  !important;
-}
 .effect .gain-family {
   display: inline-block;
   margin-right: 0.6em;
@@ -146,10 +221,6 @@ svg.icon.gaincard {
   margin: 10px;
 }
 
-.effect .icon.untap {
-  height: 40px !important;
-  width: auto !important;
-}
 
 .retrieve {
   /*margin: auto 5px;*/
@@ -157,54 +228,10 @@ svg.icon.gaincard {
 }
 
 .gain-family .icon.with-shadow {
-  filter: drop-shadow(1.2px 1.2px 1.2px rgba(0,0,0,60%));
+/*  filter: drop-shadow(1.2px 1.2px 1.2px rgba(0,0,0,60%));*/
 }
 
-/*.icon.wild, .icon.fire, .icon.water, .icon.earth {*/
-.icon.wild {
-  height: 2em;
-  width: auto;
-}
 
-.wildsame-equal-sign {
-  position: absolute;
-  transform: translate(-50%, 0%);
-  text-shadow: 1px 0 #fff, -1px 0 #fff, 0 1px #fff, 0 -1px #fff,
-             1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff;
-  filter: drop-shadow(1px 1px 1px rgba(0,0,0,40%));
-  font-size: 1.5em;
-}
-/*.resource-cost-group span:last-child .wildsame-equal-sign {
-  display: none;
-}*/
-span:last-child .wildsame-equal-sign {
-  display: none;
-}
-
-.chain {
-  font-size: 2em;
-  display: inline-block;
-
-  padding: 0.13em 0.13em 0;
-  border: 2px solid rgba(0,0,0,15%);
-  border-radius: 0.3em;
-}
-.chain .level {
-  font-size: inherit;
-}
-
-.icon.money {
-  font-size: 2em;
-  bottom: 0.1em;
-  position: relative;
-  padding: 0 0.15em;;
-  border: 2px solid rgba(0,0,0,15%);
-  border-radius: 0.3em;
-}
-.loss .icon.money {
-  background-color: rgba(255,255,255,70%);
-  bottom: auto;
-}
 
 .later-resources-group {
   margin-bottom: 12px;
@@ -251,8 +278,8 @@ span:last-child .wildsame-equal-sign {
   margin-left: 0.1em;
 }
 .contract .icon {
-  height: 1em;
-  width: 1em;
+/*  height: 1em;*/
+/*  width: 1em;*/
 }
 .contract-type-text {
   bottom: 0.1em;
@@ -260,13 +287,13 @@ span:last-child .wildsame-equal-sign {
   position: relative;
 } 
 .contract .cost .icon {
-  height: 2em !important;
-  width: 2em !important;
+/*  height: 2em !important;*/
+/*  width: 2em !important;*/
 }
 
 
 
-.tag-container {
+/*.tag-container {
   border: 1px solid black;
   border-radius: 0.5em 0.5em 0 0;
   height: 4em;
@@ -301,7 +328,7 @@ span:last-child .wildsame-equal-sign {
 }
 .tag-in-conditional > .tag-single {
   transform: translate(15%, 40%);  
-}
+}*/
 
 
 .conditional-top-container {
