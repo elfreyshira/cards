@@ -107,7 +107,7 @@ function Money ({amount}) {
 function Point ({amount}) {
 
   return (
-    <span className="icon text-icon">
+    <span className="icon text-icon for-points">
       <img className="wind" src={windIcon} /><span className="text-icon-content">{amount}</span>
     </span>
   )

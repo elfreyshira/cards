@@ -25,6 +25,14 @@ html {
   margin:  10px;
 }
 
+table {
+  border-spacing: 0;
+  width: 100%;
+}
+table td:first-child {
+  max-width: 40%;
+}
+
 .contract {
   width: 88mm;
   max-width: 88mm;
@@ -121,6 +129,9 @@ span:last-child .wildsame-equal-sign {
   bottom: auto;
 }
 
+.icon.text-icon.for-points {
+  min-width: 3.2rem;
+}
 .icon.text-icon .wind {
   vertical-align: text-bottom;
   height: 80%;
@@ -131,8 +142,8 @@ span:last-child .wildsame-equal-sign {
 .icon.chain {
   display: inline-block;
   padding: 0.13rem 0.13rem 0;
-  border: 2px solid rgba(0,0,0,15%);
-  border-radius: 0.3rem;
+  border: 2px solid rgba(0,0,0,25%);
+  border-radius: 0.4rem;
 }
 .icon.chain img {
   height: 1.5rem;
@@ -220,28 +231,26 @@ span:last-child .wildsame-equal-sign {
 .effect {
   position: absolute;
   bottom: 0;
+  padding: 5px 10px;
 }
 
 .effect .gain-family {
   display: inline-block;
-  margin-right: 0.6em;
+  margin-right: 0.6rem;
+  margin-top: 0.4rem;
+}
+.effect .gain-family:last-child {
+  margin-right: 0;
 }
 .loss {
-  margin: 10px;
+  margin-right: 10px;
   padding: 5px;
-  background: repeating-linear-gradient(
-    45deg,
-    rgba(200, 0, 0, 20%),
-    rgba(200, 0, 0, 20%) 3px,
-    transparent 3px,
-    transparent 6px
-  );
+  background: repeating-linear-gradient( 45deg, rgba(200, 0, 0, 20%), rgba(200, 0, 0, 20%) 3px, transparent 3px, transparent 6px );
   border: 2px solid rgba(200, 0, 0, 40%);
-  display: inline-block;
 }
 .gain {
-  /*display: inline-block;*/
-  margin: 10px;
+  display: inline-block;
+/*  margin: 10px;*/
 }
 
 
@@ -254,13 +263,15 @@ span:last-child .wildsame-equal-sign {
 /*  filter: drop-shadow(1.2px 1.2px 1.2px rgba(0,0,0,60%));*/
 }
 
+/* for the icons that have img + text */
+span.icon {
+  zoom: 1.05;
+}
 
 
 .later-resources-group {
-  margin-bottom: 12px;
-  position: relative;
   padding: 0rem 0.3rem 0.1rem;
-  border: 1px solid rgba(0,0,0,15%);
+  border: 1px solid rgba(0,0,0,25%);
   border-radius: 0.4rem;
   zoom: 0.8;
 }

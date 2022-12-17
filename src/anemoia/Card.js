@@ -62,14 +62,14 @@ function ResourceIcon ({resource, amount}) {
   if (_.isUndefined(ChosenIcon)) {
     return null
   }
-  else if (_.includes(RESOURCES_WITH_DIGITS_AFTER, resource)) {
+  else if (_.includes(RESOURCES_WITH_DIGITS_AFTER, resource) || amount === 1) {
     return <ChosenIcon amount={amount}/>
   }
   else {
     return (
       <span className="resource-icon-container">
-        <ChosenIcon />
-        {amount > 1 ? <span className="amount-text">{amount}</span> : null}
+        <ChosenIcon amount={amount} />
+        <span className="amount-text">{amount}</span>
       </span>
     )
   }
@@ -240,8 +240,16 @@ function Gain({gain}) {
 function Effect ({loss, gain}) {
   return (
     <div className="effect">
-      <Loss loss={loss} />
-      <Gain gain={gain} />
+      <table>
+        <tr>
+          <td>
+            <Loss loss={loss} />
+          </td>
+          <td>
+            <Gain gain={gain} />
+          </td>
+        </tr>
+      </table>
     </div>
   )
   // return null
