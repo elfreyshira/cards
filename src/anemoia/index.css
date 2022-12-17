@@ -11,7 +11,8 @@ html {
   max-width: 63mm;
   height:  88mm;
   max-height:  88mm;
-  border:  5px solid black;
+  border: 5px solid black;
+  border-top-width: 8px;
   
   padding-left:  0px;
   display:  inline-block;
@@ -59,6 +60,9 @@ tap: yellow. - B3A500
 .icon {
   height: 2rem;
 }
+span.icon {
+  zoom: 1.1;
+}
 
 .icon.card-icon {
   margin: auto 0.1rem;
@@ -71,6 +75,7 @@ tap: yellow. - B3A500
 .icon.wildsame > img {
   height: 2rem;
 }
+
 .wildsame-equal-sign {
   position: absolute;
   z-index: 9;
@@ -108,16 +113,22 @@ span:last-child .wildsame-equal-sign {
   font-size: 1.5rem;
   font-weight: 600;
   padding: 0 0.15rem;
-  border: 2px solid rgba(0,0,0,15%);
+  border: 2px solid rgba(0,0,0,25%);
   border-radius: 0.4rem;
 }
 .icon.text-icon .text-icon-content {
-
-  float: left;
+  float: right;
 }
 .loss .icon.text-icon {
   background-color: rgba(255,255,255,80%);
   bottom: auto;
+}
+
+.icon.text-icon .wind {
+  vertical-align: text-bottom;
+  height: 80%;
+  transform: translateY(-10%);
+  margin-right: 0.2rem;
 }
 
 .icon.chain {
@@ -133,6 +144,7 @@ span:last-child .wildsame-equal-sign {
 .icon.chain .chain-level {
   float: right;
   font-size: 1.5rem;
+  font-weight: 600;
   position: relative;
   display: inline-block;
   bottom: 0.15rem;
@@ -151,7 +163,7 @@ span:last-child .wildsame-equal-sign {
 /* icon sizes in different contexts */
 
 .type .icon {
-  zoom: 1.2;
+  zoom: 0.9;
 }
 .cost .icon {
   zoom: .65;
@@ -170,28 +182,28 @@ span:last-child .wildsame-equal-sign {
   position: relative;
 }
 .point-generator .type {
-  background-color: #b7b7b7;
+  background-color: #ccc;
 }
 
 
 .level {
   display: inline-block;
   font-weight: 600;
-  font-size: 3rem;
+  font-size: 2rem;
   position: relative;
   bottom: 0.15rem;
   left: 0.2rem;
   height: 0;
 }
 
-.points {
-  font-size: 2rem;
+.points-on-card {
+  font-size: 1.6rem;
   top: 0;
   right: 0;
   position: absolute;
-  margin: 0.6rem;
+  margin: 0.4rem;
 }
-.points > .negative {
+.points-on-card > .negative {
   color: rgba(150, 0, 0, 100%);
 }
 
@@ -201,7 +213,7 @@ span:last-child .wildsame-equal-sign {
   border-bottom: 3px solid black;
 }
 .resource-cost-group {
-  margin-right: 0.3em;
+  margin-right: 0.2rem;
 }
 /*.resource-cost-group.wildsame {
   border-bottom: 2px solid rgba(0,0,0,30%);
@@ -261,9 +273,8 @@ span:last-child .wildsame-equal-sign {
 .later-colon {
   display: inline-block;
   position: relative;
-  font-size: 2em;
+  font-size: 2rem;
   vertical-align: bottom;
-  bottom: 2px;
 }
 
 .anytime-container {
@@ -364,3 +375,4 @@ span:last-child .wildsame-equal-sign {
   border-bottom: 2px solid rgba(0,0,0,30%);
   border-radius: .2em;
 }
+

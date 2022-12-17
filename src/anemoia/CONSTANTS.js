@@ -40,7 +40,7 @@ const RESOURCE_GAIN_VALUE = {
   },
   retrieve: _.constant(50),
   chainLevel1: _.constant(75),
-  chainLevel2: _.constant(100),
+  chainLevel2: _.constant(110),
   chainLevel3: _.constant(150),
   point: _.constant(25),
 }

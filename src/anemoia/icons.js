@@ -12,6 +12,7 @@ import grabIcon from './images/grab.png'
 import thisCardIcon from './images/this-card.png'
 import momentIcon from './images/moment.png'
 import windmillIcon from './images/windmill.png'
+import windIcon from './images/wind.png'
 
 import retrieveIcon from './images/retrieve.png'
 import cardIcon from './images/card.png'
@@ -82,13 +83,13 @@ function Windmill () {
 
 
 function Chainlevel1 () {
-  return <div className="icon chain"><img src={spotIcon}/><span className="chain-level">1</span></div>
+  return <span className="icon chain"><img src={spotIcon}/><span className="chain-level">1</span></span>
 }
 function Chainlevel2 () {
-  return <div className="icon chain"><img src={spotIcon}/><span className="chain-level">2</span></div>
+  return <span className="icon chain"><img src={spotIcon}/><span className="chain-level">2</span></span>
 }
 function Chainlevel3 () {
-  return <div className="icon chain"><img src={spotIcon}/><span className="chain-level">3</span></div>
+  return <span className="icon chain"><img src={spotIcon}/><span className="chain-level">3</span></span>
 }
 
 function Money ({amount}) {
@@ -101,9 +102,10 @@ function Money ({amount}) {
 
 
 function Point ({amount}) {
+
   return (
     <span className="icon text-icon">
-      <span className="text-icon-content">❋{amount}</span>
+      <img className="wind" src={windIcon} /><span className="text-icon-content">{amount}</span>
     </span>
   )
 }

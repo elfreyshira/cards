@@ -465,14 +465,14 @@ function getTotalCostValue (cardType, usageValue) {
   // return usageValue*BASE_CARD_MULTIPLIER - DEFAULT_CARD_COST
 
   if (cardType === SPOT) {
-    return usageValue * (1.70 + (usageValue-100)/1000) - DEFAULT_CARD_COST
+    return usageValue * (1.70 + (usageValue-200)/800) - DEFAULT_CARD_COST
   }
   if (cardType === HOME) {
 
-    return usageValue * (1.65 + (usageValue-100)/600) - DEFAULT_CARD_COST
+    return usageValue * (1.65 + (usageValue-100)/800) - DEFAULT_CARD_COST
   }
   if (cardType === TAP) {
-    return usageValue * (1.70 + (usageValue-100)/600) - DEFAULT_CARD_COST
+    return usageValue * (1.70 + (usageValue-100)/800) - DEFAULT_CARD_COST
   }
 }
 
@@ -791,29 +791,6 @@ function Cards () {
   return (
     <div>
 
-<ICONS.Spot />
-  <ICONS.Home />
-  <ICONS.Tap />
-  <ICONS.Earth />
-  <ICONS.Fire />
-  <ICONS.Water />
-  <ICONS.Wild />
-  <ICONS.Wildsame />
-  <ICONS.Card />
-  <ICONS.Tapanother />
-  <ICONS.Retrieve />
-  <ICONS.Money amount={3}/>
-  <ICONS.Grab />
-  <ICONS.Grabanother />
-  <ICONS.ThisCard />
-  <ICONS.Point amount={4}/>
-  <ICONS.Points4/>
-  <ICONS.Points2/>
-  <ICONS.Chainlevel1 />
-  <ICONS.Chainlevel2 />
-  <ICONS.Chainlevel3 />
-  <ICONS.Untap />
-  <ICONS.Windmill />
 
 
       {_.map(cardsArray, (obj) => {

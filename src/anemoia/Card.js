@@ -9,6 +9,8 @@ import ICONS from './icons.js'
 import _ from 'lodash'
 import classnames from 'classnames'
 
+const RESOURCES_WITH_DIGITS = ['money', 'point']
+
 function Type ({type, spotLevel, isPointGenerator}) {
 
   if (_.isEmpty(type)) {
@@ -49,7 +51,7 @@ function Points ({pointsOnCard}) {
   }
 
   return (
-    <div className="points">
+    <div className="points-on-card">
       &#x274B;<span className={classnames({negative: pointsOnCard < 0})}>{pointsOnCard}</span>
     </div>
   )
@@ -112,9 +114,15 @@ function Loss({loss}) {
 
   return (
     <div className="loss">
-    {_.map(lossKeysInOrder, (key) => {
-      const val = loss[key]
-      return _.times(val, (idx) => <ResourceIcon resource={key} amount={1} key={key+idx}/>)
+    {_.map(lossKeysInOrder, (resourceKey) => {
+      const resourceLossNumber = loss[resourceKey]
+      return _.times(resourceLossNumber, (idx) => {
+        if (idx >= 1 && _.includes(RESOURCES_WITH_DIGITS, resourceKey)) {
+          // money/point is all at once, so don't do it multiple times
+          return null
+        }
+        return <ResourceIcon resource={resourceKey} amount={resourceLossNumber} key={resourceKey+idx}/>
+      })
     })}
     </div>
   )
@@ -169,8 +177,6 @@ const RESOURCE_ORDER_MAP = {
   chainLevel3: 5,
 }
 
-const RESOURCES_WITH_DIGITS = ['money', 'point']
-
 function Gain({gain}) {
   if (_.isEmpty(gain)) {
     return null
@@ -179,20 +185,20 @@ function Gain({gain}) {
   const gainKeys = _.sortBy(_.keys(gain), (key) => RESOURCE_ORDER_MAP[key])
 
   const resourceArray = []
-  _.forEach(gainKeys, (resource) => {
+  _.forEach(gainKeys, (resourceKey) => {
     // ignore the 'later' resources
-    if (_.includes(resource, 'later')) {
+    if (_.includes(resourceKey, 'later')) {
       return
     }
 
     const resourceDiv = (
-      <div className="gain-family" key={resource}>
-        {_.times(gain[resource], (idx) => {
-          if (idx >= 1 && _.includes(RESOURCES_WITH_DIGITS, resource)) {
+      <div className="gain-family" key={resourceKey}>
+        {_.times(gain[resourceKey], (idx) => {
+          if (idx >= 1 && _.includes(RESOURCES_WITH_DIGITS, resourceKey)) {
             // money/point is all at once, so don't do it multiple times
             return null
           }
-          return <ResourceIcon key={idx} resource={resource} amount={gain[resource]} />
+          return <ResourceIcon key={idx} resource={resourceKey} amount={gain[resourceKey]} />
         })}
       </div>
     )
