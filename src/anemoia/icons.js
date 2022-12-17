@@ -5,7 +5,10 @@ import tapIcon from './images/tap.png'
 import earthIcon from './images/earth.png'
 import fireIcon from './images/fire.png'
 import waterIcon from './images/water.png'
-import wildIcon from './images/wild.png'
+
+// import wildIcon from './images/wild.png'
+import wildIcon from './images/wild2.png'
+
 import tapanotherIcon from './images/tapanother.png'
 import untapIcon from './images/untap.png'
 import grabIcon from './images/grab.png'

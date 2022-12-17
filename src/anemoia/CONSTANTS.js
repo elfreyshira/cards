@@ -127,7 +127,7 @@ const pointGeneratorResourceLossProportions = {
   fire: 1,
   water: 1,
   earth: 1,
-  wildsame: 2,
+  wild: 1.5,
   card: 1,
   money: 1,
 }

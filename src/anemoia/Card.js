@@ -9,7 +9,7 @@ import ICONS from './icons.js'
 import _ from 'lodash'
 import classnames from 'classnames'
 
-const RESOURCES_WITH_DIGITS = ['money', 'point']
+const RESOURCES_WITH_DIGITS_AFTER = ['money', 'point']
 
 function Type ({type, spotLevel, isPointGenerator}) {
 
@@ -62,7 +62,18 @@ function ResourceIcon ({resource, amount}) {
   if (_.isUndefined(ChosenIcon)) {
     return null
   }
-  return <ChosenIcon amount={amount}/>
+  else if (_.includes(RESOURCES_WITH_DIGITS_AFTER, resource)) {
+    return <ChosenIcon amount={amount}/>
+  }
+  else {
+    return (
+      <span className="resource-icon-container">
+        <ChosenIcon />
+        {amount > 1 ? <span className="amount-text">{amount}</span> : null}
+      </span>
+    )
+  }
+  // return <ChosenIcon amount={amount}/>
 }
 
 // mostly for moments/contracts
@@ -115,14 +126,13 @@ function Loss({loss}) {
   return (
     <div className="loss">
     {_.map(lossKeysInOrder, (resourceKey) => {
-      const resourceLossNumber = loss[resourceKey]
-      return _.times(resourceLossNumber, (idx) => {
-        if (idx >= 1 && _.includes(RESOURCES_WITH_DIGITS, resourceKey)) {
-          // money/point is all at once, so don't do it multiple times
-          return null
-        }
-        return <ResourceIcon resource={resourceKey} amount={resourceLossNumber} key={resourceKey+idx}/>
-      })
+      return (
+        <ResourceIcon
+          key={resourceKey}
+          resource={resourceKey}
+          amount={loss[resourceKey]}
+        />
+      )
     })}
     </div>
   )
@@ -130,21 +140,29 @@ function Loss({loss}) {
 
 function LaterResources ({gain}) {
   const resourceArray = []
-  _.forEach(gain, (amount, resource) => {
+  _.forEach(gain, (amount, resourceKey) => {
     // ignore the normal resources
-    if (!_.includes(resource, 'later')) {
+    if (!_.includes(resourceKey, 'later')) {
       return
     }
 
-    const resourceDiv = (
-      <span key={resource}>
-        {_.times(amount, (idx) => {
-          return <ResourceIcon key={idx} resource={resource.replace(/later$/, '')} />
-        })}
-      </span>
-      
+    resourceArray.push(
+      <ResourceIcon
+        key={resourceKey}
+        resource={resourceKey.replace(/later$/, '')}
+        amount={gain[resourceKey]}
+      />
     )
-    resourceArray.push(resourceDiv)
+
+    // const resourceDiv = (
+    //   <span key={resource}>
+    //     {_.times(amount, (idx) => {
+    //       return <ResourceIcon key={idx} resource={resource.replace(/later$/, '')} />
+    //     })}
+    //   </span>
+      
+    // )
+    // resourceArray.push(resourceDiv)
   })
 
   if (_.isEmpty(resourceArray)) {
@@ -191,18 +209,24 @@ function Gain({gain}) {
       return
     }
 
-    const resourceDiv = (
+    resourceArray.push(
       <div className="gain-family" key={resourceKey}>
-        {_.times(gain[resourceKey], (idx) => {
-          if (idx >= 1 && _.includes(RESOURCES_WITH_DIGITS, resourceKey)) {
-            // money/point is all at once, so don't do it multiple times
-            return null
-          }
-          return <ResourceIcon key={idx} resource={resourceKey} amount={gain[resourceKey]} />
-        })}
+        <ResourceIcon resource={resourceKey} amount={gain[resourceKey]} />
       </div>
     )
-    resourceArray.push(resourceDiv)
+
+    // const resourceDiv = (
+    //   <div className="gain-family" key={resourceKey}>
+    //     {_.times(gain[resourceKey], (idx) => {
+    //       if (idx >= 1 && _.includes(RESOURCES_WITH_DIGITS_AFTER, resourceKey)) {
+    //         // money/point is all at once, so don't do it multiple times
+    //         return null
+    //       }
+    //       return <ResourceIcon key={idx} resource={resourceKey} amount={gain[resourceKey]} />
+    //     })}
+    //   </div>
+    // )
+    // resourceArray.push(resourceDiv)
   })
 
   return (
