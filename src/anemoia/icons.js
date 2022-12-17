@@ -15,7 +15,9 @@ import grabIcon from './images/grab.png'
 import thisCardIcon from './images/this-card.png'
 import momentIcon from './images/moment.png'
 import windmillIcon from './images/windmill.png'
-import windIcon from './images/wind.png'
+
+// import windIcon from './images/wind.png'
+import windIcon from './images/wind2.png'
 
 import retrieveIcon from './images/retrieve.png'
 import cardIcon from './images/card.png'

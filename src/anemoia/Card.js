@@ -9,6 +9,26 @@ import ICONS from './icons.js'
 import _ from 'lodash'
 import classnames from 'classnames'
 
+import backgroundArt1 from './images/background-art/spot-point-001.jpg'
+import backgroundArt2 from './images/background-art/spot-point-002.jpg'
+import backgroundArt3 from './images/background-art/spot-point-003.jpg'
+import backgroundArt4 from './images/background-art/spot-point-004.jpg'
+import backgroundArt5 from './images/background-art/spot-point-005.jpg'
+import backgroundArt6 from './images/background-art/spot-point-006.jpg'
+import backgroundArt7 from './images/background-art/spot-point-007.jpg'
+import backgroundArt8 from './images/background-art/spot-point-008.jpg'
+
+const BACKGROUND_ART_MAPPING = {
+  1: backgroundArt1,
+  2: backgroundArt2,
+  3: backgroundArt3,
+  4: backgroundArt4,
+  5: backgroundArt5,
+  6: backgroundArt6,
+  7: backgroundArt7,
+  8: backgroundArt8
+}
+
 const RESOURCES_WITH_DIGITS_AFTER = ['money', 'point']
 
 function Type ({type, spotLevel, isPointGenerator}) {
@@ -241,6 +261,7 @@ function Effect ({loss, gain}) {
   return (
     <div className="effect">
       <table>
+        <tbody>
         <tr>
           <td>
             <Loss loss={loss} />
@@ -249,6 +270,7 @@ function Effect ({loss, gain}) {
             <Gain gain={gain} />
           </td>
         </tr>
+        </tbody>
       </table>
     </div>
   )
@@ -367,6 +389,15 @@ function Contract (props) {
   )
 }
 
+function Background () {
+  return (
+    <div className="background">
+      <img src={BACKGROUND_ART_MAPPING[_.random(1,8)]}/>
+      <div className="background-bottom"></div>
+    </div>
+  )
+}
+
 function Card (props) {
   const {
     type, spotLevel,
@@ -394,9 +425,11 @@ function Card (props) {
 
       <Cost resourceCost={resourceCost} />
 
+      <Background />
+
       <Effect loss={loss} gain={gain} />
-      <div>{uuid}</div>
-      <div>{_usageValue}</div>
+      {/*<div>{uuid}</div>*/}
+      {/*<div>{_usageValue}</div>*/}
 
 
 

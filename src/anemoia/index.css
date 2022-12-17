@@ -20,6 +20,7 @@ html {
   position: relative;
 
   overflow-wrap: break-word;
+  overflow: hidden;
 
   /* 0.5px for printing */
   margin:  10px;
@@ -184,6 +185,7 @@ span:last-child .wildsame-equal-sign {
 .type {
   padding: 5px 10px;
   position: relative;
+  border-bottom: 2px solid black;
 }
 .point-generator .type {
   background-color: #ccc;
@@ -212,9 +214,13 @@ span:last-child .wildsame-equal-sign {
 }
 
 .cost {
-  padding: 0.3rem;
-  border-top: 1px dotted black;
-  border-bottom: 3px solid black;
+  padding: 0.2rem 0.2rem 0.2rem 0.35rem;
+  position: absolute;
+  border-radius: 1rem;
+  /* filter: drop-shadow(0px 0px 5px white) drop-shadow(0px 0px 3px white) drop-shadow(0px 0px 1px white); */
+  background-color: rgba(255,255,255,50%);
+  margin: 0.3rem;
+  box-shadow: 1px 1px 2px rgb(0 0 0 / 50%);
 }
 .resource-cost-group {
   margin-right: 0.2rem;
@@ -274,6 +280,7 @@ span.icon {
   border: 1px solid rgba(0,0,0,25%);
   border-radius: 0.4rem;
   zoom: 0.8;
+  background-color: rgba(255,255,255,50%);
 }
 .later-colon {
   display: inline-block;
@@ -393,5 +400,23 @@ span.icon {
   transform: translate(-50%, -25%);
   bottom: 0;
   left: 50%;
-  text-shadow: 1px 0 #000, -1px 0 #000, 0 1px #000, 0 -1px #000, .5px .5px #000, -.5px -.5px #000, .5px -.5px #000, -.5px .5px #000;
+/*  text-shadow: 1px 0 #000, -1px 0 #000, 0 1px #000, 0 -1px #000, .5px .5px #000, -.5px -.5px #000, .5px -.5px #000, -.5px .5px #000;*/
+}
+
+.background {
+  width: 100%;
+  overflow: hidden;
+}
+.background > img {
+  max-width: 100%;
+}
+.background-bottom {
+  position: absolute;
+  width: 100%;
+  bottom: 14%;
+  height: 14%;
+  background: linear-gradient(0deg,
+    rgba(254,255,255,1) 0%,
+    rgba(255,255,255,0) 100%
+  );
 }
