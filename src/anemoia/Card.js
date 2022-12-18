@@ -111,6 +111,10 @@ const costOrderFunc = (resource) => {
 
 function Cost ({resourceCost}) {
 
+  if (_.isEmpty(resourceCost)) {
+    return null
+  }
+
   const resourceArray = []
 
   let resourceCostOrder = _.sortBy(
@@ -213,6 +217,7 @@ const RESOURCE_ORDER_MAP = {
   chainLevel1: 5,
   chainLevel2: 5,
   chainLevel3: 5,
+  chainLevel4: 5,
 }
 
 function Gain({gain}) {

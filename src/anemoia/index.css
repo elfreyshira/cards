@@ -221,6 +221,7 @@ span:last-child .wildsame-equal-sign {
   background-color: rgba(255,255,255,50%);
   margin: 0.3rem;
   box-shadow: 1px 1px 2px rgb(0 0 0 / 50%);
+  z-index: 1;
 }
 .resource-cost-group {
   margin-right: 0.2rem;
@@ -409,14 +410,14 @@ span.icon {
 }
 .background > img {
   max-width: 100%;
+  display: block;
+  position: relative;
 }
 .background-bottom {
-  position: absolute;
+  position: relative;
   width: 100%;
-  bottom: 14%;
-  height: 14%;
-  background: linear-gradient(0deg,
-    rgba(254,255,255,1) 0%,
-    rgba(255,255,255,0) 100%
-  );
+  height: 4rem;
+  top: 0;
+  transform: translateY(-100%);
+  background: linear-gradient(0deg, rgba(254,255,255,1) 0%, rgba(255,255,255,0) 100% );
 }

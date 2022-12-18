@@ -20,6 +20,11 @@ import {
   homeResourceLossProportions,
   tapResourceLossProportions,
   pointGeneratorResourceLossProportions,
+  //////////
+  spotLevelProportions,
+  spotLevelToMaxvalueMapping,
+  homeMaxvalueProportions,
+  tapMaxvalueProportions,
 } from './CONSTANTS.js'
 
 import getNewIncludeExcludeList from './get-new-include-exclude-list.js'
@@ -53,43 +58,39 @@ function excludeValuesAbove (value, cardObj) {
 
 
 let cardsArray = []
-const cardsMultiply = 2 // 1 = 45 cards, 2 = 90 cards
+
+////////////////////////
+/// RESOURCE GENERATORS
+////////////////////////
+
+const cardsPerType = 20
 
 // SPOT
-const spotMaxValues =         [225,  325]
-const spotCardsPerMaxValue =  [8,    7]
-const spotLevels = [LEVELS.LEVEL_2,  LEVELS.LEVEL_3]
-_.forEach(spotMaxValues, (val, idx) => {
-  _.times(spotCardsPerMaxValue[idx] * cardsMultiply, () => {
-    cardsArray.push({
-      type: SPOT,
-      maxValue: val,
-      spotLevel: spotLevels[idx]
-    })
+const spotLevelRoller = new Brng(spotLevelProportions, {bias: 4})
+_.times(cardsPerType, (idx) => {
+  const chosenSpotLevel = spotLevelRoller.roll()
+  cardsArray.push({
+    type: SPOT,
+    spotLevel: chosenSpotLevel,
+    maxValue: spotLevelToMaxvalueMapping[chosenSpotLevel]
   })
 })
 
 // HOME
-const homeMaxValues =         [125, 150,  175,  200,  225,  250]
-const homeCardsPerMaxValue =  [3,   2,    3,    2,    3,    2]
-_.forEach(homeMaxValues, (val, idx) => {
-  _.times(homeCardsPerMaxValue[idx] * cardsMultiply, () => {
-    cardsArray.push({
-      type: HOME,
-      maxValue: val
-    })
+const homeMaxvalueRoller = new Brng(homeMaxvalueProportions, {bias: 4})
+_.times(cardsPerType, (idx) => {
+  cardsArray.push({
+    type: HOME,
+    maxValue: _.toNumber(homeMaxvalueRoller.roll())
   })
 })
 
 // TAP
-const tapMaxValues =         [125,  150,  175,  200,  225]
-const tapCardsPerMaxValue =  [3,    3,    3,    3,    3]
-_.forEach(tapMaxValues, (val, idx) => {
-  _.times(tapCardsPerMaxValue[idx] * cardsMultiply, () => {
-    cardsArray.push({
-      type: TAP,
-      maxValue: val
-    })
+const tapMaxvalueRoller = new Brng(tapMaxvalueProportions, {bias: 4})
+_.times(cardsPerType, (idx) => {
+  cardsArray.push({
+    type: TAP,
+    maxValue: _.toNumber(tapMaxvalueRoller.roll())
   })
 })
 
@@ -97,52 +98,62 @@ _.forEach(tapMaxValues, (val, idx) => {
 /// POINT GENERATORS
 ////////////////////////
 
-const pointCardsMultiply = 2 // 1 = 12 cards, 2 = 24 cards
+const pointCardsPerType = 10
 
 // SPOT
-const spotPointsMaxValues =         [125, 225,  325]
-const spotPointsCardsPerMaxValue =  [2,   2,    2]
-const spotPointsLevels = [LEVELS.LEVEL_1, LEVELS.LEVEL_2,  LEVELS.LEVEL_3]
-_.forEach(spotPointsMaxValues, (val, idx) => {
-  _.times(spotPointsCardsPerMaxValue[idx] * pointCardsMultiply, () => {
-    cardsArray.push({
-      type: SPOT,
-      isPointGenerator: true,
-      maxValue: val,
-      spotLevel: spotPointsLevels[idx]
-    })
+_.times(pointCardsPerType, (idx) => {
+  const chosenSpotLevel = spotLevelRoller.roll()
+  cardsArray.push({
+    type: SPOT,
+    spotLevel: chosenSpotLevel,
+    maxValue: spotLevelToMaxvalueMapping[chosenSpotLevel],
+    isPointGenerator: true,
   })
 })
 
 // HOME
-const homePointsMaxValues =         [125, 150,  175,  200,  225,  250]
-const homePointsCardsPerMaxValue =  [1,   1,    1,    1,    1,    1]
-_.forEach(homePointsMaxValues, (val, idx) => {
-  _.times(homePointsCardsPerMaxValue[idx] * pointCardsMultiply, () => {
-    cardsArray.push({
-      type: HOME,
-      isPointGenerator: true,
-      maxValue: val
-    })
+_.times(pointCardsPerType, (idx) => {
+  cardsArray.push({
+    type: HOME,
+    maxValue: _.toNumber(homeMaxvalueRoller.roll()),
+    isPointGenerator: true,
   })
 })
 
 // TAP
-const tapPointsMaxValues =         [125,  150,  175,  200,  225]
-const tapPointsCardsPerMaxValue =  [1,    1,    2,    1,    1]
-_.forEach(tapPointsMaxValues, (val, idx) => {
-  _.times(tapPointsCardsPerMaxValue[idx] * pointCardsMultiply, () => {
-    cardsArray.push({
-      type: TAP,
-      isPointGenerator: true,
-      maxValue: val
-    })
+_.times(pointCardsPerType, (idx) => {
+  cardsArray.push({
+    type: TAP,
+    maxValue: _.toNumber(tapMaxvalueRoller.roll()),
+    isPointGenerator: true,
   })
 })
+
 ////////////////////////
 /// END POINT GENERATORS
 ////////////////////////
 
+function maxValueSortFunc (cardObj) {
+  return 400 - cardObj.maxValue // large to small
+  // return cardObj.maxValue // small to large
+}
+function hasLossSortFunc (cardObj) {
+  return !cardObj.hasLoss // hasLoss first
+  // return cardObj.hasLoss // hasLoss last
+}
+const TYPE_SORT_MAPPING = {}
+TYPE_SORT_MAPPING[SPOT] = 1
+TYPE_SORT_MAPPING[HOME] = 2
+TYPE_SORT_MAPPING[TAP] = 3
+function typeSortFunc (cardObj) {
+  return TYPE_SORT_MAPPING[cardObj.type]
+}
+const sortCardsByArray = [
+  typeSortFunc, 'isPointGenerator', maxValueSortFunc, hasLossSortFunc, 'totalCostValue'
+]
+////////////////
+
+cardsArray = _.sortBy(cardsArray, sortCardsByArray)
 
 const cardPointsRoller = new Brng({
   POINTS_0_3: 1,
@@ -322,26 +333,6 @@ let currentCardType = SPOT
 let hasAddedChainLevel1 = false
 let hasAddedChainLevel2 = false
 
-function hasLossSortFunc (cardObj) {
-  return !cardObj.hasLoss // hasLoss first
-  // return cardObj.hasLoss // hasLoss last
-}
-function maxValueSortFunc (cardObj) {
-  return 400 - cardObj.maxValue // large to small
-  // return cardObj.maxValue // small to large
-}
-const TYPE_SORT_MAPPING = {}
-TYPE_SORT_MAPPING[SPOT] = 1
-TYPE_SORT_MAPPING[HOME] = 2
-TYPE_SORT_MAPPING[TAP] = 3
-function typeSortFunc (cardObj) {
-  return TYPE_SORT_MAPPING[cardObj.type]
-}
-
-const sortCardsByArray = [
-  typeSortFunc, 'isPointGenerator', maxValueSortFunc, hasLossSortFunc, 'totalCostValue'
-]
-
 // order: SPOT, HOME, TAP
 cardsArray = _.sortBy(cardsArray, sortCardsByArray)
 _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
@@ -367,7 +358,7 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
   const similarityRatioIncrement = (maxRatioAllowed-acceptableRatio)/timesUntilGivingUp
 
   const acceptableDifference = {}
-  acceptableDifference[SPOT] = 75
+  acceptableDifference[SPOT] = 60
   acceptableDifference[TAP] = 40
   acceptableDifference[HOME] = 40
 
@@ -465,7 +456,8 @@ function getTotalCostValue (cardType, usageValue) {
   // return usageValue*BASE_CARD_MULTIPLIER - DEFAULT_CARD_COST
 
   if (cardType === SPOT) {
-    return usageValue * (1.70 + (usageValue-200)/800) - DEFAULT_CARD_COST
+    const spotUsageValue = usageValue - 100 // since there's already +100 spots available
+    return spotUsageValue * (1.70 + (spotUsageValue-100)/800) - DEFAULT_CARD_COST
   }
   if (cardType === HOME) {
 
@@ -491,7 +483,10 @@ _.forEach(cardsArray, (cardObj) => {
   let pointsOnCard = 0
   while (pointsOnCard < minPointsOnCard || roundToNearest25(totalCostValue)%100 !== 0) {
     pointsOnCard++
-    totalCostValue += 25
+    
+    // !! this is WRONG ON PURPOSE. math-wise should be 25.
+    // giving more value to end-game points on cards so that there's some value to build it early/late.
+    totalCostValue += 20
   }
 
   cardObj.pointsOnCard = pointsOnCard
@@ -603,16 +598,6 @@ console.log(resourceGainRoller.proportions)
 // console.log(momentsArray)
 
 console.log('----------------------')
-console.log('TAP _usageValue avg')
-console.log(_.chain(cardsArray).filter({type:TAP}).map('_usageValue').value())
-console.log(_.chain(cardsArray).filter({type:TAP}).map('_usageValue').mean().value())
-
-console.log('----------------------')
-console.log('SPOT, _usageValue, level 1 avg')
-console.log(_.chain(cardsArray).filter({type:SPOT, spotLevel: LEVELS.LEVEL_1}).map('_usageValue').value())
-console.log(_.chain(cardsArray).filter({type:SPOT, spotLevel: LEVELS.LEVEL_1}).map('_usageValue').mean().value())
-
-console.log('----------------------')
 console.log('SPOT, _usageValue, level 2 avg')
 console.log(_.chain(cardsArray).filter({type:SPOT, spotLevel: LEVELS.LEVEL_2}).map('_usageValue').value())
 console.log(_.chain(cardsArray).filter({type:SPOT, spotLevel: LEVELS.LEVEL_2}).map('_usageValue').mean().value())
@@ -623,10 +608,19 @@ console.log(_.chain(cardsArray).filter({type:SPOT, spotLevel: LEVELS.LEVEL_3}).m
 console.log(_.chain(cardsArray).filter({type:SPOT, spotLevel: LEVELS.LEVEL_3}).map('_usageValue').mean().value())
 
 console.log('----------------------')
+console.log('SPOT, _usageValue, level 4 avg')
+console.log(_.chain(cardsArray).filter({type:SPOT, spotLevel: LEVELS.LEVEL_4}).map('_usageValue').value())
+console.log(_.chain(cardsArray).filter({type:SPOT, spotLevel: LEVELS.LEVEL_4}).map('_usageValue').mean().value())
+
+console.log('----------------------')
 console.log('HOME _usageValue avg')
 console.log(_.chain(cardsArray).filter({type:HOME}).map('_usageValue').value())
 console.log(_.chain(cardsArray).filter({type:HOME}).map('_usageValue').mean().value())
 
+console.log('----------------------')
+console.log('TAP _usageValue avg')
+console.log(_.chain(cardsArray).filter({type:TAP}).map('_usageValue').value())
+console.log(_.chain(cardsArray).filter({type:TAP}).map('_usageValue').mean().value())
 
 function countOccurences (key, resources) {
   let countTotal = 0
@@ -659,13 +653,14 @@ const cardCount = countOccurences('gain', ['card'])
 const chainLevel1Count = countOccurences('gain', ['chainLevel1'])
 const chainLevel2Count = countOccurences('gain', ['chainLevel2'])
 const chainLevel3Count = countOccurences('gain', ['chainLevel3'])
+const chainLevel4Count = countOccurences('gain', ['chainLevel4'])
 
 const tapAnotherCount = countOccurences('loss', ['tapAnother'])
 const untapCount = countOccurences('gain', ['untap'])
 
 console.log('----------------------')
-console.log('chainLevel1Count + chainLevel2Count + chainLevel3Count',
-  chainLevel1Count + chainLevel2Count + chainLevel3Count)
+console.log('chainLevel1Count + chainLevel2Count + chainLevel3Count + chainLevel4Count',
+  chainLevel1Count + chainLevel2Count + chainLevel3Count + chainLevel4Count)
 console.log('tapAnotherCount + untapCount', tapAnotherCount + untapCount)
 countOccurences('gain', ['retrieve'])
 countOccurences('gain', ['grabanother'])

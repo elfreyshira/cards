@@ -13,7 +13,8 @@ const MIN_POINTS_MAP = {
 const LEVELS = {
   LEVEL_1: 'LEVEL_1',
   LEVEL_2: 'LEVEL_2',
-  LEVEL_3: 'LEVEL_3'
+  LEVEL_3: 'LEVEL_3',
+  LEVEL_4: 'LEVEL_4',
 }
 
 const RESOURCE_GAIN_VALUE = {
@@ -40,8 +41,9 @@ const RESOURCE_GAIN_VALUE = {
   },
   retrieve: _.constant(50),
   chainLevel1: _.constant(75),
-  chainLevel2: _.constant(110),
-  chainLevel3: _.constant(150),
+  chainLevel2: _.constant(100),
+  chainLevel3: _.constant(125),
+  chainLevel4: _.constant(150),
   point: _.constant(25),
 }
 
@@ -54,14 +56,14 @@ const RESOURCE_LOSS_VALUE = {
   wild: 80,
   wildsame: 80, // increases the more you add
   tapAnother: 140,
-  points4: 130,
-  points2: 65,
+  points4: 120,
+  points2: 60,
 }
 
 ////////////////////////////////////////////
 
 const ABSTRACT_RESOURCE_ARRAY = ['untap', 'retrieve', 'grabanother',
-  'chainLevel1','chainLevel2', 'chainLevel3']
+  'chainLevel1','chainLevel2', 'chainLevel3', 'chainLevel4']
 
 const SPECIAL_RESOURCE_ARRAY = ['money', 'card']
 
@@ -74,7 +76,38 @@ const NOW_RESOURCE_ARRAY = ['fire', 'water', 'earth', 'wild']
 
 ////////////////////////////////////////////
 ////////////////////////////////////////////
-/// PROPORTIONS GAIN
+/// BRNG ROLLERS
+
+//////// MAXVALUE
+const spotLevelProportions = {
+  LEVEL_2: 1, // level 2 // 225
+  LEVEL_3: 1, // level 3 // 287
+  LEVEL_4: 1, // level 4 // 350
+}
+const spotLevelToMaxvalueMapping = {
+  LEVEL_2: 225,
+  LEVEL_3: 290,
+  LEVEL_4: 350,
+}
+
+const homeMaxvalueProportions = {
+  125: 1,
+  150: 1,
+  175: 1,
+  200: 1,
+  225: 1,
+  250: 1,
+}
+
+const tapMaxvalueProportions = {
+  125: 1,
+  150: 1,
+  175: 1,
+  200: 1,
+  225: 1,
+}
+
+//////// GAIN
 
 const baseResourceGainProportions = {
   money: 3.5,
@@ -86,9 +119,10 @@ const baseResourceGainProportions = {
   earth: 1.9,
   earthlater: 1,
   wild: 3.3,
-  chainLevel1: 0.50,
-  chainLevel2: 0.55,
-  chainLevel3: 0.47,
+  chainLevel1: 0.40,
+  chainLevel2: 0.40,
+  chainLevel3: 0.40,
+  chainLevel4: 0.40,
 }
 
 const spotResourceGainProportions = _.merge({}, baseResourceGainProportions, {
@@ -156,5 +190,10 @@ export {
   spotResourceLossProportions,
   homeResourceLossProportions,
   tapResourceLossProportions,
-  pointGeneratorResourceLossProportions
+  pointGeneratorResourceLossProportions,
+  //////
+  spotLevelProportions,
+  spotLevelToMaxvalueMapping,
+  homeMaxvalueProportions,
+  tapMaxvalueProportions,
 }
