@@ -2,7 +2,8 @@
 
 html {
   font-size: 100%;
-/*  font-size: 16px;*/
+  -webkit-print-color-adjust: exact;
+  -webkit-filter: opacity(1);
 }
 
 .card {
@@ -32,6 +33,17 @@ table {
 }
 table td:first-child {
   max-width: 40%;
+}
+
+h3 {
+  margin: .3rem auto .2rem;
+}
+ul {
+  padding-inline-start: 1rem;
+  margin: 0;
+}
+p {
+  margin: 0;
 }
 
 .contract {
@@ -149,6 +161,7 @@ span:last-child .wildsame-equal-sign {
 .icon.chain img {
   height: 1.5rem;
   float: left;
+  display: inline-block;
 }
 .icon.chain .chain-level {
   float: right;
@@ -280,7 +293,7 @@ span.icon {
   padding: 0rem 0.3rem 0.1rem;
   border: 1px solid rgba(0,0,0,25%);
   border-radius: 0.4rem;
-  zoom: 0.8;
+  zoom: 0.76;
   background-color: rgba(255,255,255,50%);
 }
 .later-colon {
@@ -290,23 +303,57 @@ span.icon {
   vertical-align: text-bottom;
 }
 
+/* REFERENCE  */
+.reference-container {
+  margin: 10px 10px;
+  font-size: .9rem;
+}
+.reference-container .icon {
+  zoom: .5;
+  vertical-align: text-bottom;
+}
+.reference-row {
+  line-height: .9rem;
+  padding: 0.25rem 0 0.2rem;
+  border-top: 1px solid #888;
+}
+
+/* ANYTIME  */
 .anytime-container {
   margin: 10px 10px;
+/*  font-size: .9rem;*/
 }
-.anytime-arrow {
-  font-size: 2em;
-  display: inline-block;
-  bottom: 0.1em;
-  position: relative;
+.anytime-container .icon {
+  vertical-align: text-bottom;
 }
 .anytime-row {
-  margin-top: 0.4em;
-  zoom: .87;
+  zoom: .8;
+  padding: 0.2rem 0 0.16rem;
+  border-top: 2px solid #888;
 }
-.anytime-title {
-  font-size: 1.5em;
+.anytime-arrow {
+  font-size: 2rem;
+  display: inline-block;
+  bottom: 0.1rem;
+  position: relative;
+}
+.reference-title, .anytime-title {
+  font-size: 1.5rem;
   text-align: center;
   margin-bottom: 10px;
+}
+
+.play-a-turn-container {
+  font-size: .85rem;
+}
+.simultaneous-container {
+  font-size: .8rem;
+}
+.simultaneous-container .reference-title {
+  font-size: 1rem;
+}
+.reference-container .icon {
+  zoom: .4;
 }
 
 

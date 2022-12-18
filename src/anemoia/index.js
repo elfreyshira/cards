@@ -32,7 +32,7 @@ import getNewIncludeExcludeList from './get-new-include-exclude-list.js'
 import checkSimilarity from './check-similarity.js'
 import {Card, Contract} from './Card.js'
 import ICONS from './icons.js'
-import baseCards from './base-cards.js'
+import {Reference, Exchange, PlayATurn, PlayATurnSimultaneous} from './base-cards.js'
 
 
 // import endGameCards from './end-game-cards.js'
@@ -670,9 +670,6 @@ countOccurences('gain', ['grabanother'])
 ////////////////////////////////////////////
 // add the starter spots
 
-function Arrow () {
-  return <span className="anytime-arrow">&rarr;</span>
-}
 
 const starterSpots = [
   {
@@ -720,31 +717,23 @@ const starterSpots = [
     },
     "_usageValue": 100
   },
-  // {
-  //   uuid: "ANYTIME",
-  //   ExtraStuff: (
-  //     <div className="anytime-container">
-  //       <div className="anytime-title">ANYTIME</div>
-  //       <div className="anytime-row"><ICONS.Money amount={5}/> <Arrow/> <ICONS.Wild /></div>
-  //       <div className="anytime-row"><ICONS.Money amount={3}/> <Arrow/> <ICONS.Card /></div>
-  //       <div className="anytime-row"><ICONS.Card /> <Arrow/> <ICONS.Money amount={1}/></div>
-  //       <div className="anytime-row"><ICONS.Card /> <ICONS.Card /> <Arrow/> <ICONS.Money amount={3}/></div>
-  //       <div className="anytime-row"><ICONS.Card /> <ICONS.Money amount={1}/> <Arrow/> <ICONS.Card /></div>
-  //       <div className="anytime-row"><ICONS.Wild/> <Arrow/> <ICONS.Money amount={3}/></div>
-  //       <div className="anytime-row"><ICONS.Wild/> <ICONS.Money amount={2}/> <Arrow/> <ICONS.Wild/></div>
-  //     </div>
-  //   )
-  // },
+  {
+    uuid: "EXCHANGE",
+    ExtraStuff: <Exchange />
+  },
   {
     uuid: "REFERENCE",
-    ExtraStuff: (
-      <div className="anytime-container">
-        <div className="anytime-title">REFERENCE</div>
-        {/*<div className="anytime-row"><ICONS.Wild/> : <ICONS.Fire/> / <ICONS.Water/> / <ICONS.Earth/></div>*/}
-        {/*<div className="anytime-row"><ICONS.Untap/> : refresh one of your <ICONS.Tap/> cards</div>*/}
-      </div>
-    )
-  }
+    ExtraStuff: <Reference />
+  },
+  {
+    uuid: "PLAY A TURN",
+    ExtraStuff: <PlayATurn />
+  },
+  {
+    uuid: "PLAY A TURN (SIMULTANEOUS)",
+    ExtraStuff: <PlayATurnSimultaneous />
+  },
+
 ]
 
 cardsArray = cardsArray.concat(starterSpots)

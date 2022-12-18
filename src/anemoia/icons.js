@@ -99,6 +99,9 @@ function Chainlevel3 () {
 function Chainlevel4 () {
   return <span className="icon chain"><img src={spotIcon}/><span className="chain-level">4</span></span>
 }
+function ChainlevelX () {
+  return <span className="icon chain"><img src={spotIcon}/><span className="chain-level">X</span></span>
+}
 
 function Money ({amount}) {
   return (
@@ -142,6 +145,7 @@ export default {
   Chainlevel2,
   Chainlevel3,
   Chainlevel4,
+  ChainlevelX,
   Money,
   Grab,
   Grabanother,
