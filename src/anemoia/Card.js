@@ -410,7 +410,7 @@ function Card (props) {
     loss, gain, uuid,
     totalCostValue, _usageValue,
     isPointGenerator,
-    ExtraStuff
+    ExtraStuff, maxValue,
   } = props.cardObj
 
   if (!_.isEmpty(ExtraStuff)) {
@@ -430,11 +430,11 @@ function Card (props) {
 
       <Cost resourceCost={resourceCost} />
 
-      {/*<Background />*/}
+      <Background />
 
       <Effect loss={loss} gain={gain} />
       {/*<div>{uuid}</div>*/}
-      <div style={{textAlign: 'right', padding: '5px', fontSize: '.9rem'}}>{_usageValue}</div>
+      <div style={{textAlign: 'right', padding: '5px', fontSize: '.8rem'}}>{_usageValue} / {maxValue}</div>
 
 
 

@@ -362,6 +362,9 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
   acceptableDifference[TAP] = 40
   acceptableDifference[HOME] = 40
 
+  let bestSimilarityRatio = 1 // the lower the better
+  let bestNonSimilarCardObj = {}
+
   while (true) {
     timesTriedToSetResources++
     const {undoChainArray, lossObj, gainObj} = getLossAndGain(cardObj)
@@ -377,23 +380,32 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
     const {similarityRatio, mostSimilarCardObj} = checkSimilarity(
       cardsArray.slice(0, cardsArrayIndex), newCardObj
     )
-    
+
     if (
-      (
-        similarityRatio < acceptableRatio
-        // the usageValue is not too low compare to the max value
-        && (cardObj.maxValue - currentUsageValue) < acceptableDifference[cardObj.type]
-      )
-      || timesTriedToSetResources > timesUntilGivingUp
+      (similarityRatio < bestSimilarityRatio)
+      && (cardObj.maxValue - currentUsageValue) <= acceptableDifference[cardObj.type]
+    ) {
+      bestSimilarityRatio = similarityRatio
+      bestNonSimilarCardObj = _.cloneDeep(newCardObj)
+    }
+
+    if (
+      similarityRatio < acceptableRatio
+      // the usageValue is not too low compared to the max value
+      && (cardObj.maxValue - currentUsageValue) <= acceptableDifference[cardObj.type]
     ) {
       if (!_.isEmpty(lossObj)) {
         cardObj.loss = lossObj // !!!!!!!!!!!!!!!
       }
       cardObj.gain = gainObj // !!!!!!!!!!!!!!!
-
-      if (similarityRatio >= acceptableRatio && timesTriedToSetResources > timesUntilGivingUp) {
-        console.log('just gave up', similarityRatio, mostSimilarCardObj, cardObj)
+      break
+    }
+    else if (timesTriedToSetResources > timesUntilGivingUp) {
+      if (!_.isEmpty(bestNonSimilarCardObj.loss)) {
+        cardObj.loss = bestNonSimilarCardObj.loss // !!!!!!!!!!!!!!!
       }
+      cardObj.gain = bestNonSimilarCardObj.gain // !!!!!!!!!!!!!!!
+      console.log('just gave up', bestSimilarityRatio, bestNonSimilarCardObj)
       break
     }
     else {
@@ -755,7 +767,7 @@ const cardsImportantKeys = [
   'loss',
   'gain',
   '_usageValue',
-  'ExtraStuff'
+  'ExtraStuff',
 ]
 
 const contractsImportantKeys = [
