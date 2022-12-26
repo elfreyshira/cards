@@ -9,6 +9,7 @@ import {
   LEVELS,
   RESOURCE_GAIN_VALUE,
   RESOURCE_LOSS_VALUE,
+  LATER_COUNT_ADDITIONAL_VALUE_MAPPING,
   /////////////
   PHYSICAL_RESOURCE_ARRAY,
   ///////////////
@@ -286,6 +287,7 @@ function getLossAndGain(cardObj) {
       gainRollerToUse = resourceGainRoller
     }
 
+    // TODO: FIX THIS THING HERE!!!!!!!!!!!!!!!!!!!!!
     const chosenResource = _.attempt(() => gainRollerToUse.roll({
       only: _.isEmpty(includeList) ? undefined : includeList,
       exclude: _.uniq(excludeValuesAbove(currentMaxValue, cardObj).concat(excludeList))
@@ -383,7 +385,7 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
 
     if (
       (similarityRatio < bestSimilarityRatio)
-      && (cardObj.maxValue - currentUsageValue) <= acceptableDifference[cardObj.type]
+      && (cardObj.maxValue - currentUsageValue) < acceptableDifference[cardObj.type]
     ) {
       bestSimilarityRatio = similarityRatio
       bestNonSimilarCardObj = _.cloneDeep(newCardObj)
@@ -392,7 +394,7 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
     if (
       similarityRatio < acceptableRatio
       // the usageValue is not too low compared to the max value
-      && (cardObj.maxValue - currentUsageValue) <= acceptableDifference[cardObj.type]
+      && (cardObj.maxValue - currentUsageValue) < acceptableDifference[cardObj.type]
     ) {
       if (!_.isEmpty(lossObj)) {
         cardObj.loss = lossObj // !!!!!!!!!!!!!!!
@@ -425,10 +427,23 @@ function roundToNearest25 (x) {
 }
 
 function getGainValue (cardObj) {
-  return _.chain(cardObj.gain)
+
+  const baseMainValue = _.chain(cardObj.gain)
     .map((val, key) => RESOURCE_GAIN_VALUE[key](cardObj) * val)
     .sum()
     .value()
+
+  const totalLaterResourcesCount = _.chain(cardObj.gain)
+    .pickBy((val, key) => {
+      return _.includes(key, 'later')
+    })
+    .values()
+    .sum()
+    .value()
+
+  return baseMainValue + LATER_COUNT_ADDITIONAL_VALUE_MAPPING[totalLaterResourcesCount]
+
+  // return baseMainValue
 }
 
 function getLossValue (lossObj) {
@@ -469,14 +484,14 @@ function getTotalCostValue (cardType, usageValue) {
 
   if (cardType === SPOT) {
     const spotUsageValue = usageValue - 100 // since there's already +100 spots available
-    return spotUsageValue * (1.70 + (spotUsageValue-100)/800) - DEFAULT_CARD_COST
+    return spotUsageValue * (1.60 + (spotUsageValue)/700) - DEFAULT_CARD_COST
   }
   if (cardType === HOME) {
 
-    return usageValue * (1.65 + (usageValue-100)/800) - DEFAULT_CARD_COST
+    return usageValue * (1.50 + (usageValue)/700) - DEFAULT_CARD_COST
   }
   if (cardType === TAP) {
-    return usageValue * (1.70 + (usageValue-100)/800) - DEFAULT_CARD_COST
+    return usageValue * (1.65 + (usageValue)/700) - DEFAULT_CARD_COST
   }
 }
 

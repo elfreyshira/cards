@@ -17,6 +17,7 @@ import backgroundArt5 from './images/background-art/spot-point-005.jpg'
 import backgroundArt6 from './images/background-art/spot-point-006.jpg'
 import backgroundArt7 from './images/background-art/spot-point-007.jpg'
 import backgroundArt8 from './images/background-art/spot-point-008.jpg'
+import backgroundArt9 from './images/background-art/spot-point-009.jpg'
 
 const BACKGROUND_ART_MAPPING = {
   1: backgroundArt1,
@@ -26,7 +27,8 @@ const BACKGROUND_ART_MAPPING = {
   5: backgroundArt5,
   6: backgroundArt6,
   7: backgroundArt7,
-  8: backgroundArt8
+  8: backgroundArt8,
+  9: backgroundArt9,
 }
 
 const RESOURCES_WITH_DIGITS_AFTER = ['money', 'point']
@@ -397,7 +399,7 @@ function Contract (props) {
 function Background () {
   return (
     <div className="background">
-      <img src={BACKGROUND_ART_MAPPING[_.random(1,8)]}/>
+      <img src={BACKGROUND_ART_MAPPING[_.random(1,9)]}/>
       <div className="background-bottom"></div>
     </div>
   )
@@ -430,7 +432,7 @@ function Card (props) {
 
       <Cost resourceCost={resourceCost} />
 
-      <Background />
+      {/*<Background />*/}
 
       <Effect loss={loss} gain={gain} />
       {/*<div>{uuid}</div>*/}

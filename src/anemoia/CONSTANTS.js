@@ -17,6 +17,24 @@ const LEVELS = {
   LEVEL_4: 'LEVEL_4',
 }
 
+const LATER_COUNT_ADDITIONAL_VALUE_MAPPING = {
+  0: 0,
+  1: 0,
+  2: 5,
+  3: 15,
+}
+
+function getLaterResourceValue (cardObj = {}, isForFuture = false) {
+  // _.chain(cardObj.gain)
+  //   .pickBy((val, key) => {
+  //     return _.includes(key, 'later')
+  //   })
+  //   .values()
+  //   .sum()
+  //   .value()
+  return 40
+}
+
 const RESOURCE_GAIN_VALUE = {
   money: _.constant(25),
   card: _.constant(50),
@@ -33,7 +51,7 @@ const RESOURCE_GAIN_VALUE = {
     // if (!_.isEmpty(cardObj) && cardObj.type === HOME) {
     if (cardObj.type === HOME) {
       // only valuable when you have more tapped cards than workers you rested
-      return 90
+      return 95
     }
     else {
       return 140
@@ -119,10 +137,10 @@ const baseResourceGainProportions = {
   earth: 1.9,
   earthlater: 1,
   wild: 3.3,
-  chainLevel1: 0.40,
-  chainLevel2: 0.40,
-  chainLevel3: 0.40,
-  chainLevel4: 0.40,
+  chainLevel1: 0.35,
+  chainLevel2: 0.35,
+  chainLevel3: 0.35,
+  chainLevel4: 0.35,
 }
 
 const spotResourceGainProportions = _.merge({}, baseResourceGainProportions, {
@@ -152,7 +170,7 @@ const baseResourceLossProportions = {
   points4: 2,
 }
 const spotResourceLossProportions = _.merge({}, baseResourceLossProportions, {
-  tapAnother: 3.7
+  // tapAnother: 3.7
 })
 const homeResourceLossProportions = {points4: 2, points2: 2}
 const tapResourceLossProportions = _.cloneDeep(baseResourceLossProportions)
@@ -176,6 +194,7 @@ export {
   LEVELS,
   RESOURCE_GAIN_VALUE,
   RESOURCE_LOSS_VALUE,
+  LATER_COUNT_ADDITIONAL_VALUE_MAPPING,
   ////////////////
   ABSTRACT_RESOURCE_ARRAY,
   SPECIAL_RESOURCE_ARRAY,
