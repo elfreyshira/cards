@@ -484,14 +484,14 @@ function getTotalCostValue (cardType, usageValue) {
 
   if (cardType === SPOT) {
     const spotUsageValue = usageValue - 100 // since there's already +100 spots available
-    return spotUsageValue * (1.60 + (spotUsageValue)/700) - DEFAULT_CARD_COST
+    return spotUsageValue * (1.70 + (spotUsageValue)/700) - DEFAULT_CARD_COST
   }
   if (cardType === HOME) {
 
-    return usageValue * (1.50 + (usageValue)/700) - DEFAULT_CARD_COST
+    return usageValue * (1.60 + (usageValue)/700) - DEFAULT_CARD_COST
   }
   if (cardType === TAP) {
-    return usageValue * (1.65 + (usageValue)/700) - DEFAULT_CARD_COST
+    return usageValue * (1.75 + (usageValue)/700) - DEFAULT_CARD_COST
   }
 }
 
