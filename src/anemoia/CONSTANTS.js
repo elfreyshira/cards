@@ -57,11 +57,11 @@ const RESOURCE_GAIN_VALUE = {
       return 140
     }
   },
-  retrieve: _.constant(50),
-  chainLevel1: _.constant(75),
-  chainLevel2: _.constant(100),
-  chainLevel3: _.constant(125),
-  chainLevel4: _.constant(150),
+  retrieve: _.constant(75),
+  chainLevel1: _.constant(100),
+  chainLevel2: _.constant(120),
+  chainLevel3: _.constant(140),
+  chainLevel4: _.constant(160),
   point: _.constant(25),
 }
 
@@ -99,7 +99,7 @@ const NOW_RESOURCE_ARRAY = ['fire', 'water', 'earth', 'wild']
 //////// MAXVALUE
 const spotLevelProportions = {
   LEVEL_2: 1, // level 2 // 225
-  LEVEL_3: 1, // level 3 // 287
+  LEVEL_3: 1, // level 3 // 290
   LEVEL_4: 1, // level 4 // 350
 }
 const spotLevelToMaxvalueMapping = {
@@ -136,7 +136,8 @@ const baseResourceGainProportions = {
   waterlater: 1,
   earth: 1.9,
   earthlater: 1,
-  wild: 3.3,
+  // wild: 3.3,
+  wild: 1.9,
   chainLevel1: 0.35,
   chainLevel2: 0.35,
   chainLevel3: 0.35,
@@ -144,18 +145,18 @@ const baseResourceGainProportions = {
 }
 
 const spotResourceGainProportions = _.merge({}, baseResourceGainProportions, {
-  grabanother: 0.8, // changed later
+  // grabanother: 0.8, // changed later
   untap: 1.6, // changed later
   retrieve: 1.8, // changed later
 })
 const homeResourceGainProportions = _.merge({}, baseResourceGainProportions, {
-  grabanother: 0.9, // changed
+  // grabanother: 0.9, // changed
   untap: 1.8, // changed
   // retrieve: 1.8, // removed
 })
 
 const tapResourceGainProportions = _.merge({}, baseResourceGainProportions, {
-  grabanother: 0.9, // changed
+  // grabanother: 0.9, // changed
   // untap: 1.6, // removed
   retrieve: 2.0, // changed
 })
@@ -166,13 +167,15 @@ const baseResourceLossProportions = {
   fire: 1.9,
   water: 1.9,
   earth: 1.9,
-  wild: 3.3,
-  points4: 2,
+  // wild: 3.3,
+  wild: 1.9,
+  // points4: 2,
 }
 const spotResourceLossProportions = _.merge({}, baseResourceLossProportions, {
   // tapAnother: 3.7
 })
-const homeResourceLossProportions = {points4: 2, points2: 2}
+// const homeResourceLossProportions = {points4: 2, points2: 2}
+const homeResourceLossProportions = {}
 const tapResourceLossProportions = _.cloneDeep(baseResourceLossProportions)
 
 const pointGeneratorResourceLossProportions = {

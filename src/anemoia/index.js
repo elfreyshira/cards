@@ -100,6 +100,7 @@ _.times(cardsPerType, (idx) => {
 ////////////////////////
 
 const pointCardsPerType = 10
+// const pointCardsPerType = 0
 
 // SPOT
 _.times(pointCardsPerType, (idx) => {
@@ -163,7 +164,7 @@ const cardPointsRoller = new Brng({
 }, {bias: 4})
 
 const spotCardHasLossRoller = new Brng({0: 1, 1: 1}, {keepHistory: true, bias: 4})
-const homeCardHasLossRoller = new Brng({0: 8, 1: 2}, {keepHistory: true, bias: 4})
+// const homeCardHasLossRoller = new Brng({0: 8, 1: 2}, {keepHistory: true, bias: 4})
 
 _.forEach(cardsArray, (cardObj) => {
   cardObj.points = cardPointsRoller.roll()
@@ -178,7 +179,8 @@ _.forEach(cardsArray, (cardObj) => {
     hasLoss = !!_.toNumber(spotCardHasLossRoller.roll())
   }
   else if (cardObj.type === HOME) {
-    hasLoss = !!_.toNumber(homeCardHasLossRoller.roll())
+    // hasLoss = !!_.toNumber(homeCardHasLossRoller.roll())
+    hasLoss = false
   }
   else if (cardObj.type === TAP) {
     hasLoss = true
