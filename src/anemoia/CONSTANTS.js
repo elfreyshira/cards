@@ -130,14 +130,14 @@ const tapMaxvalueProportions = {
 const baseResourceGainProportions = {
   money: 3.5,
   card: 2.5,
-  fire: 1.9,
-  firelater: 1,
-  water: 1.9,
+  fire: 2.2,
+  firelater: 1.1,
+  water: 2,
   waterlater: 1,
-  earth: 1.9,
+  earth: 2,
   earthlater: 1,
   // wild: 3.3,
-  wild: 1.9,
+  wild: 2,
   chainLevel1: 0.27,
   chainLevel2: 0.27,
   chainLevel3: 0.27,
@@ -145,14 +145,17 @@ const baseResourceGainProportions = {
 }
 
 const spotResourceGainProportions = _.merge({}, baseResourceGainProportions, {
-  // grabanother: 0.8, // changed later
+  fire: 1,
+  firelater: .5,
+
   untap: 1.7, // changed later
   retrieve: 1.8, // changed later
 })
 const homeResourceGainProportions = _.merge({}, baseResourceGainProportions, {
-  // grabanother: 0.9, // changed
+  water: 1,
+  waterlater: .5,
+
   untap: 1.9, // changed
-  // retrieve: 1.8, // removed
 
   chainLevel1: 0.4,
   chainLevel2: 0.4,
@@ -161,8 +164,9 @@ const homeResourceGainProportions = _.merge({}, baseResourceGainProportions, {
 })
 
 const tapResourceGainProportions = _.merge({}, baseResourceGainProportions, {
-  // grabanother: 0.9, // changed
-  // untap: 1.6, // removed
+  earth: 1,
+  earthlater: .5,
+
   retrieve: 2.0, // changed
 
   chainLevel1: 0.4,
@@ -174,11 +178,11 @@ const tapResourceGainProportions = _.merge({}, baseResourceGainProportions, {
 //////// LOSS
 
 const baseResourceLossProportions = {
-  fire: 1.9,
-  water: 1.9,
-  earth: 1.9,
+  fire: 1,
+  water: 1,
+  earth: 1,
   // wild: 3.3,
-  wild: 1.9,
+  wild: 1,
   // points4: 2,
 }
 const spotResourceLossProportions = _.merge({}, baseResourceLossProportions, {
@@ -195,6 +199,23 @@ const pointGeneratorResourceLossProportions = {
   wild: 1,
   // card: 1,
   money: 1,
+}
+
+//////// RESOURCE COST ON CARD
+const spotResourceCostProportions = {
+  fire: 2,
+  water: 1,
+  earth: 1,
+}
+const homeResourceCostProportions = {
+  fire: 1,
+  water: 2,
+  earth: 1,
+}
+const tapResourceCostProportions = {
+  fire: 1,
+  water: 1,
+  earth: 2,
 }
 
 ////////////////////////////////////////////
@@ -228,4 +249,8 @@ export {
   spotLevelToMaxvalueMapping,
   homeMaxvalueProportions,
   tapMaxvalueProportions,
+  ///////
+  spotResourceCostProportions,
+  homeResourceCostProportions,
+  tapResourceCostProportions,
 }

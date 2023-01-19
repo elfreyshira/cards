@@ -26,6 +26,10 @@ import {
   spotLevelToMaxvalueMapping,
   homeMaxvalueProportions,
   tapMaxvalueProportions,
+  //////
+  spotResourceCostProportions,
+  homeResourceCostProportions,
+  tapResourceCostProportions,
 } from './CONSTANTS.js'
 
 import getNewIncludeExcludeList from './get-new-include-exclude-list.js'
@@ -418,7 +422,7 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
         cardObj.loss = leastSimilarCardObj.loss // !!!!!!!!!!!!!!!
       }
       cardObj.gain = leastSimilarCardObj.gain // !!!!!!!!!!!!!!!
-      console.log('just gave up', lowestSimilarityRatio, _.cloneDeep(leastSimilarCardObj))
+      console.log('just gave up', lowestSimilarityRatio, cardObj.uuid, _.cloneDeep(leastSimilarCardObj))
       break
     }
     else if (timesTriedToSetResources <= timesUntilGivingUp) {
@@ -427,6 +431,7 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
       acceptableRatio = _.min([acceptableRatio + similarityRatioIncrement, maxRatioAllowed])
       _.over(undoChainArray)()
     }
+    // else. don't undo the resource rolls, just keep going and hope for a better result.
   }
   
 
@@ -546,8 +551,8 @@ const cost23More3VarietyRoller = new Brng({2:1, 3:1}, {keepHistory: true, bias: 
 const costToVarietyMap = {
   0: _.constant(1),
   100: _.constant(1),
-  200: _.constant(1),
-  300: _.constant(1),
+  200: _.constant(2),
+  300: _.constant(2),
   400: _.constant(2),
   // 400: () => cost12VarietyRoller.roll(),
   500: _.constant(2),
@@ -557,28 +562,49 @@ const costToVarietyMap = {
   900: _.constant(3)
 }
 
-const resourceCostRoller = new Brng({
-  fire: 1,
-  water: 1,
-  earth: 1,
-}, {keepHistory: true, bias: 2})
-
+const resourceCostRoller = new Brng(spotResourceCostProportions, {keepHistory: true, bias: 2})
+let currentCardTypeForResourceCost = SPOT
+const typeToResourceCostMapping = {}
+typeToResourceCostMapping[SPOT] = 'fire'
+typeToResourceCostMapping[HOME] = 'water'
+typeToResourceCostMapping[TAP] = 'earth'
 
 // RESOURCE COST
 
 // returns {resourceCost, undoChainArray} -- resourceCost = {fire: 2, water: 1, ...}
-function getResourceCost (totalCostValue) {
+function getResourceCost (totalCostValue, cardType) {
+
+  if (cardType === SPOT && cardType !== currentCardTypeForResourceCost) {
+    currentCardTypeForResourceCost = SPOT
+    resourceCostRoller.updateProportions(spotResourceCostProportions)
+  }
+  else if (cardType === HOME && cardType !== currentCardTypeForResourceCost) {
+    currentCardTypeForResourceCost = HOME
+    resourceCostRoller.updateProportions(homeResourceCostProportions)
+  }
+  else if (cardType === TAP && cardType !== currentCardTypeForResourceCost) {
+    currentCardTypeForResourceCost = TAP
+    resourceCostRoller.updateProportions(tapResourceCostProportions)
+  }
+
   const undoChainArray = []
   
   const costVariety = _.toNumber(costToVarietyMap[totalCostValue]())
-  
+
   const resourceCostObj = {}
   let onlyResourceCost = []
 
   while (_.sum(_.values(resourceCostObj))*100 < totalCostValue) {
-    const chosenResourceToPay = resourceCostRoller.roll(
-      {only: _.isEmpty(onlyResourceCost) ? undefined : onlyResourceCost}
-    )
+    let chosenResourceToPay
+    if (_.sum(_.values(resourceCostObj)) === 0 && !_.isEmpty(typeToResourceCostMapping[cardType])) {
+      chosenResourceToPay = resourceCostRoller.roll(typeToResourceCostMapping[cardType])
+    }
+    else {
+      chosenResourceToPay = resourceCostRoller.roll(
+        {only: _.isEmpty(onlyResourceCost) ? undefined : onlyResourceCost}
+      )
+    }
+    
     undoChainArray.push(() => resourceCostRoller.undo())
     resourceCostObj[chosenResourceToPay] = (resourceCostObj[chosenResourceToPay] + 1) || 1
 
@@ -590,7 +616,7 @@ function getResourceCost (totalCostValue) {
   return {resourceCost: resourceCostObj, undoChainArray}
 
 }
-
+// SETTING RESOURCE COST FOR EACH CARD
 cardsArray = _.sortBy(cardsArray, sortCardsByArray)
 _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
   
@@ -602,7 +628,7 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
 
   while (true) {
     timesTriedToSetResources++
-    const {resourceCost, undoChainArray} = getResourceCost(cardObj.totalCostValue)
+    const {resourceCost, undoChainArray} = getResourceCost(cardObj.totalCostValue, cardObj.type)
 
     const newCardObj = _.cloneDeep(cardObj)
     newCardObj.resourceCost = resourceCost
@@ -684,6 +710,9 @@ countOccurences('gain', ['water'])
 countOccurences('gain', ['earth'])
 countOccurences('gain', ['wild'])
 
+countOccurences('gain', ['firelater'])
+countOccurences('gain', ['waterlater'])
+countOccurences('gain', ['earthlater'])
 countOccurences('gain', ['firelater', 'waterlater', 'earthlater'])
 
 const moneyCount = countOccurences('gain', ['money'])
