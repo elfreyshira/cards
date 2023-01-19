@@ -75,10 +75,10 @@ function getNewIncludeExcludeList (gainObj, chosenResource, includeList, exclude
     newExcludeList = _.concat(newExcludeList, LATER_RESOURCE_ARRAY)
   }
 
-  // max of 2 `element` now for each element
+  // max of 3 `element` now for each element
   else if (
     _.includes(NOW_RESOURCE_ARRAY, chosenResource)
-    && gainObj[chosenResource] === 2
+    && gainObj[chosenResource] === 3
   ) {
     newExcludeList = _.concat(excludeList, chosenResource)
   }

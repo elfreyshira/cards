@@ -65,6 +65,7 @@ let cardsArray = []
 ////////////////////////
 
 const cardsPerType = 20
+// const cardsPerType = 40
 
 // SPOT
 const spotLevelRoller = new Brng(spotLevelProportions, {bias: 4})
@@ -357,8 +358,8 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
 
   let timesTriedToSetResources = 0
   let acceptableRatio = 0.70
-  const maxRatioAllowed = 0.90
-  const timesUntilGivingUp = 100
+  const maxRatioAllowed = 0.95
+  const timesUntilGivingUp = 200
   const similarityRatioIncrement = (maxRatioAllowed-acceptableRatio)/timesUntilGivingUp
 
   const acceptableDifference = {}
@@ -366,8 +367,8 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
   acceptableDifference[TAP] = 40
   acceptableDifference[HOME] = 40
 
-  let bestSimilarityRatio = 1 // the lower the better
-  let bestNonSimilarCardObj = {}
+  let lowestSimilarityRatio = 1 // the lower the better
+  let leastSimilarCardObj = {}
 
   while (true) {
     timesTriedToSetResources++
@@ -385,18 +386,23 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
       cardsArray.slice(0, cardsArrayIndex), newCardObj
     )
 
+    const isWithinValueRange = (cardObj.maxValue - currentUsageValue) < acceptableDifference[cardObj.type]
+
+    if (_.isEmpty(leastSimilarCardObj)) {
+      leastSimilarCardObj = _.cloneDeep(newCardObj)
+    }
     if (
-      (similarityRatio < bestSimilarityRatio)
-      && (cardObj.maxValue - currentUsageValue) < acceptableDifference[cardObj.type]
+      (similarityRatio <= lowestSimilarityRatio)
+      && isWithinValueRange
     ) {
-      bestSimilarityRatio = similarityRatio
-      bestNonSimilarCardObj = _.cloneDeep(newCardObj)
+      lowestSimilarityRatio = similarityRatio
+      leastSimilarCardObj = _.cloneDeep(newCardObj)
     }
 
     if (
       similarityRatio < acceptableRatio
       // the usageValue is not too low compared to the max value
-      && (cardObj.maxValue - currentUsageValue) < acceptableDifference[cardObj.type]
+      && isWithinValueRange
     ) {
       if (!_.isEmpty(lossObj)) {
         cardObj.loss = lossObj // !!!!!!!!!!!!!!!
@@ -404,15 +410,18 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
       cardObj.gain = gainObj // !!!!!!!!!!!!!!!
       break
     }
-    else if (timesTriedToSetResources > timesUntilGivingUp) {
-      if (!_.isEmpty(bestNonSimilarCardObj.loss)) {
-        cardObj.loss = bestNonSimilarCardObj.loss // !!!!!!!!!!!!!!!
+    else if (
+      timesTriedToSetResources > timesUntilGivingUp
+      && isWithinValueRange
+    ) {
+      if (!_.isEmpty(leastSimilarCardObj.loss)) {
+        cardObj.loss = leastSimilarCardObj.loss // !!!!!!!!!!!!!!!
       }
-      cardObj.gain = bestNonSimilarCardObj.gain // !!!!!!!!!!!!!!!
-      console.log('just gave up', bestSimilarityRatio, bestNonSimilarCardObj)
+      cardObj.gain = leastSimilarCardObj.gain // !!!!!!!!!!!!!!!
+      console.log('just gave up', lowestSimilarityRatio, _.cloneDeep(leastSimilarCardObj))
       break
     }
-    else {
+    else if (timesTriedToSetResources <= timesUntilGivingUp) {
       // undoes everything, increase acceptableRatio, retry
 
       acceptableRatio = _.min([acceptableRatio + similarityRatioIncrement, maxRatioAllowed])
@@ -424,8 +433,8 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
 })
 
 
-function roundToNearest25 (x) {
-  return Math.round(x/25)*25
+function roundToNearest20 (x) {
+  return Math.round(x/20)*20
 }
 
 function getGainValue (cardObj) {
@@ -435,17 +444,17 @@ function getGainValue (cardObj) {
     .sum()
     .value()
 
-  const totalLaterResourcesCount = _.chain(cardObj.gain)
-    .pickBy((val, key) => {
-      return _.includes(key, 'later')
-    })
-    .values()
-    .sum()
-    .value()
+  // const totalLaterResourcesCount = _.chain(cardObj.gain)
+  //   .pickBy((val, key) => {
+  //     return _.includes(key, 'later')
+  //   })
+  //   .values()
+  //   .sum()
+  //   .value()
 
-  return baseMainValue + LATER_COUNT_ADDITIONAL_VALUE_MAPPING[totalLaterResourcesCount]
+  // return baseMainValue + LATER_COUNT_ADDITIONAL_VALUE_MAPPING[totalLaterResourcesCount]
 
-  // return baseMainValue
+  return baseMainValue
 }
 
 function getLossValue (lossObj) {
@@ -486,7 +495,7 @@ function getTotalCostValue (cardType, usageValue) {
 
   if (cardType === SPOT) {
     const spotUsageValue = usageValue - 100 // since there's already +100 spots available
-    return spotUsageValue * (1.70 + (spotUsageValue)/700) - DEFAULT_CARD_COST
+    return _.max([spotUsageValue * (1.70 + (spotUsageValue)/700) - DEFAULT_CARD_COST, 0])
   }
   if (cardType === HOME) {
 
@@ -510,16 +519,16 @@ _.forEach(cardsArray, (cardObj) => {
 
   const minPointsOnCard = MIN_POINTS_MAP[cardObj.points]
   let pointsOnCard = 0
-  while (pointsOnCard < minPointsOnCard || roundToNearest25(totalCostValue)%100 !== 0) {
+  while (pointsOnCard < minPointsOnCard || roundToNearest20(totalCostValue)%100 !== 0) {
     pointsOnCard++
     
     // !! this is WRONG ON PURPOSE. math-wise should be 25.
-    // giving more value to end-game points on cards so that there's some value to build it early/late.
+    // giving more value to end-game points on cards so that there's value to build it early/late.
     totalCostValue += 20
   }
 
   cardObj.pointsOnCard = pointsOnCard
-  cardObj.totalCostValue = roundToNearest25(totalCostValue)
+  cardObj.totalCostValue = roundToNearest20(totalCostValue)
   cardObj._usageValue = usageValue
   
 })
@@ -537,12 +546,13 @@ const cost23More3VarietyRoller = new Brng({2:1, 3:1}, {keepHistory: true, bias: 
 const costToVarietyMap = {
   0: _.constant(1),
   100: _.constant(1),
-  200: () => cost12VarietyRoller.roll(),
-  300: _.constant(2),
+  200: _.constant(1),
+  300: _.constant(1),
   400: _.constant(2),
-  500: () => cost23More3VarietyRoller.roll(),
-  600: () => cost23More3VarietyRoller.roll(),
-  700: () => cost23More3VarietyRoller.roll(),
+  // 400: () => cost12VarietyRoller.roll(),
+  500: _.constant(2),
+  600: _.constant(2),
+  700: _.constant(2),
   800: _.constant(3),
   900: _.constant(3)
 }
@@ -561,7 +571,7 @@ function getResourceCost (totalCostValue) {
   const undoChainArray = []
   
   const costVariety = _.toNumber(costToVarietyMap[totalCostValue]())
-
+  
   const resourceCostObj = {}
   let onlyResourceCost = []
 

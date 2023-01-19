@@ -12,9 +12,9 @@ function Reference () {
             <ICONS.ThisCard /> : <ICONS.Wild/> / <ICONS.Grab />
           </span> : on this card, place resources OR grab resources
       </div>
-      <div className="reference-row"><ICONS.Grabanother/> : grab your resources placed on another card</div>
+      {/*<div className="reference-row"><ICONS.Grabanother/> : grab your resources placed on another card</div>*/}
       <div className="reference-row"><ICONS.Untap/> : untap one <ICONS.Tap/> card</div>
-      <div className="reference-row"><ICONS.Tapanother/> : tap a <ICONS.Tap/> card without activating it</div>
+      {/*<div className="reference-row"><ICONS.Tapanother/> : tap a <ICONS.Tap/> card without activating it</div>*/}
       <div className="reference-row"><ICONS.ChainlevelX/> : send 1 assistant to a <ICONS.Spot/> card that's level X or lower</div>
       <div className="reference-row"><ICONS.Home/> : return 1 traveler or assistant to their home</div>
     </div>

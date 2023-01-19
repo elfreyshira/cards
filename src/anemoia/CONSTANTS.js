@@ -138,27 +138,37 @@ const baseResourceGainProportions = {
   earthlater: 1,
   // wild: 3.3,
   wild: 1.9,
-  chainLevel1: 0.35,
-  chainLevel2: 0.35,
-  chainLevel3: 0.35,
-  chainLevel4: 0.35,
+  chainLevel1: 0.27,
+  chainLevel2: 0.27,
+  chainLevel3: 0.27,
+  chainLevel4: 0.27,
 }
 
 const spotResourceGainProportions = _.merge({}, baseResourceGainProportions, {
   // grabanother: 0.8, // changed later
-  untap: 1.6, // changed later
+  untap: 1.7, // changed later
   retrieve: 1.8, // changed later
 })
 const homeResourceGainProportions = _.merge({}, baseResourceGainProportions, {
   // grabanother: 0.9, // changed
-  untap: 1.8, // changed
+  untap: 1.9, // changed
   // retrieve: 1.8, // removed
+
+  chainLevel1: 0.4,
+  chainLevel2: 0.4,
+  chainLevel3: 0.4,
+  chainLevel4: 0.4,
 })
 
 const tapResourceGainProportions = _.merge({}, baseResourceGainProportions, {
   // grabanother: 0.9, // changed
   // untap: 1.6, // removed
   retrieve: 2.0, // changed
+
+  chainLevel1: 0.4,
+  chainLevel2: 0.4,
+  chainLevel3: 0.4,
+  chainLevel4: 0.4,
 })
 
 //////// LOSS
@@ -182,8 +192,8 @@ const pointGeneratorResourceLossProportions = {
   fire: 1,
   water: 1,
   earth: 1,
-  wild: 1.5,
-  card: 1,
+  wild: 1,
+  // card: 1,
   money: 1,
 }
 
