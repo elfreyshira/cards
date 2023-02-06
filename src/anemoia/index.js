@@ -42,6 +42,7 @@ import {Reference, Exchange, PlayATurn, PlayATurnSimultaneous} from './base-card
 
 // import endGameCards from './end-game-cards.js'
 // import './calculate-retrieve-cost.js'
+// import './calculate-retrieve-cost-2.js'
 
 // import contractsArray from './generate-contracts.js'
 // import './calculate-avg-tag-value.js'
@@ -68,6 +69,7 @@ let cardsArray = []
 /// RESOURCE GENERATORS
 ////////////////////////
 
+// const cardsPerType = 0
 // const cardsPerType = 20
 const cardsPerType = 40
 
@@ -142,8 +144,12 @@ _.times(pointCardsPerType, (idx) => {
 ////////////////////////
 
 function maxValueSortFunc (cardObj) {
-  return 400 - cardObj.maxValue // large to small
-  // return cardObj.maxValue // small to large
+  if (cardObj.type === HOME) {
+    return cardObj.maxValue // small to large
+  }
+  else {
+    return 400 - cardObj.maxValue // large to small
+  }
 }
 function hasLossSortFunc (cardObj) {
   return !cardObj.hasLoss // hasLoss first
@@ -501,13 +507,13 @@ function getTotalCostValue (cardType, usageValue) {
 
   if (cardType === SPOT) {
     const spotUsageValue = usageValue - 100 // since there's already +100 spots available
-    return 1.50*(spotUsageValue**1.045) - DEFAULT_CARD_COST
+    return 1.55*(70+(spotUsageValue-70)**1.065) - DEFAULT_CARD_COST
   }
   if (cardType === HOME) {
-    return 1.45*(usageValue**1.045) - DEFAULT_CARD_COST
+    return 1.50*(70+(usageValue-70)**1.065) - DEFAULT_CARD_COST
   }
   if (cardType === TAP) {
-    return 1.55*(usageValue**1.045) - DEFAULT_CARD_COST
+    return 1.60*(70+(usageValue-70)**1.065) - DEFAULT_CARD_COST
   }
 }
 
