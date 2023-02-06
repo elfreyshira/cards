@@ -68,8 +68,8 @@ let cardsArray = []
 /// RESOURCE GENERATORS
 ////////////////////////
 
-const cardsPerType = 20
-// const cardsPerType = 40
+// const cardsPerType = 20
+const cardsPerType = 40
 
 // SPOT
 const spotLevelRoller = new Brng(spotLevelProportions, {bias: 4})
@@ -104,7 +104,8 @@ _.times(cardsPerType, (idx) => {
 /// POINT GENERATORS
 ////////////////////////
 
-const pointCardsPerType = 10
+// const pointCardsPerType = 10
+const pointCardsPerType = 20
 // const pointCardsPerType = 0
 
 // SPOT
@@ -500,14 +501,13 @@ function getTotalCostValue (cardType, usageValue) {
 
   if (cardType === SPOT) {
     const spotUsageValue = usageValue - 100 // since there's already +100 spots available
-    return _.max([spotUsageValue * (1.70 + (spotUsageValue)/700) - DEFAULT_CARD_COST, 0])
+    return 1.50*(spotUsageValue**1.045) - DEFAULT_CARD_COST
   }
   if (cardType === HOME) {
-
-    return usageValue * (1.60 + (usageValue)/700) - DEFAULT_CARD_COST
+    return 1.45*(usageValue**1.045) - DEFAULT_CARD_COST
   }
   if (cardType === TAP) {
-    return usageValue * (1.75 + (usageValue)/700) - DEFAULT_CARD_COST
+    return 1.55*(usageValue**1.045) - DEFAULT_CARD_COST
   }
 }
 
@@ -523,6 +523,7 @@ _.forEach(cardsArray, (cardObj) => {
   totalCostValue = getTotalCostValue(cardObj.type, usageValue)
 
   const minPointsOnCard = MIN_POINTS_MAP[cardObj.points]
+  // const minPointsOnCard = 1
   let pointsOnCard = 0
   while (pointsOnCard < minPointsOnCard || roundToNearest20(totalCostValue)%100 !== 0) {
     pointsOnCard++
@@ -656,7 +657,9 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
   
 })
 
-console.log(resourceGainRoller.proportions)
+console.log('resourceGainRoller.proportions', resourceGainRoller.proportions)
+console.log('resourceLossRoller.proportions', resourceLossRoller.proportions)
+console.log('resourceCostRoller.proportions', resourceCostRoller.proportions)
 
 
 // console.log('momentsArray')
@@ -700,6 +703,9 @@ function countOccurences (key, resources) {
   return countTotal
 }
 
+countOccurences('resourceCost', ['fire'])
+countOccurences('resourceCost', ['water'])
+countOccurences('resourceCost', ['earth'])
 
 const lossCount = countOccurences('loss', ['wild', 'fire', 'water', 'earth'])
 const gainCount = countOccurences('gain', ['wild', 'fire', 'water', 'earth'])
@@ -723,15 +729,14 @@ const chainLevel2Count = countOccurences('gain', ['chainLevel2'])
 const chainLevel3Count = countOccurences('gain', ['chainLevel3'])
 const chainLevel4Count = countOccurences('gain', ['chainLevel4'])
 
-const tapAnotherCount = countOccurences('loss', ['tapAnother'])
-const untapCount = countOccurences('gain', ['untap'])
+
 
 console.log('----------------------')
 console.log('chainLevel1Count + chainLevel2Count + chainLevel3Count + chainLevel4Count',
   chainLevel1Count + chainLevel2Count + chainLevel3Count + chainLevel4Count)
-console.log('tapAnotherCount + untapCount', tapAnotherCount + untapCount)
+countOccurences('gain', ['untap'])
 countOccurences('gain', ['retrieve'])
-countOccurences('gain', ['grabanother'])
+// countOccurences('gain', ['grabanother'])
 
 
 ////////////////////////////////////////////

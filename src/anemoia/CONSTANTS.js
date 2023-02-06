@@ -51,10 +51,10 @@ const RESOURCE_GAIN_VALUE = {
     // if (!_.isEmpty(cardObj) && cardObj.type === HOME) {
     if (cardObj.type === HOME) {
       // only valuable when you have more tapped cards than workers you rested
-      return 95
+      return 80
     }
     else {
-      return 140
+      return 120
     }
   },
   retrieve: _.constant(75),
@@ -130,14 +130,15 @@ const tapMaxvalueProportions = {
 const baseResourceGainProportions = {
   money: 3.5,
   card: 2.5,
+  //////////
   fire: 2.2,
   firelater: 1.1,
-  water: 2,
-  waterlater: 1,
+  water: 1.9,
+  waterlater: 0.95,
   earth: 2,
   earthlater: 1,
   // wild: 3.3,
-  wild: 2,
+  wild: 2.5,
   chainLevel1: 0.27,
   chainLevel2: 0.27,
   chainLevel3: 0.27,
@@ -149,13 +150,13 @@ const spotResourceGainProportions = _.merge({}, baseResourceGainProportions, {
   firelater: .5,
 
   untap: 1.7, // changed later
-  retrieve: 1.8, // changed later
+  retrieve: 1.6, // changed later
 })
 const homeResourceGainProportions = _.merge({}, baseResourceGainProportions, {
   water: 1,
   waterlater: .5,
 
-  untap: 1.9, // changed
+  untap: 1.8, // changed
 
   chainLevel1: 0.4,
   chainLevel2: 0.4,
@@ -167,7 +168,7 @@ const tapResourceGainProportions = _.merge({}, baseResourceGainProportions, {
   earth: 1,
   earthlater: .5,
 
-  retrieve: 2.0, // changed
+  retrieve: 1.7, // changed
 
   chainLevel1: 0.4,
   chainLevel2: 0.4,
@@ -203,19 +204,19 @@ const pointGeneratorResourceLossProportions = {
 
 //////// RESOURCE COST ON CARD
 const spotResourceCostProportions = {
-  fire: 2,
+  fire: 2.1,
   water: 1,
   earth: 1,
 }
 const homeResourceCostProportions = {
   fire: 1,
-  water: 2,
+  water: 2.15,
   earth: 1,
 }
 const tapResourceCostProportions = {
   fire: 1,
   water: 1,
-  earth: 2,
+  earth: 2.17,
 }
 
 ////////////////////////////////////////////

@@ -313,9 +313,10 @@ span.icon {
   vertical-align: text-bottom;
 }
 .reference-row {
-  line-height: .9rem;
+  line-height: 1rem;
   padding: 0.25rem 0 0.2rem;
   border-top: 1px solid #888;
+  zoom: 1.1;
 }
 
 /* ANYTIME  */
@@ -351,9 +352,6 @@ span.icon {
 }
 .simultaneous-container .reference-title {
   font-size: 1rem;
-}
-.reference-container .icon {
-  zoom: .4;
 }
 
 
