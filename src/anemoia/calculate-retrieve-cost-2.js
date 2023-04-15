@@ -63,6 +63,41 @@ function doWithMax(maxTotalValue) {
   console.log(_.mean(arrayOfAvgRetrieveCost))
 }
 
+function doWithMaxCost(maxTotalCost) {
+  // const maxTotalCost = 100
+
+  const arrayOfAvgRetrieveCost = []
+  _.times(1000, () => {
+    let currentTotalCost = 0
+    const [spots, homes, taps] = [[], [], []]
+    while (currentTotalCost < maxTotalCost) {
+      
+      const cardType = _.sample(['spot','home','tap'])
+
+      if (cardType === 'spot') {
+        const newSpotValue = _.random(200, 350)
+        const newSpotCost = 1.58*(70+(newSpotValue-100-70)**1.065)
+        currentTotalCost += newSpotCost
+        spots.push(newSpotValue)
+      }
+      else if (cardType === 'home') {
+        const newHome = _.random(100, 225)
+        currentTotalCost += newHome
+        homes.push(newHome)
+      }
+      else if (cardType === 'tap') {
+        const newTap = _.random(100, 200)
+        currentTotalCost += newTap
+        taps.push(newTap)
+      }
+    }
+    // console.log(spots, homes, taps)
+    arrayOfAvgRetrieveCost.push(calculateRetrieveCost({spots, homes, taps}))
+  })
+  console.log(_.mean(arrayOfAvgRetrieveCost))
+}
+
+
 _.times(30, (idx) => {
   console.log(idx*60)
   doWithMax(idx*60)

@@ -51,13 +51,13 @@ const RESOURCE_GAIN_VALUE = {
     // if (!_.isEmpty(cardObj) && cardObj.type === HOME) {
     if (cardObj.type === HOME) {
       // only valuable when you have more tapped cards than workers you rested
-      return 80
+      return 90
     }
     else {
-      return 120
+      return 135
     }
   },
-  retrieve: _.constant(90),
+  retrieve: _.constant(110),
   chainLevel1: _.constant(100),
   chainLevel2: _.constant(120),
   chainLevel3: _.constant(140),

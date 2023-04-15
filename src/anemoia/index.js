@@ -43,6 +43,7 @@ import {Reference, Exchange, PlayATurn, PlayATurnSimultaneous} from './base-card
 // import endGameCards from './end-game-cards.js'
 // import './calculate-retrieve-cost.js'
 // import './calculate-retrieve-cost-2.js'
+// import './calculate-multiplier-cost.js'
 
 // import contractsArray from './generate-contracts.js'
 // import './calculate-avg-tag-value.js'
@@ -107,7 +108,7 @@ _.times(cardsPerType, (idx) => {
 ////////////////////////
 
 // const pointCardsPerType = 10
-const pointCardsPerType = 20
+const pointCardsPerType = 15
 // const pointCardsPerType = 0
 
 // SPOT
@@ -210,11 +211,12 @@ const resourceLossRoller = new Brng(spotResourceLossProportions, {keepHistory: t
 
 const resourceLossForPointGeneratorRoller = new Brng(pointGeneratorResourceLossProportions, {
   keepHistory: true,
-  bias: 4
+  bias: 1
 })
 const lossCountForPointGeneratorRoller = new Brng({
-  1: 1,
-  2: 1,
+  1: 4,
+  2: 3,
+  3: 2,
 }, {
   keepHistory: true,
   bias: 4
