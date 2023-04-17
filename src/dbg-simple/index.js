@@ -18,6 +18,10 @@ const effectToValueMapping = {
   opponentDraw: -2,
 }
 
+const primaryResources = ['money', 'attack', 'gem']
+const attackResources = ['money', 'gem']
+const positiveResources = ['money', 'attack', 'gem', 'draw', 'drawAndDiscard']
+
 const proportionsEffect = {
   // positive
   money: 10,
@@ -27,10 +31,10 @@ const proportionsEffect = {
   drawAndDiscard: 5,
 
   // negative
-  opponentMoney: 0.7,
-  opponentAttack: 0.7,
-  opponentGem: 0.7,
-  opponentDraw: 0.7,
+  // opponentMoney: 0.7,
+  // opponentAttack: 0.7,
+  // opponentGem: 0.7,
+  // opponentDraw: 0.7,
 }
 const proportionsAttackEffect = {
   money: 12,
@@ -40,7 +44,16 @@ const proportionsAttackEffect = {
   // drawAndDiscard: 4,
 }
 
-const effectRoller = new Brng(proportionsEffect, {bias: 1, keepHistory: true})
+const proportionsOpponentEffect = {
+  opponentMoney: 1,
+  opponentAttack: 1,
+  opponentGem: 1,
+  opponentDraw: 1
+}
+const opponentEffectRoller = new Brng(proportionsOpponentEffect, {bias: 4, keepHistory: false})
+const hasOpponentEffectRoller = new Brng({yes: 1, no: 3}, {bias: 4, keepHistory: false})
+
+const effectRoller = new Brng(proportionsEffect, {bias: 1, keepHistory: false})
 
 const proportionsCardCost = {
   1: 5,
@@ -54,15 +67,15 @@ const proportionsCardCost = {
   // 9: NONE,
   // 10: 3,
 }
-const cardCostRoller = new Brng(proportionsCardCost, {bias: 4, keepHistory: true})
+const cardCostRoller = new Brng(proportionsCardCost, {bias: 4, keepHistory: false})
 
-const costToMaxValue = {
+const costToMaxValueMapping = {
   1: 2,
   2: 3,
-  // 3: NONE,
+  // 3: 3.5,
   4: 4,
   5: 5,
-  // 6: NONE,
+  // 6: 5.5,
   7: 6,
   8: 7,
   // 9: NONE,
@@ -107,6 +120,7 @@ const healthToMaxValue = {
 }
 
 const quantityCards = 36
+// const quantityCards = 72
 let cardsArray = []
 
 _.times(quantityCards, (idx) => {
@@ -122,7 +136,17 @@ _.times(quantityCards, (idx) => {
 // cardsArray = _.sortBy(cardsArray, ['cost']) // least expensive first
 cardsArray = _.sortBy(cardsArray, cardObj => -cardObj.cost) // most expensive first
 _.forEach(cardsArray, cardObj => {
-  const primaryMaxValue = costToMaxValue[cardObj.cost]
+  const hasOpponentEffect = hasOpponentEffectRoller.roll()
+  if (hasOpponentEffect === 'yes') {
+    cardObj.hasOpponentEffect = true
+  }
+})
+
+
+// cardsArray = _.sortBy(cardsArray, ['cost']) // least expensive first
+cardsArray = _.sortBy(cardsArray, [cardObj => -cardObj.cost, 'hasOpponentEffect']) // most expensive first
+_.forEach(cardsArray, cardObj => {
+  const primaryMaxValue = costToMaxValueMapping[cardObj.cost]
 
   let currentValue = 0
   const primaryBenefitObj = {}
@@ -132,6 +156,13 @@ _.forEach(cardsArray, cardObj => {
     exclusion = _.concat(exclusion, 'draw')
   }
 
+  if (cardObj.hasOpponentEffect) {
+    const chosenOpponentEffect = opponentEffectRoller.roll()
+    primaryBenefitObj[chosenOpponentEffect] = 1
+    currentValue += effectToValueMapping[chosenOpponentEffect]
+    delete cardObj.hasOpponentEffect
+  }
+
   while (currentValue < primaryMaxValue) {
 
     if (primaryMaxValue - currentValue < 2) {
@@ -139,7 +170,7 @@ _.forEach(cardsArray, cardObj => {
       exclusion = _.uniq(_.concat(exclusion, ['draw']))
     }
 
-    if (_.intersection(['money', 'attack', 'gem'], _.keys(primaryBenefitObj)).length === 2) {
+    if (_.intersection(primaryResources, _.keys(primaryBenefitObj)).length === 2) {
       exclusion = _.uniq(_.concat(
         exclusion,
         _.without(['money', 'attack', 'gem'], ..._.keys(primaryBenefitObj))
@@ -147,7 +178,7 @@ _.forEach(cardsArray, cardObj => {
     }
 
 
-    if (_.intersection(['money', 'attack', 'gem'], _.keys(primaryBenefitObj)).length === 1
+    if (_.intersection(primaryResources, _.keys(primaryBenefitObj)).length === 1
       && primaryMaxValue <= 5 // only for lower cards
     ) {
       exclusion = _.uniq(_.concat(
@@ -156,7 +187,7 @@ _.forEach(cardsArray, cardObj => {
       ))
     }
 
-    if (_.keys(primaryBenefitObj).length === 3) {
+    if ( _.intersection(positiveResources, _.keys(primaryBenefitObj)).length === 3 ) {
       exclusion = _.uniq(_.concat(
         exclusion,
         _.without(_.keys(proportionsEffect), ..._.keys(primaryBenefitObj))
@@ -223,7 +254,7 @@ _.forEach(cardsArray, cardObj => {
     attackBenefitObj[chosenEffect] = attackBenefitObj[chosenEffect]
       ? attackBenefitObj[chosenEffect]+1 : 1
   }
-  // cardObj.attackEffect = attackBenefitObj
+  cardObj.attackEffect = attackBenefitObj
   // cardObj.maxValue = attackMaxValue
   // cardObj.value = currentValue
 })
