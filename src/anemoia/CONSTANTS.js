@@ -57,7 +57,7 @@ const RESOURCE_GAIN_VALUE = {
       return 135
     }
   },
-  retrieve: _.constant(110),
+  // retrieve: _.constant(110),
 
   retrieveLevel1: _.constant(30),
   retrieveLevel2: _.constant(70),
@@ -65,9 +65,9 @@ const RESOURCE_GAIN_VALUE = {
   retrieveLevel4: _.constant(150),
 
   chainLevel1: _.constant(100),
-  chainLevel2: _.constant(120),
-  chainLevel3: _.constant(140),
-  chainLevel4: _.constant(160),
+  chainLevel2: _.constant(115),
+  chainLevel3: _.constant(130),
+  chainLevel4: _.constant(145),
   point: _.constant(25),
 }
 
@@ -86,8 +86,12 @@ const RESOURCE_LOSS_VALUE = {
 
 ////////////////////////////////////////////
 
-const ABSTRACT_RESOURCE_ARRAY = ['untap', 'retrieve', 'grabanother',
-  'chainLevel1','chainLevel2', 'chainLevel3', 'chainLevel4']
+const ABSTRACT_RESOURCE_ARRAY = [
+  'untap', 'grabanother',
+  'retrieve',
+  'retrieveLevel1','retrieveLevel2', 'retrieveLevel3', 'retrieveLevel4',
+  'chainLevel1','chainLevel2', 'chainLevel3', 'chainLevel4',
+]
 
 const SPECIAL_RESOURCE_ARRAY = ['money', 'card']
 
@@ -156,7 +160,12 @@ const spotResourceGainProportions = _.merge({}, baseResourceGainProportions, {
   firelater: .5,
 
   untap: 1.7, // changed later
-  retrieve: 1.6, // changed later
+  
+  // changed later
+  retrieveLevel1: 0.4,
+  retrieveLevel2: 0.4,
+  retrieveLevel3: 0.4,
+  retrieveLevel4: 0.4,
 })
 const homeResourceGainProportions = _.merge({}, baseResourceGainProportions, {
   water: 1,
@@ -174,7 +183,11 @@ const tapResourceGainProportions = _.merge({}, baseResourceGainProportions, {
   earth: 1,
   earthlater: .5,
 
-  retrieve: 1.7, // changed
+  // changed
+  retrieveLevel1: 0.425,
+  retrieveLevel2: 0.425,
+  retrieveLevel3: 0.425,
+  retrieveLevel4: 0.425,
 
   chainLevel1: 0.4,
   chainLevel2: 0.4,

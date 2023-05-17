@@ -36,14 +36,14 @@ import getNewIncludeExcludeList from './get-new-include-exclude-list.js'
 
 import checkSimilarity from './check-similarity.js'
 import {Card, Contract} from './Card.js'
-import ICONS from './icons.js'
+// import ICONS from './icons.js'
 import {Reference, Exchange, PlayATurn, PlayATurnSimultaneous} from './base-cards.js'
 
 
 // import endGameCards from './end-game-cards.js'
 // import './calculate-retrieve-cost.js'
 // import './calculate-retrieve-cost-2.js'
-import './calculate-retrieve-cost-3.js'
+// import './calculate-retrieve-cost-3.js'
 // import './calculate-multiplier-cost.js'
 
 // import contractsArray from './generate-contracts.js'
@@ -71,9 +71,10 @@ let cardsArray = []
 /// RESOURCE GENERATORS
 ////////////////////////
 
-const cardsPerType = 0
+// const cardsPerType = 0
+// const cardsPerType = 5
 // const cardsPerType = 20
-// const cardsPerType = 40
+const cardsPerType = 40
 
 // SPOT
 const spotLevelRoller = new Brng(spotLevelProportions, {bias: 4})
@@ -108,9 +109,9 @@ _.times(cardsPerType, (idx) => {
 /// POINT GENERATORS
 ////////////////////////
 
-// const pointCardsPerType = 10
+const pointCardsPerType = 10
 // const pointCardsPerType = 15
-const pointCardsPerType = 0
+// const pointCardsPerType = 0
 
 // SPOT
 _.times(pointCardsPerType, (idx) => {
@@ -432,7 +433,7 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
         cardObj.loss = leastSimilarCardObj.loss // !!!!!!!!!!!!!!!
       }
       cardObj.gain = leastSimilarCardObj.gain // !!!!!!!!!!!!!!!
-      console.log('just gave up', lowestSimilarityRatio, cardObj.uuid, _.cloneDeep(leastSimilarCardObj))
+      console.log('just gave up', lowestSimilarityRatio, mostSimilarCardObj.uuid, _.cloneDeep(leastSimilarCardObj))
       break
     }
     else if (timesTriedToSetResources <= timesUntilGivingUp) {
@@ -744,7 +745,15 @@ console.log('----------------------')
 console.log('chainLevel1Count + chainLevel2Count + chainLevel3Count + chainLevel4Count',
   chainLevel1Count + chainLevel2Count + chainLevel3Count + chainLevel4Count)
 countOccurences('gain', ['untap'])
-countOccurences('gain', ['retrieve'])
+
+const retrieveLevel1Count = countOccurences('gain', ['retrieveLevel1'])
+const retrieveLevel2Count = countOccurences('gain', ['retrieveLevel2'])
+const retrieveLevel3Count = countOccurences('gain', ['retrieveLevel3'])
+const retrieveLevel4Count = countOccurences('gain', ['retrieveLevel4'])
+
+// countOccurences('gain', ['retrieve'])
+console.log('retrieveLevel1Count + retrieveLevel2Count + retrieveLevel3Count + retrieveLevel4Count',
+  retrieveLevel1Count + retrieveLevel2Count + retrieveLevel3Count + retrieveLevel4Count)
 // countOccurences('gain', ['grabanother'])
 
 
@@ -877,6 +886,6 @@ function Cards () {
 }
 
 
-console.log('cardsArray !!', cardsArray)
+// console.log('cardsArray !!', cardsArray)
 
 export default Cards

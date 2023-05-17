@@ -78,8 +78,20 @@ function ThisCard () {
 }
 
 function Retrieve () {
-  // return <img className="icon" src={retrieveIcon} />
   return <img className="icon" src={homeIcon} />
+}
+
+function Retrievelevel1 () {
+  return <span className="icon chain"><img src={homeIcon} /><span className="chain-level">1</span></span>
+}
+function Retrievelevel2 () {
+  return <span className="icon chain"><img src={homeIcon} /><span className="chain-level">2</span></span>
+}
+function Retrievelevel3 () {
+  return <span className="icon chain"><img src={homeIcon} /><span className="chain-level">3</span></span>
+}
+function Retrievelevel4 () {
+  return <span className="icon chain"><img src={homeIcon} /><span className="chain-level">4</span></span>
 }
 
 function Windmill () {
@@ -141,6 +153,10 @@ export default {
   Tapanother,
   Untap,
   Retrieve,
+  Retrievelevel1,
+  Retrievelevel2,
+  Retrievelevel3,
+  Retrievelevel4,
   Chainlevel1,
   Chainlevel2,
   Chainlevel3,

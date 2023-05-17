@@ -432,7 +432,7 @@ function Card (props) {
 
       <Cost resourceCost={resourceCost} />
 
-      {/*<Background />*/}
+      <Background />
 
       <Effect loss={loss} gain={gain} />
       {/*<div>{uuid}</div>*/}

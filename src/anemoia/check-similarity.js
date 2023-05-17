@@ -1,11 +1,28 @@
 import _ from 'lodash'
 
 
-export default function checkSimilarity(cardsArray, newCardObj) {
+// writes!
+function cleanupCardObj (cardObj) {
+
+  _.forEach(cardObj.gain, (val, key)=>{
+      if (_.includes(key, 'Level')) {
+          delete cardObj.gain[key]
+          cardObj.gain[key.replace(/level\d/i,'')] = val
+      }
+  })
+  return cardObj
+}
+
+export default function checkSimilarity(cardsArray, newCardObjArg) {
+
+  const newCardObj = cleanupCardObj(_.cloneDeep(newCardObjArg))
+
   let highestSimilarityRatio = 0
   let mostSimilarCardObj = {}
 
-  _.forEach(cardsArray, (prevCardObj) => {
+  _.forEach(cardsArray, (prevCardObjArg) => {
+    const prevCardObj = cleanupCardObj(_.cloneDeep(prevCardObjArg))
+    
     let comparisonSpace = 0
     let similarityPoints = 0
 
