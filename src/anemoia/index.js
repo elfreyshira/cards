@@ -43,6 +43,7 @@ import {Reference, Exchange, PlayATurn, PlayATurnSimultaneous} from './base-card
 // import endGameCards from './end-game-cards.js'
 // import './calculate-retrieve-cost.js'
 // import './calculate-retrieve-cost-2.js'
+import './calculate-retrieve-cost-3.js'
 // import './calculate-multiplier-cost.js'
 
 // import contractsArray from './generate-contracts.js'
@@ -70,9 +71,9 @@ let cardsArray = []
 /// RESOURCE GENERATORS
 ////////////////////////
 
-// const cardsPerType = 0
+const cardsPerType = 0
 // const cardsPerType = 20
-const cardsPerType = 40
+// const cardsPerType = 40
 
 // SPOT
 const spotLevelRoller = new Brng(spotLevelProportions, {bias: 4})
@@ -108,8 +109,8 @@ _.times(cardsPerType, (idx) => {
 ////////////////////////
 
 // const pointCardsPerType = 10
-const pointCardsPerType = 15
-// const pointCardsPerType = 0
+// const pointCardsPerType = 15
+const pointCardsPerType = 0
 
 // SPOT
 _.times(pointCardsPerType, (idx) => {

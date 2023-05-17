@@ -58,6 +58,12 @@ const RESOURCE_GAIN_VALUE = {
     }
   },
   retrieve: _.constant(110),
+
+  retrieveLevel1: _.constant(30),
+  retrieveLevel2: _.constant(70),
+  retrieveLevel3: _.constant(110),
+  retrieveLevel4: _.constant(150),
+
   chainLevel1: _.constant(100),
   chainLevel2: _.constant(120),
   chainLevel3: _.constant(140),
