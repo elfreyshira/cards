@@ -5,8 +5,8 @@ function Reference () {
   return (
     <div className="reference-container">
       <div className="reference-title">REFERENCE</div>
-      <div className="reference-row"><ICONS.Wild/> : gain <ICONS.Fire/> or <ICONS.Water/> or <ICONS.Earth/></div>
-      <div className="reference-row"><ICONS.Card/> : draw a card</div>
+      <div className="reference-row"><ICONS.Wild/> : <ICONS.Fire/> or <ICONS.Water/> or <ICONS.Earth/></div>
+      <div className="reference-row"><ICONS.Card/> : card</div>
       <div className="reference-row">
           <span style={{border: '1px solid #ddd', borderRadius: '3px', padding: '0px 2px 1px'}}>
             <ICONS.ThisCard /> : <ICONS.Wild/> / <ICONS.Grab />
@@ -16,7 +16,7 @@ function Reference () {
       <div className="reference-row"><ICONS.Untap/> : restore one <ICONS.Tap/> card</div>
       {/*<div className="reference-row"><ICONS.Tapanother/> : tap a <ICONS.Tap/> card without activating it</div>*/}
       <div className="reference-row"><ICONS.ChainlevelX/> : send 1 scout to a <ICONS.Spot/> card that's level X or lower</div>
-      <div className="reference-row"><ICONS.Home/> : return 1 traveler/scout to their home. If a traveler returns to a <ICONS.Home/> card, activate the card's effect.</div>
+      <div className="reference-row"><ICONS.RetrievelevelX/> : return 1 traveler/scout from a <ICONS.Spot/> card that's level X or lower</div>
     </div>
   )
 }

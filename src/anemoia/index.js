@@ -73,8 +73,8 @@ let cardsArray = []
 
 // const cardsPerType = 0
 // const cardsPerType = 5
-// const cardsPerType = 20
-const cardsPerType = 40
+const cardsPerType = 20
+// const cardsPerType = 40
 
 // SPOT
 const spotLevelRoller = new Brng(spotLevelProportions, {bias: 4})
@@ -109,9 +109,9 @@ _.times(cardsPerType, (idx) => {
 /// POINT GENERATORS
 ////////////////////////
 
-const pointCardsPerType = 10
+// const pointCardsPerType = 10
 // const pointCardsPerType = 15
-// const pointCardsPerType = 0
+const pointCardsPerType = 0
 
 // SPOT
 _.times(pointCardsPerType, (idx) => {

@@ -15,6 +15,9 @@ import grabIcon from './images/grab.png'
 import thisCardIcon from './images/this-card.png'
 import momentIcon from './images/moment.png'
 import windmillIcon from './images/windmill.png'
+import scoutIcon from './images/scout.png'
+import arrowIcon from './images/arrow.png'
+
 
 // import windIcon from './images/wind.png'
 import windIcon from './images/wind2.png'
@@ -81,38 +84,68 @@ function Retrieve () {
   return <img className="icon" src={homeIcon} />
 }
 
+function RetrieveLevelHolder ({level}) {
+  return (
+    <span className="icon chain">
+      <div className="retrieve-level-spot-container">
+        <img src={spotIcon}/>
+        <span className="chain-level">{level}</span>
+      </div>
+      <img className="arrow-icon" src={arrowIcon} />
+      <img src={homeIcon} />
+    </span>
+  )
+}
+
 function Retrievelevel1 () {
-  return <span className="icon chain"><img src={homeIcon} /><span className="chain-level">1</span></span>
+  return <RetrieveLevelHolder level="1" />
 }
 function Retrievelevel2 () {
-  return <span className="icon chain"><img src={homeIcon} /><span className="chain-level">2</span></span>
+  return <RetrieveLevelHolder level="2" />
 }
 function Retrievelevel3 () {
-  return <span className="icon chain"><img src={homeIcon} /><span className="chain-level">3</span></span>
+  return <RetrieveLevelHolder level="3" />
 }
 function Retrievelevel4 () {
-  return <span className="icon chain"><img src={homeIcon} /><span className="chain-level">4</span></span>
+  return <RetrieveLevelHolder level="4" />
+}
+function RetrievelevelX () {
+  return <RetrieveLevelHolder level="X" />
 }
 
 function Windmill () {
   return <img className="icon" src={windmillIcon} />
 }
 
+function Scout () {
+  return <img className="icon" src={scoutIcon} />
+}
+
+function ChainLevelHolder ({level}) {
+  return (
+    <span className="icon chain">
+      <img src={scoutIcon} />
+      <img className="arrow-icon" src={arrowIcon} />
+      <img src={spotIcon}/>
+      <span className="chain-level">{level}</span>
+    </span>
+  )
+}
 
 function Chainlevel1 () {
-  return <span className="icon chain"><img src={spotIcon}/><span className="chain-level">1</span></span>
+  return <ChainLevelHolder level="1" />
 }
 function Chainlevel2 () {
-  return <span className="icon chain"><img src={spotIcon}/><span className="chain-level">2</span></span>
+  return <ChainLevelHolder level="2" />
 }
 function Chainlevel3 () {
-  return <span className="icon chain"><img src={spotIcon}/><span className="chain-level">3</span></span>
+  return <ChainLevelHolder level="3" />
 }
 function Chainlevel4 () {
-  return <span className="icon chain"><img src={spotIcon}/><span className="chain-level">4</span></span>
+  return <ChainLevelHolder level="4" />
 }
 function ChainlevelX () {
-  return <span className="icon chain"><img src={spotIcon}/><span className="chain-level">X</span></span>
+  return <ChainLevelHolder level="X" />
 }
 
 function Money ({amount}) {
@@ -157,6 +190,7 @@ export default {
   Retrievelevel2,
   Retrievelevel3,
   Retrievelevel4,
+  RetrievelevelX,
   Chainlevel1,
   Chainlevel2,
   Chainlevel3,

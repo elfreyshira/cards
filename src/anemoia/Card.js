@@ -9,26 +9,26 @@ import ICONS from './icons.js'
 import _ from 'lodash'
 import classnames from 'classnames'
 
-import backgroundArt1 from './images/background-art/spot-point-001.jpg'
-import backgroundArt2 from './images/background-art/spot-point-002.jpg'
-import backgroundArt3 from './images/background-art/spot-point-003.jpg'
-import backgroundArt4 from './images/background-art/spot-point-004.jpg'
-import backgroundArt5 from './images/background-art/spot-point-005.jpg'
-import backgroundArt6 from './images/background-art/spot-point-006.jpg'
-import backgroundArt7 from './images/background-art/spot-point-007.jpg'
-import backgroundArt8 from './images/background-art/spot-point-008.jpg'
-import backgroundArt9 from './images/background-art/spot-point-009.jpg'
+// import backgroundArt1 from './images/background-art/spot-point-001.jpg'
+// import backgroundArt2 from './images/background-art/spot-point-002.jpg'
+// import backgroundArt3 from './images/background-art/spot-point-003.jpg'
+// import backgroundArt4 from './images/background-art/spot-point-004.jpg'
+// import backgroundArt5 from './images/background-art/spot-point-005.jpg'
+// import backgroundArt6 from './images/background-art/spot-point-006.jpg'
+// import backgroundArt7 from './images/background-art/spot-point-007.jpg'
+// import backgroundArt8 from './images/background-art/spot-point-008.jpg'
+// import backgroundArt9 from './images/background-art/spot-point-009.jpg'
 
 const BACKGROUND_ART_MAPPING = {
-  1: backgroundArt1,
-  2: backgroundArt2,
-  3: backgroundArt3,
-  4: backgroundArt4,
-  5: backgroundArt5,
-  6: backgroundArt6,
-  7: backgroundArt7,
-  8: backgroundArt8,
-  9: backgroundArt9,
+  // 1: backgroundArt1,
+  // 2: backgroundArt2,
+  // 3: backgroundArt3,
+  // 4: backgroundArt4,
+  // 5: backgroundArt5,
+  // 6: backgroundArt6,
+  // 7: backgroundArt7,
+  // 8: backgroundArt8,
+  // 9: backgroundArt9,
 }
 
 const RESOURCES_WITH_DIGITS_AFTER = ['money', 'point']
@@ -101,6 +101,9 @@ function ResourceIcon ({resource, amount}) {
 // mostly for moments/contracts
 const costOrderFunc = (resource) => {
   if (resource === 'wildsame') {
+    return 3
+  }
+  else if (resource === 'money') {
     return 2
   }
   else if (resource === 'wild') {
@@ -195,13 +198,16 @@ function LaterResources ({gain}) {
     return null
   }
 
+  // the first div is needed so the later-resources-group div can be inline-block
   return (
-    <div className="later-resources-group">
-      <ICONS.ThisCard />
-      <span className="later-colon">&nbsp;:&nbsp;</span>
-      {resourceArray}
-      <span className="later-colon">&nbsp;/&nbsp;</span>
-      <ICONS.Grab />
+    <div>
+      <div className="later-resources-group">
+        <ICONS.ThisCard />
+        <span className="later-colon">&nbsp;:&nbsp;</span>
+        {resourceArray}
+        <span className="later-colon">&nbsp;/&nbsp;</span>
+        <ICONS.Grab />
+      </div>
     </div>
   )
 }
@@ -432,7 +438,7 @@ function Card (props) {
 
       <Cost resourceCost={resourceCost} />
 
-      <Background />
+      {/*<Background />*/}
 
       <Effect loss={loss} gain={gain} />
       {/*<div>{uuid}</div>*/}

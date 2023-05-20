@@ -162,6 +162,7 @@ span:last-child .wildsame-equal-sign {
   height: 1.5rem;
   float: left;
   display: inline-block;
+  margin-left: .12rem;
 }
 .icon.chain .chain-level {
   float: right;
@@ -171,6 +172,15 @@ span:last-child .wildsame-equal-sign {
   display: inline-block;
   bottom: 0.15rem;
   margin-left: 0.1rem;
+}
+
+.retrieve-level-spot-container {
+  display: inline-block;
+  float: left;
+}
+
+.arrow-icon {
+  filter: opacity(60%);
 }
 
 .gain-family .icon {
@@ -251,7 +261,7 @@ span:last-child .wildsame-equal-sign {
 .effect {
   position: absolute;
   bottom: 0;
-  padding: 5px 10px;
+  padding: 5px 8px;
 }
 
 .effect .gain-family {
@@ -263,8 +273,8 @@ span:last-child .wildsame-equal-sign {
   margin-right: 0;
 }
 .loss {
-  margin-right: 10px;
-  padding: 5px;
+  margin-right: 8px;
+  padding: 4.5px;
   background: repeating-linear-gradient( 45deg, rgba(200, 0, 0, 20%), rgba(200, 0, 0, 20%) 3px, transparent 3px, transparent 6px );
   border: 2px solid rgba(200, 0, 0, 40%);
 }
@@ -295,6 +305,7 @@ span.icon {
   border-radius: 0.4rem;
   zoom: 0.76;
   background-color: rgba(255,255,255,70%);
+  display: inline-block;
 }
 .later-colon {
   display: inline-block;
