@@ -224,6 +224,16 @@ const lossCountForPointGeneratorRoller = new Brng({
   bias: 4
 })
 
+function getInitialExcludeList(cardObj) {
+  let excludeList = []
+  if (cardObj.type === SPOT) {
+    const spotLevelNumber = _.last(cardObj.spotLevel)
+    excludeList.push('retrieveLevel' + spotLevelNumber)
+    excludeList.push('chainLevel' + spotLevelNumber)
+  }
+  return excludeList
+}
+
 // returns undoChainArray
 function getLossAndGain(cardObj) {
   const undoChainArray = []
@@ -231,7 +241,7 @@ function getLossAndGain(cardObj) {
   const fixedMaxValue = cardObj.maxValue
   let currentMaxValue = fixedMaxValue
   let currentValue = 0
-  let excludeList = []
+  let excludeList = getInitialExcludeList(cardObj)
 
   let loopTimes = 0
   let includeList = []
@@ -886,6 +896,6 @@ function Cards () {
 }
 
 
-// console.log('cardsArray !!', cardsArray)
+console.log('cardsArray !!', cardsArray)
 
 export default Cards
