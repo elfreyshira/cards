@@ -110,8 +110,9 @@ _.times(cardsPerType, (idx) => {
 ////////////////////////
 
 // const pointCardsPerType = 10
-// const pointCardsPerType = 15
-const pointCardsPerType = 0
+// const pointCardsPerType = 4
+const pointCardsPerType = 15
+// const pointCardsPerType = 0
 
 // SPOT
 _.times(pointCardsPerType, (idx) => {
