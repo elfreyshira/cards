@@ -1,0 +1,26 @@
+html {
+  font-size: 100%;
+  -webkit-print-color-adjust: exact;
+  -webkit-filter: opacity(1);
+}
+
+.card {
+  /* 63 x 88 */
+  width: 63mm;
+  max-width: 63mm;
+  height:  88mm;
+  max-height:  88mm;
+  border: 5px solid black;
+  border-top-width: 8px;
+  
+  padding-left:  0px;
+  display:  inline-block;
+  vertical-align: bottom;
+  position: relative;
+
+  overflow-wrap: break-word;
+  overflow: hidden;
+
+  /* 0.5px for printing */
+  margin:  10px;
+}
