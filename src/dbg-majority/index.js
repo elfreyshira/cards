@@ -13,6 +13,7 @@ import _ from 'lodash'
 const ATTACK_TOP_BASE = 4.4
 const WILD_MULTIPLIER = 1.2
 const ATTACK_BOTTOM_MULTIPLIER = 1.2222222
+// const ATTACK_BOTTOM_MULTIPLIER = 1
 
 
 const effectRoller = new Brng({
@@ -21,6 +22,8 @@ const effectRoller = new Brng({
   earthTop: ATTACK_TOP_BASE,
   waterTop: ATTACK_TOP_BASE,
   wildTop: ATTACK_TOP_BASE*WILD_MULTIPLIER,
+  // push: 3,/
+  // pull: 6,
 
   fireBottom: ATTACK_TOP_BASE*ATTACK_BOTTOM_MULTIPLIER,
   earthBottom: ATTACK_TOP_BASE*ATTACK_BOTTOM_MULTIPLIER,
@@ -32,15 +35,21 @@ const effectRoller = new Brng({
   money: 13,
 
   draw: 6,
-  cycle: 2,
+  cycle: 3,
   trash: 2,
   energy: 7,
-}, {bias: 1})
-const topEffectList = ['fireTop', 'earthTop', 'waterTop', 'wildTop', 'money', 'draw', 'cycle', 'trash']
+}, {bias: 4})
+const topEffectList = [
+  'fireTop', 'earthTop', 'waterTop',
+  'wildTop',
+  // 'pull',
+  'money', 'draw', 'cycle', 'trash'
+]
 const bottomEffectList = ['fireBottom', 'earthBottom', 'waterBottom', 'wildBottom', 'money', 'trash']
 
 const attackList = [
-  'fireTop', 'earthTop', 'waterTop', 'wildTop',
+  'fireTop', 'earthTop', 'waterTop',
+  'wildTop',
   'fireBottom', 'earthBottom', 'waterBottom', 'wildBottom',
 ]
 
@@ -49,11 +58,13 @@ const attackListMapping = {
   earthTop: 'earthBottom',
   waterTop: 'waterBottom',
   wildTop: 'wildBottom',
+  // pull: 'wildBottom',
 
   fireBottom: 'fireTop',
   earthBottom: 'earthTop',
   waterBottom: 'waterTop',
   wildBottom: 'wildTop',
+  // wildBottom: 'pull',
 }
 
 
@@ -63,6 +74,8 @@ const effectToValueMapping = {
   earthTop: 100,
   waterTop: 100,
   wildTop: 150,
+  // push: 50,
+  // pull: 50,
 
   fireBottom: 100,
   earthBottom: 100,
@@ -109,6 +122,8 @@ const costToMaxValueMapping = {
   9: 600, // 6
 }
 
+const topOrBottomRoller = new Brng({top: 1, bottom: 1}, {bias: 4})
+
 ///////////////////////////////////////
 ///////////////////////////////////////
 ///////////////////////////////////////
@@ -123,8 +138,8 @@ const CARD_QUANTITY = 42
 _.times(CARD_QUANTITY, () => {
   cardsArray.push({cost: cardCostRoller.roll()})
 })
-cardsArray = _.sortBy(cardsArray, ['cost'])
-// cardsArray = _.sortBy(cardsArray, [cardObj => -cardObj.cost])
+// cardsArray = _.sortBy(cardsArray, ['cost'])
+cardsArray = _.sortBy(cardsArray, [cardObj => -cardObj.cost])
 // cardsArray = _.sortBy(cardsArray, [cardObj => -Math.abs(5-cardObj.cost), 'cost'])
 
 
@@ -166,6 +181,8 @@ _.forEach(cardsArray, cardObj => {
   const topObj = {}
   const bottomObj = {}
 
+  const topPriority = (topOrBottomRoller.roll() === 'top')
+
   let attempts = 0
   while ((getCurrentValue(topObj) + getCurrentValue(bottomObj)) < maxValue*2 && attempts < 20) {
 
@@ -175,14 +192,14 @@ _.forEach(cardsArray, cardObj => {
     let exclusion = []
 
     ////////// TOP ///////////////
-    if (topValue <= bottomValue) {
+    if (topPriority ? topValue <= bottomValue : topValue < bottomValue) {
       let onlyList = _.intersection(
         _.cloneDeep(topEffectList),
         getAvailableEffects(maxValue - topValue + VALUE_SLACK)
       ).concat('energy')
 
       if (
-        _.intersection(topEffectList, _.keys(topObj)).length >= 2 // 2 unique effects
+        _.intersection(topEffectList, _.keys(topObj)).length >= 2 // 2 unique effects max
         || (maxValue <= 200 && !_.isEmpty(topObj)) // $1 card
       ) {
         onlyList = _.intersection(
@@ -208,21 +225,32 @@ _.forEach(cardsArray, cardObj => {
         exclusion = _.uniq(_.concat(exclusion, 'draw'))
       }
 
+      // max of 2 cycle in one card
       if (topObj['cycle'] >= 2) {
         exclusion = _.uniq(_.concat(exclusion, 'cycle'))
       }
 
-      // money and attack cannot be together
-      if (_.includes(_.keys(topObj), 'money')) {
-        exclusion = _.uniq(_.concat(exclusion, attackList))
+      // max of 4 pull in one card
+      // if (topObj['pull'] >= 4) {
+      //   exclusion = _.uniq(_.concat(exclusion, 'pull'))
+      // }
+
+      // draw and cycle cannot be together
+      if (_.intersection(_.keys(topObj), ['draw', 'cycle']).length >= 1) {
+        exclusion = _.uniq(_.concat(exclusion, _.without(['draw', 'cycle'], ..._.keys(topObj)) ))
       }
+
+      // money 2+ and attack cannot be together
+      // if (_.includes(_.keys(topObj), 'money') && topObj.money >= 2) {
+      //   exclusion = _.uniq(_.concat(exclusion, attackList))
+      // }
 
       // limit 1 attack type per side
       if (_.intersection(attackList, _.keys(topObj)).length >= 1) {
         exclusion = _.uniq(_.concat(
           exclusion,
           _.without(attackList, ..._.keys(topObj)),
-          'money' // money and attack can't be together
+          // 'money' // money and attack can't be together
         ))
       }
 
@@ -263,8 +291,8 @@ _.forEach(cardsArray, cardObj => {
         exclusion = _.uniq(_.concat(exclusion, 'money'))
       }
 
-      // money and attack cannot be together
-      if (_.includes(_.keys(bottomObj), 'money')) {
+      // (ONLY BOTTOM) money and attack cannot be together
+      if (_.includes(_.keys(bottomObj), 'money') && bottomObj.money >= 1) {
         exclusion = _.uniq(_.concat(exclusion, attackList))
       }
 
@@ -273,7 +301,7 @@ _.forEach(cardsArray, cardObj => {
         exclusion = _.uniq(_.concat(
           exclusion,
           _.without(attackList, ..._.keys(bottomObj)),
-          'money' // money and attack can't be together
+          'money' // ONLY BOTTOM money and attack can't be together
         ))
       }
 
@@ -329,6 +357,7 @@ function countOccurences (key, resources) {
 
 const forAttack = 0
   + countOccurences('top', ['wildTop'])*1.5
+  // + countOccurences('top', ['pull'])/2
   + countOccurences('bottom', ['wildBottom'])*1.5
   + countOccurences('top', ['fireTop'])
   + countOccurences('bottom', ['fireBottom'])
