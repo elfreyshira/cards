@@ -16,8 +16,7 @@ const WILD_MULTIPLIER = 1.2
 const ATTACK_BOTTOM_MULTIPLIER = 1.2222222
 // const ATTACK_BOTTOM_MULTIPLIER = 1
 
-
-const effectRoller = new Brng({
+const effectsProportions = {
   fireTop: ATTACK_TOP_BASE,
   earthTop: ATTACK_TOP_BASE,
   waterTop: ATTACK_TOP_BASE,
@@ -38,7 +37,9 @@ const effectRoller = new Brng({
   cycle: 3,
   trash: 2,
   // energy: 7,
-}, {bias: 4})
+}
+
+const effectRoller = new Brng(effectsProportions, {bias: 4})
 const topEffectList = [
   'fireTop', 'earthTop', 'waterTop',
   'wildTop',
