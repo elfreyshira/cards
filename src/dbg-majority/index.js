@@ -40,6 +40,8 @@ const effectsProportions = {
 }
 
 const effectRoller = new Brng(effectsProportions, {bias: 4})
+const comboRoller = new Brng(effectsProportions, {bias: 4})
+
 const topEffectList = [
   'fireTop', 'earthTop', 'waterTop',
   'wildTop',
@@ -132,12 +134,12 @@ _.times(CARD_QUANTITY, () => {
 cardsArray = _.sortBy(cardsArray, [cardObj => -cardObj.cost])
 // cardsArray = _.sortBy(cardsArray, [cardObj => -Math.abs(5-cardObj.cost), 'cost'])
 
-
+const VALUE_SLACK = 25
 function getAvailableEffects (remainingValue) {
   // returns all effects that are less than remainingValue
   return _.keys(
     _.pickBy(effectToValueMapping, (effectValue) => {
-      return effectValue <= remainingValue
+      return effectValue <= remainingValue + VALUE_SLACK
     })
   )
 }
@@ -145,12 +147,14 @@ function getAvailableEffects (remainingValue) {
 
 function getCurrentValue(effectObj) {
   let currentValue = 0
-  _.forEach(effectObj, (val, key) => {
-    currentValue += effectToValueMapping[key] * (val || 0)
+  _.forEach(_.omit(effectObj, 'combo'), (val, key) => {
+    currentValue += (effectToValueMapping[key] || 0) * (val || 0)
   })
+  if (effectObj.combo) {
+    currentValue -= effectToValueMapping[effectObj.combo]/2
+  }
   return currentValue
 }
-
 
 _.forEach(cardsArray, cardObj => {
   // not a feature on brng yet
@@ -169,6 +173,26 @@ _.forEach(cardsArray, cardObj => {
     bottomMaxValue = costToMaxValueMapping[cardObj.cost].first
     topMaxValue = costToMaxValueMapping[cardObj.cost].second
   }
+
+
+  //////////////// COMBO ////////////////////////////////////
+  //////////////// COMBO ////////////////////////////////////
+  //////////////// COMBO ////////////////////////////////////
+  //////////////// COMBO ////////////////////////////////////
+  let firstChosenEffect
+  if (topPriority) {
+    firstChosenEffect = comboRoller.roll({only: topEffectList})
+    topObj[firstChosenEffect] = 1
+    topObj.combo = firstChosenEffect
+  }
+  else { // bottom priority
+    firstChosenEffect = comboRoller.roll({only: bottomEffectList})
+    bottomObj[firstChosenEffect] = 1
+    bottomObj.combo = firstChosenEffect
+  }
+  //////////////// COMBO ////////////////////////////////////
+  
+
 
   let attempts = 0
   while (
@@ -329,7 +353,7 @@ _.forEach(cardsArray, cardObj => {
   cardObj.bottom = bottomObj
   cardObj.topValue = getCurrentValue(topObj)
   cardObj.bottomValue = getCurrentValue(bottomObj)
-  // cardObj.priority = topPriority ? 'top' : 'bottom'
+  cardObj.priority = topPriority ? 'top' : 'bottom'
 
 })
 
