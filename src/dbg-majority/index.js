@@ -31,11 +31,11 @@ const effectsProportions = {
 
   // move: 7,
 
-  money: 13,
+  money: 13.5,
 
   draw: 6,
   cycle: 3,
-  trash: 2,
+  trash: 2.5,
   // energy: 7,
 }
 
@@ -150,9 +150,9 @@ function getCurrentValue(effectObj) {
   _.forEach(_.omit(effectObj, 'combo'), (val, key) => {
     currentValue += (effectToValueMapping[key] || 0) * (val || 0)
   })
-  if (effectObj.combo) {
-    currentValue -= effectToValueMapping[effectObj.combo]/2
-  }
+  // if (effectObj.combo) {
+  //   currentValue -= effectToValueMapping[effectObj.combo]/2
+  // }
   return currentValue
 }
 
@@ -182,12 +182,12 @@ _.forEach(cardsArray, cardObj => {
   let firstChosenEffect
   if (topPriority) {
     firstChosenEffect = comboRoller.roll({only: topEffectList})
-    topObj[firstChosenEffect] = 1
+    topObj[firstChosenEffect] = 0.5
     topObj.combo = firstChosenEffect
   }
   else { // bottom priority
     firstChosenEffect = comboRoller.roll({only: bottomEffectList})
-    bottomObj[firstChosenEffect] = 1
+    bottomObj[firstChosenEffect] = 0.5
     bottomObj.combo = firstChosenEffect
   }
   //////////////// COMBO ////////////////////////////////////
@@ -244,7 +244,7 @@ _.forEach(cardsArray, cardObj => {
       }
 
       // max of 2 cycle in one card
-      if (topObj['cycle'] >= 2) {
+      if (topObj['cycle'] > 1) {
         exclusion = _.uniq(_.concat(exclusion, 'cycle'))
       }
 
@@ -319,7 +319,7 @@ _.forEach(cardsArray, cardObj => {
       }
 
       // (ONLY BOTTOM) money and attack cannot be together
-      if (_.includes(_.keys(bottomObj), 'money') && bottomObj.money >= 1) {
+      if (_.includes(_.keys(bottomObj), 'money') && bottomObj.money > 0) {
         exclusion = _.uniq(_.concat(exclusion, attackList))
       }
 
@@ -330,6 +330,11 @@ _.forEach(cardsArray, cardObj => {
           _.without(attackList, ..._.keys(bottomObj)),
           'money' // (ONLY BOTTOM) money and attack cannot be together
         ))
+      }
+
+      // max of 1 trash in one card
+      if (bottomObj['trash'] > 0) {
+        exclusion = _.uniq(_.concat(exclusion, 'trash'))
       }
 
       const chosenEffect = _.attempt(() =>
