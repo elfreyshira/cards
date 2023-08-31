@@ -9,6 +9,7 @@ import _ from 'lodash'
 
 // 50% attack/move, 25% draw/trash/energy, 25% money
 
+console.clear()
 
 const ATTACK_TOP_BASE = 4.4
 const WILD_MULTIPLIER = 1.2
@@ -17,7 +18,6 @@ const ATTACK_BOTTOM_MULTIPLIER = 1.2222222
 
 
 const effectRoller = new Brng({
-  // attack: 42,
   fireTop: ATTACK_TOP_BASE,
   earthTop: ATTACK_TOP_BASE,
   waterTop: ATTACK_TOP_BASE,
@@ -37,7 +37,7 @@ const effectRoller = new Brng({
   draw: 6,
   cycle: 3,
   trash: 2,
-  energy: 7,
+  // energy: 7,
 }, {bias: 4})
 const topEffectList = [
   'fireTop', 'earthTop', 'waterTop',
@@ -58,13 +58,11 @@ const attackListMapping = {
   earthTop: 'earthBottom',
   waterTop: 'waterBottom',
   wildTop: 'wildBottom',
-  // pull: 'wildBottom',
 
   fireBottom: 'fireTop',
   earthBottom: 'earthTop',
   waterBottom: 'waterTop',
   wildBottom: 'wildTop',
-  // wildBottom: 'pull',
 }
 
 
@@ -74,20 +72,11 @@ const effectToValueMapping = {
   earthTop: 100,
   waterTop: 100,
   wildTop: 150,
-  // push: 50,
-  // pull: 50,
 
   fireBottom: 100,
   earthBottom: 100,
   waterBottom: 100,
   wildBottom: 150,
-
-  // fire: 100,
-  // earth: 100,
-  // water: 100,
-  
-  // wild: 150,
-  // move: 50,
 
   money: 100,
 
@@ -111,15 +100,15 @@ const proportionsCardCost = {
 const cardCostRoller = new Brng(proportionsCardCost, {bias: 4, keepHistory: false})
 
 const costToMaxValueMapping = {
-  1: 200, // 2
-  2: 275, // 2.5+3
-  3: 350, // 3.5 or 3+4
-  4: 400, // 4
-  5: 450, // 4.5 or 4+5
-  6: 500, // 5
-  7: 525, // 5+5.5
-  8: 575, // 5.5+6
-  9: 600, // 6
+  1: {first: 200, second: 200}, // 2
+  2: {first: 300, second: 250}, // 275, // 2.5+3
+  3: {first: 350, second: 350}, // 350, // 3.5 or 3+4
+  4: {first: 400, second: 400}, // 400, // 4
+  5: {first: 450, second: 450}, // 450, // 4.5 or 4+5
+  6: {first: 500, second: 500}, // 500, // 5
+  7: {first: 550, second: 500}, // 525, // 5+5.5
+  8: {first: 600, second: 550}, // 575, // 5.5+6
+  9: {first: 600, second: 600}, // 600, // 6
 }
 
 const topOrBottomRoller = new Brng({top: 1, bottom: 1}, {bias: 4})
@@ -147,20 +136,11 @@ function getAvailableEffects (remainingValue) {
   // returns all effects that are less than remainingValue
   return _.keys(
     _.pickBy(effectToValueMapping, (effectValue) => {
-      return effectValue < remainingValue
-    })
-  )
-}
-
-
-function getExcludedEffectsTooBig (remainingValue) {
-  // returns all the effects that are bigger than remainingValue
-  return _.keys(
-    _.omitBy(effectToValueMapping, (effectValue) => {
       return effectValue <= remainingValue
     })
   )
 }
+
 
 function getCurrentValue(effectObj) {
   let currentValue = 0
@@ -170,46 +150,59 @@ function getCurrentValue(effectObj) {
   return currentValue
 }
 
-const VALUE_SLACK = 25
 
 _.forEach(cardsArray, cardObj => {
-
   // not a feature on brng yet
   // effectRoller.biasMultiplier = 4-Math.round(cardObj.cost/3)
 
-  const maxValue = costToMaxValueMapping[cardObj.cost]
   const topObj = {}
   const bottomObj = {}
 
   const topPriority = (topOrBottomRoller.roll() === 'top')
+  let topMaxValue, bottomMaxValue
+  if (topPriority) {
+    topMaxValue = costToMaxValueMapping[cardObj.cost].first
+    bottomMaxValue = costToMaxValueMapping[cardObj.cost].second
+  }
+  else { // bottom priority
+    bottomMaxValue = costToMaxValueMapping[cardObj.cost].first
+    topMaxValue = costToMaxValueMapping[cardObj.cost].second
+  }
 
   let attempts = 0
-  while ((getCurrentValue(topObj) + getCurrentValue(bottomObj)) < maxValue*2 && attempts < 20) {
+  while (
+    (getCurrentValue(topObj) + getCurrentValue(bottomObj)) < (topMaxValue + bottomMaxValue)
+    && attempts < 40
+  ) {
 
     const topValue = getCurrentValue(topObj)
     const bottomValue = getCurrentValue(bottomObj)
 
     let exclusion = []
 
-    ////////// TOP ///////////////
+    ////////// TOP ///////////////////////////////////////////////////////////////////////////
+    ////////// TOP ///////////////////////////////////////////////////////////////////////////
+    ////////// TOP ///////////////////////////////////////////////////////////////////////////
+    ////////// TOP ///////////////////////////////////////////////////////////////////////////
+    ////////// TOP ///////////////////////////////////////////////////////////////////////////
     if (topPriority ? topValue <= bottomValue : topValue < bottomValue) {
       let onlyList = _.intersection(
-        _.cloneDeep(topEffectList),
-        getAvailableEffects(maxValue - topValue + VALUE_SLACK)
-      ).concat('energy')
+        topEffectList,
+        getAvailableEffects(topMaxValue - topValue)
+      )
 
       if (
         _.intersection(topEffectList, _.keys(topObj)).length >= 2 // 2 unique effects max
-        || (maxValue <= 200 && !_.isEmpty(topObj)) // $1 card
+        || (topMaxValue <= 200 && !_.isEmpty(topObj)) // $1 card
       ) {
         onlyList = _.intersection(
           _.keys(topObj),
-          getAvailableEffects(maxValue - topValue + VALUE_SLACK)
-        ).concat('energy')
+          topEffectList,
+          getAvailableEffects(topMaxValue - topValue)
+        )
       }
 
-
-      // make sure the top and bottom don't share the same attack
+      // make sure the top and bottom don't share the same attack type
       const attacksToExclude = []
       _.forEach(_.keys(bottomObj), (bottomKey) => {
         attacksToExclude.push(attackListMapping[bottomKey])
@@ -221,7 +214,7 @@ _.forEach(cardsArray, cardObj => {
         exclusion = _.uniq(_.concat(exclusion, 'money'))
       }
 
-      if (maxValue <= 200) {
+      if (topMaxValue <= 200) {
         exclusion = _.uniq(_.concat(exclusion, 'draw'))
       }
 
@@ -254,32 +247,41 @@ _.forEach(cardsArray, cardObj => {
         ))
       }
 
-      const chosenEffect = _.attempt(() => effectRoller.roll({only: onlyList, exclude: exclusion}))
+      const chosenEffect = _.attempt(() =>
+        effectRoller.roll({only: onlyList, exclude: _.compact(exclusion)})
+      )
 
       if (!_.isError(chosenEffect)) {
         topObj[chosenEffect] = topObj[chosenEffect] ? topObj[chosenEffect]+1 : 1  
       }
+      else {
+        topObj.energy = topObj.energy ? topObj.energy+1 : 1  
+      }
     }
 
-    ////////// BOTTOM ///////////////
+    ////////// BOTTOM ///////////////////////////////////////////////////////////////////////////
+    ////////// BOTTOM ///////////////////////////////////////////////////////////////////////////
+    ////////// BOTTOM ///////////////////////////////////////////////////////////////////////////
+    ////////// BOTTOM ///////////////////////////////////////////////////////////////////////////
+    ////////// BOTTOM ///////////////////////////////////////////////////////////////////////////
     else {
       let onlyList = _.intersection(
         _.cloneDeep(bottomEffectList),
-        getAvailableEffects(maxValue - bottomValue + VALUE_SLACK)
-      ).concat('energy')
+        getAvailableEffects(bottomMaxValue - bottomValue)
+      )
 
       if (
         _.intersection(bottomEffectList, _.keys(bottomObj)).length >= 2 // 2 unique effects
-        || (maxValue <= 200 && !_.isEmpty(bottomObj)) // $1 card
+        || (bottomMaxValue <= 200 && !_.isEmpty(bottomObj)) // $1 card
       ) {
         onlyList = _.intersection(
           _.keys(bottomObj),
-          getAvailableEffects(maxValue - bottomValue + VALUE_SLACK)
-        ).concat('energy')
-        // onlyList = _.keys(bottomObj).concat('energy')
+          bottomEffectList,
+          getAvailableEffects(bottomMaxValue - bottomValue)
+        )
       }
 
-      // make sure the top and bottom don't share the same attack
+      // make sure the top and bottom don't share the same attack type
       const attacksToExclude = []
       _.forEach(_.keys(topObj), (topKey) => {
         attacksToExclude.push(attackListMapping[topKey])
@@ -301,13 +303,19 @@ _.forEach(cardsArray, cardObj => {
         exclusion = _.uniq(_.concat(
           exclusion,
           _.without(attackList, ..._.keys(bottomObj)),
-          'money' // ONLY BOTTOM money and attack can't be together
+          'money' // (ONLY BOTTOM) money and attack cannot be together
         ))
       }
 
-      const chosenEffect = _.attempt(() => effectRoller.roll({only: onlyList, exclude: exclusion}))
+      const chosenEffect = _.attempt(() =>
+        effectRoller.roll({only: onlyList, exclude: _.compact(exclusion)})
+      )
+
       if (!_.isError(chosenEffect)) {
         bottomObj[chosenEffect] = bottomObj[chosenEffect] ? bottomObj[chosenEffect]+1 : 1  
+      }
+      else {
+        bottomObj.energy = bottomObj.energy ? bottomObj.energy+1 : 1  
       }
     }
     
@@ -320,6 +328,7 @@ _.forEach(cardsArray, cardObj => {
   cardObj.bottom = bottomObj
   cardObj.topValue = getCurrentValue(topObj)
   cardObj.bottomValue = getCurrentValue(bottomObj)
+  // cardObj.priority = topPriority ? 'top' : 'bottom'
 
 })
 
@@ -357,7 +366,6 @@ function countOccurences (key, resources) {
 
 const forAttack = 0
   + countOccurences('top', ['wildTop'])*1.5
-  // + countOccurences('top', ['pull'])/2
   + countOccurences('bottom', ['wildBottom'])*1.5
   + countOccurences('top', ['fireTop'])
   + countOccurences('bottom', ['fireBottom'])
@@ -386,6 +394,6 @@ console.log('forDrawing', _.round(forDrawing/totalValue*100, 2))
 
 // console.log(effectRoller.proportions)
 // console.log(effectRoller)
-console.log(cardsArray)
+// console.log(cardsArray)
 
 export default Cards
