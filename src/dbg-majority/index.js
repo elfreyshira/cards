@@ -35,24 +35,20 @@ const effectsProportions = {
 
   draw: 6,
   cycle: 3,
-  trash: 2.5,
+  trash: 1.8,
   // energy: 7,
 }
 
 const effectRoller = new Brng(effectsProportions, {bias: 4})
-const comboRoller = new Brng(effectsProportions, {bias: 4})
 
 const topEffectList = [
-  'fireTop', 'earthTop', 'waterTop',
-  'wildTop',
-  // 'pull',
+  'fireTop', 'earthTop', 'waterTop', 'wildTop',
   'money', 'draw', 'cycle', 'trash'
 ]
 const bottomEffectList = ['fireBottom', 'earthBottom', 'waterBottom', 'wildBottom', 'money', 'trash']
 
 const attackList = [
-  'fireTop', 'earthTop', 'waterTop',
-  'wildTop',
+  'fireTop', 'earthTop', 'waterTop', 'wildTop',
   'fireBottom', 'earthBottom', 'waterBottom', 'wildBottom',
 ]
 
@@ -70,7 +66,6 @@ const attackListMapping = {
 
 
 const effectToValueMapping = {
-  
   fireTop: 100,
   earthTop: 100,
   waterTop: 100,
@@ -116,12 +111,21 @@ const costToMaxValueMapping = {
 
 const topOrBottomRoller = new Brng({top: 1, bottom: 1}, {bias: 4})
 
+const comboTypeRoller = new Brng({AA: 1, BB: 1, CC: 1, ABC: 1}, {bias: 4})
+
 ///////////////////////////////////////
 ///////////////////////////////////////
 ///////////////////////////////////////
 ///////////////////////////////////////
 
 let cardsArray = []
+const cardsSortOrder = [
+  cardObj => -cardObj.cost, // highest to lowest
+  // 'cost', // highest to lowest
+  // [cardObj => -Math.abs(5-cardObj.cost), 'cost']
+  'comboType',
+  'priority',
+]
 
 // const CARD_QUANTITY = 5
 // const CARD_QUANTITY = 1
@@ -130,9 +134,18 @@ const CARD_QUANTITY = 42
 _.times(CARD_QUANTITY, () => {
   cardsArray.push({cost: cardCostRoller.roll()})
 })
-// cardsArray = _.sortBy(cardsArray, ['cost'])
-cardsArray = _.sortBy(cardsArray, [cardObj => -cardObj.cost])
-// cardsArray = _.sortBy(cardsArray, [cardObj => -Math.abs(5-cardObj.cost), 'cost'])
+
+// adding comboType
+cardsArray = _.sortBy(cardsArray, cardsSortOrder)
+_.forEach(cardsArray, cardObj => {
+  cardObj.comboType = comboTypeRoller.roll()
+})
+
+// adding priority
+cardsArray = _.sortBy(cardsArray, cardsSortOrder)
+_.forEach(cardsArray, cardObj => {
+  cardObj.priority = topOrBottomRoller.roll()
+})
 
 const VALUE_SLACK = 25
 function getAvailableEffects (remainingValue) {
@@ -156,16 +169,42 @@ function getCurrentValue(effectObj) {
   return currentValue
 }
 
+//////////////// COMBO ////////////////////////////////////
+//////////////// COMBO ////////////////////////////////////
+cardsArray = _.sortBy(cardsArray, cardsSortOrder)
 _.forEach(cardsArray, cardObj => {
-  // not a feature on brng yet
-  // effectRoller.biasMultiplier = 4-Math.round(cardObj.cost/3)
 
   const topObj = {}
   const bottomObj = {}
 
-  const topPriority = (topOrBottomRoller.roll() === 'top')
+  let firstChosenEffect
+  if (cardObj.priority === 'top') {
+    firstChosenEffect = effectRoller.roll({only: topEffectList})
+    topObj[firstChosenEffect] = 0.5
+    topObj.combo = firstChosenEffect
+  }
+  else { // bottom priority
+    firstChosenEffect = effectRoller.roll({only: bottomEffectList})
+    bottomObj[firstChosenEffect] = 0.5
+    bottomObj.combo = firstChosenEffect
+  }
+
+  cardObj.top = topObj
+  cardObj.bottom = bottomObj
+})
+
+//////////////////////////////////// FILL THE REST ///////////////////////////
+//////////////////////////////////// FILL THE REST ///////////////////////////
+cardsArray = _.sortBy(cardsArray, cardsSortOrder)
+_.forEach(cardsArray, cardObj => {
+  // not a feature on brng yet
+  // effectRoller.biasMultiplier = 4-Math.round(cardObj.cost/3)
+
+  const topObj = _.cloneDeep(cardObj.top)
+  const bottomObj = _.cloneDeep(cardObj.bottom)
+
   let topMaxValue, bottomMaxValue
-  if (topPriority) {
+  if (cardObj.priority === 'top') {
     topMaxValue = costToMaxValueMapping[cardObj.cost].first
     bottomMaxValue = costToMaxValueMapping[cardObj.cost].second
   }
@@ -173,25 +212,6 @@ _.forEach(cardsArray, cardObj => {
     bottomMaxValue = costToMaxValueMapping[cardObj.cost].first
     topMaxValue = costToMaxValueMapping[cardObj.cost].second
   }
-
-
-  //////////////// COMBO ////////////////////////////////////
-  //////////////// COMBO ////////////////////////////////////
-  //////////////// COMBO ////////////////////////////////////
-  //////////////// COMBO ////////////////////////////////////
-  let firstChosenEffect
-  if (topPriority) {
-    firstChosenEffect = comboRoller.roll({only: topEffectList})
-    topObj[firstChosenEffect] = 0.5
-    topObj.combo = firstChosenEffect
-  }
-  else { // bottom priority
-    firstChosenEffect = comboRoller.roll({only: bottomEffectList})
-    bottomObj[firstChosenEffect] = 0.5
-    bottomObj.combo = firstChosenEffect
-  }
-  //////////////// COMBO ////////////////////////////////////
-  
 
 
   let attempts = 0
@@ -210,7 +230,7 @@ _.forEach(cardsArray, cardObj => {
     ////////// TOP ///////////////////////////////////////////////////////////////////////////
     ////////// TOP ///////////////////////////////////////////////////////////////////////////
     ////////// TOP ///////////////////////////////////////////////////////////////////////////
-    if (topPriority ? topValue <= bottomValue : topValue < bottomValue) {
+    if (cardObj.priority === 'top' ? topValue <= bottomValue : topValue < bottomValue) {
       let onlyList = _.intersection(
         topEffectList,
         getAvailableEffects(topMaxValue - topValue)
@@ -358,7 +378,6 @@ _.forEach(cardsArray, cardObj => {
   cardObj.bottom = bottomObj
   cardObj.topValue = getCurrentValue(topObj)
   cardObj.bottomValue = getCurrentValue(bottomObj)
-  cardObj.priority = topPriority ? 'top' : 'bottom'
 
 })
 
