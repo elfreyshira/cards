@@ -11,7 +11,7 @@ html {
   height:  88mm;
   max-height:  88mm;
   border: 5px solid black;
-  border-top-width: 8px;
+/*  border-top-width: 8px;*/
   
   padding-left:  0px;
   display:  inline-block;
@@ -23,4 +23,84 @@ html {
 
   /* 0.5px for printing */
   margin:  10px;
+}
+
+.cost {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 5px 10px;
+  font-size: 2rem;
+}
+
+.effects-container {
+  position: absolute;
+  width: calc(100% - 4px);
+  height: 35%;
+  padding: 0.2rem 0.4rem;
+  font-size: 2.6rem;
+  font-weight: bold;
+  margin: auto 2px;
+/*  margin-right: 5px;*/
+}
+
+.effects-container.top {
+  border: .3rem solid #f1c232;
+  top: 25%;
+}
+
+.effects-container.bottom {
+  border: .3rem solid #2a3466;
+  top: 64%;
+}
+
+.effects-container .icon {
+/*  margin: auto .1rem;*/
+}
+.effects-container .combo {
+  font-size: 1.7rem;
+  padding: .1rem .3rem;
+  background-color: rgba(0,0,0,10%);
+  border-radius: 10px;
+  float: left;
+}
+
+.combo .icon {
+  height: 1.5rem;
+  vertical-align: text-bottom;
+  position: relative;
+  margin-bottom: .15rem;
+}
+
+.single-effect {
+  margin-right: 1rem;
+  display: inline-block;
+}
+
+.icon {
+  height: 2rem;
+  margin-right: .15rem;
+}
+.icon:not(:last-child) {
+  margin-right: .2rem;
+}
+.icon.energy {
+  height: 1.5rem;
+}
+
+.icon.money {
+/*  vertical-align: bottom;*/
+}
+
+.icon.desert {
+  filter: drop-shadow(.1rem .1rem .1rem #cc0000);
+}
+.icon.forest {
+  filter: drop-shadow(.1rem .1rem .1rem #6aa84f);
+}
+.icon.island {
+/*  filter: drop-shadow(.1rem .1rem .1rem #3d85c6);*/
+  filter: drop-shadow(.1rem .1rem .1rem #6785ff);
+}
+.icon.wild {
 }

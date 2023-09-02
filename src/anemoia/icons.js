@@ -151,7 +151,7 @@ function ChainlevelX () {
 function Money ({amount}) {
   return (
     <span className="icon text-icon">
-      <span className="text-icon-content">${amount}</span>
+      <span className="text-icon-content">$</span>
     </span>
   )
 }
