@@ -1,11 +1,12 @@
 import _ from 'lodash'
+import Brng from 'brng'
 
 import Card from './Card.js'
 
 import './index.css'
 
 import {
-  effectRoller,
+  effectsProportions,
   topEffectList,
   bottomEffectList,
   attackList,
@@ -29,6 +30,9 @@ import {
 console.clear()
 
 
+const EFFECT_ROLLER_BIAS = 4
+const effectRoller = new Brng(effectsProportions, {bias: 4})
+
 ///////////////////////////////////////
 ///////////////////////////////////////
 ///////////////////////////////////////
@@ -47,6 +51,7 @@ const cardsSortOrder = [
 // const CARD_QUANTITY = 1
 const CARD_QUANTITY = 42
 
+// filling in the card cost
 _.times(CARD_QUANTITY, () => {
   cardsArray.push({cost: cardCostRoller.roll()})
 })
@@ -87,6 +92,7 @@ function getCurrentValue(effectObj) {
 
 //////////////// COMBO ////////////////////////////////////
 //////////////// COMBO ////////////////////////////////////
+// effectRoller.setBias(EFFECT_ROLLER_BIAS/2)
 cardsArray = _.sortBy(cardsArray, cardsSortOrder)
 _.forEach(cardsArray, cardObj => {
 
@@ -108,6 +114,8 @@ _.forEach(cardsArray, cardObj => {
   cardObj.top = topObj
   cardObj.bottom = bottomObj
 })
+// effectRoller.setBias(EFFECT_ROLLER_BIAS)
+effectRoller.setBias(EFFECT_ROLLER_BIAS*2) // this makes it 8, which is higher than max
 
 //////////////////////////////////// FILL THE REST ///////////////////////////
 //////////////////////////////////// FILL THE REST ///////////////////////////
@@ -175,12 +183,15 @@ _.forEach(cardsArray, cardObj => {
         exclusion = _.uniq(_.concat(exclusion, 'money'))
       }
 
-      // don't have trash on both sides
+      // don't have trash/draw/cycle on both sides
       if (_.includes(_.keys(bottomObj), 'trash')) {
-        exclusion = _.uniq(_.concat(exclusion, 'trash'))
+        exclusion = _.uniq(_.concat(exclusion, ['trash', 'draw', 'cycle']))
       }
 
-      if (topMaxValue <= 200) {
+      if (
+        topMaxValue <= 200 // for small cards
+        || topObj['draw'] > 1 // max of 2 draw in one card
+      ) {
         exclusion = _.uniq(_.concat(exclusion, 'draw'))
       }
 
@@ -194,9 +205,12 @@ _.forEach(cardsArray, cardObj => {
       //   exclusion = _.uniq(_.concat(exclusion, 'pull'))
       // }
 
-      // draw and cycle cannot be together
-      if (_.intersection(_.keys(topObj), ['draw', 'cycle']).length >= 1) {
-        exclusion = _.uniq(_.concat(exclusion, _.without(['draw', 'cycle'], ..._.keys(topObj)) ))
+      // draw/cycle/trash cannot be together
+      if (_.intersection(_.keys(topObj), ['draw', 'cycle', 'trash']).length >= 1) {
+        exclusion = _.uniq(_.concat(
+          exclusion,
+          _.without(['draw', 'cycle', 'trash'], ..._.keys(topObj))
+        ))
       }
 
       // money 2+ and attack cannot be together
@@ -259,9 +273,9 @@ _.forEach(cardsArray, cardObj => {
         exclusion = _.uniq(_.concat(exclusion, 'money'))
       }
 
-      // don't have trash on both sides
-      if (_.includes(_.keys(topObj), 'trash')) {
-        exclusion = _.uniq(_.concat(exclusion, 'trash'))
+      // don't have trash/draw/cycle on both sides
+      if (_.intersection(_.keys(topObj), ['trash', 'draw', 'cycle']).length > 0) {
+        exclusion = _.uniq(_.concat(exclusion, ['trash', 'draw', 'cycle']))
       }
 
       // (ONLY BOTTOM) money and attack cannot be together
@@ -315,7 +329,7 @@ function Cards () {
   return (
     <div>
       {
-        _.map(cardsArray, (cardObj) => <Card cardObj={cardObj} /> )
+        _.map(cardsArray, (cardObj, idx) => <Card key={idx} cardObj={cardObj} /> )
       }
       <pre>
         {/*{JSON.stringify(_.pick(cardsArray, cardsImportantKeys), null, 2)}*/}

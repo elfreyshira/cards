@@ -1,7 +1,7 @@
 import Brng from 'brng'
 
 const ATTACK_TOP_BASE = 4.4
-const WILD_MULTIPLIER = 1.2
+const WILD_MULTIPLIER = 1
 const ATTACK_BOTTOM_MULTIPLIER = 1.2222222
 // const ATTACK_BOTTOM_MULTIPLIER = 1
 
@@ -20,10 +20,10 @@ const effectsProportions = {
 
   // move: 7,
 
-  money: 13.5,
+  money: 13.7,
 
   draw: 6,
-  cycle: 3,
+  cycle: 2.8,
   trash: 1.8,
   // energy: 7,
 }
@@ -110,7 +110,7 @@ const comboTypeRoller = new Brng({AA: 1, BB: 1, CC: 1, ABC: 1}, {bias: 4})
 
 
 export {
-  effectRoller,
+  effectsProportions,
   topEffectList,
   bottomEffectList,
   attackList,

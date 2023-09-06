@@ -25,7 +25,7 @@ function EffectContainer({effectSide, effects, comboType}) {
     const ChosenIcon = ICONS[cleanup(effects.combo)]
     ComboEffect = (
       <div className="combo-container">
-        <span className="combo">{comboType}: +<ChosenIcon /></span>
+        <span className="combo">{comboType}: <ChosenIcon /></span>
       </div>
       
     )
