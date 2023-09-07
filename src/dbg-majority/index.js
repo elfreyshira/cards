@@ -6,6 +6,7 @@ import Card from './Card.js'
 import './index.css'
 
 import {
+  proportionsCardCost,
   effectsProportions,
   topEffectList,
   bottomEffectList,
@@ -39,6 +40,8 @@ const effectRoller = new Brng(effectsProportions, {bias: 4})
 ///////////////////////////////////////
 
 let cardsArray = []
+
+
 const cardsSortOrder = [
   cardObj => -cardObj.cost, // highest to lowest
   // 'cost', // highest to lowest
@@ -49,7 +52,8 @@ const cardsSortOrder = [
 
 // const CARD_QUANTITY = 5
 // const CARD_QUANTITY = 1
-const CARD_QUANTITY = 42
+// const CARD_QUANTITY = 42
+const CARD_QUANTITY = _.sum(_.values(proportionsCardCost))
 
 // filling in the card cost
 _.times(CARD_QUANTITY, () => {
@@ -65,7 +69,9 @@ _.forEach(cardsArray, cardObj => {
 // adding priority
 cardsArray = _.sortBy(cardsArray, cardsSortOrder)
 _.forEach(cardsArray, cardObj => {
-  cardObj.priority = topOrBottomRoller.roll()
+  // if (!_.has(cardObj, 'priority')) {
+    cardObj.priority = topOrBottomRoller.roll()
+  // }
 })
 
 const VALUE_SLACK = 25
@@ -96,8 +102,8 @@ function getCurrentValue(effectObj) {
 cardsArray = _.sortBy(cardsArray, cardsSortOrder)
 _.forEach(cardsArray, cardObj => {
 
-  const topObj = {}
-  const bottomObj = {}
+  const topObj = _.cloneDeep(cardObj.top) || {}
+  const bottomObj = _.cloneDeep(cardObj.bottom) || {}
 
   let firstChosenEffect
   if (cardObj.priority === 'top') {
@@ -117,6 +123,59 @@ _.forEach(cardsArray, cardObj => {
 // effectRoller.setBias(EFFECT_ROLLER_BIAS)
 effectRoller.setBias(EFFECT_ROLLER_BIAS*2) // this makes it 8, which is higher than max
 
+
+///////// CUSTOM CARDS //////////////////////////////
+///////// CUSTOM CARDS //////////////////////////////
+cardsArray.push({
+  cost: '9',
+  priority: 'top',
+  bottom: {wildBottom: 4},
+  // customBottom: "For each card played this turn that costs $2 or less: [Wild]"
+  customCard: 'gainForEachCard',
+  customSide: 'bottom',
+})
+_.times(4, () => effectRoller.roll('wildBottom'))
+
+cardsArray.push({
+  cost: '9',
+  priority: 'bottom',
+  top: {draw: 3},
+  // customTop: "When you purchase a card: [Draw]",
+  customCard: 'drawWhenPurchase',
+  customSide: 'top',
+})
+_.times(3, () => effectRoller.roll('draw'))
+
+cardsArray.push({
+  cost: '8',
+  priority: 'top',
+  top: {wildTop: 4},
+  // customTop: "Any location: gain units equal to the number of your units already there."
+  customCard: 'doubleUnits',
+  customSide: 'top',
+})
+_.times(4, () => effectRoller.roll('wildTop'))
+
+cardsArray.push({
+  cost: '8',
+  priority: 'bottom',
+  bottom: {wildBottom: 4},
+  customCard: 'lossForEachCard',
+  customSide: 'bottom',
+})
+_.times(4, () => effectRoller.roll('wildBottom'))
+
+cardsArray.push({
+  cost: '8',
+  priority: 'bottom',
+  bottom: {money: 6},
+  customCard: 'moneyForEachUnit',
+  customSide: 'bottom',
+})
+_.times(6, () => effectRoller.roll('money'))
+
+///////// CUSTOM CARDS //////////////////////////////
+
 //////////////////////////////////// FILL THE REST ///////////////////////////
 //////////////////////////////////// FILL THE REST ///////////////////////////
 cardsArray = _.sortBy(cardsArray, cardsSortOrder)
@@ -124,8 +183,8 @@ _.forEach(cardsArray, cardObj => {
   // not a feature on brng yet
   // effectRoller.biasMultiplier = 4-Math.round(cardObj.cost/3)
 
-  const topObj = _.cloneDeep(cardObj.top)
-  const bottomObj = _.cloneDeep(cardObj.bottom)
+  const topObj = _.cloneDeep(cardObj.top) || {}
+  const bottomObj = _.cloneDeep(cardObj.bottom) || {}
 
   let topMaxValue, bottomMaxValue
   if (cardObj.priority === 'top') {
@@ -311,6 +370,9 @@ _.forEach(cardsArray, cardObj => {
     
 
     attempts++
+    if (attempts > 39) {
+      console.log('what the heck!!!!!!!')
+    }
 
   }
 
@@ -386,6 +448,6 @@ console.log('forDrawing', _.round(forDrawing/totalValue*100, 2))
 
 // console.log(effectRoller.proportions)
 // console.log(effectRoller)
-// console.log(cardsArray)
+console.log(cardsArray)
 
 export default Cards

@@ -104,3 +104,17 @@ html {
 }
 .icon.wild {
 }
+
+.custom-card {
+/*  font-size: 1rem;*/
+}
+.center-content {
+  display: inline-block;
+  left: 50%;
+  position: relative;
+  transform: translateX(-50%);
+}
+.small-icon img.icon {
+  height: 1.1rem;
+  vertical-align: text-bottom;
+}

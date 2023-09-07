@@ -87,8 +87,8 @@ const proportionsCardCost = {
   5: 6,
   6: 5,
   7: 4,
-  8: 3,
-  9: 2,
+  // 8: 3,
+  // 9: 2,
 }
 const cardCostRoller = new Brng(proportionsCardCost, {bias: 4, keepHistory: false})
 
@@ -110,6 +110,7 @@ const comboTypeRoller = new Brng({AA: 1, BB: 1, CC: 1, ABC: 1}, {bias: 4})
 
 
 export {
+  proportionsCardCost,
   effectsProportions,
   topEffectList,
   bottomEffectList,

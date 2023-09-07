@@ -9,6 +9,7 @@ import energyIcon from './images/energy.png'
 import trashIcon from './images/trash.png'
 import cycleIcon from './images/cycle.png'
 import moneyIcon from './images/money.png'
+import dayIcon from './images/day.png'
 
 
 const flr1 = (amount) => {
@@ -53,6 +54,9 @@ function Energy ({amount}) {
   return _.times(_.floor(amount) || 1, (idx) => <img key={idx} className="icon energy" src={energyIcon} />)
   // return <img className="icon energy" src={energyIcon} />
 }
+function Day () {
+  return <img className="icon day" src={dayIcon} />
+}
 
 
 export default {
@@ -65,4 +69,5 @@ export default {
   Cycle,
   Trash,
   Energy,
+  Day
 }
