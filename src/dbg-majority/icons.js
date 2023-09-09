@@ -10,6 +10,7 @@ import trashIcon from './images/trash.png'
 import cycleIcon from './images/cycle.png'
 import moneyIcon from './images/money.png'
 import dayIcon from './images/day.png'
+import moveIcon from './images/move.png'
 
 
 const flr1 = (amount) => {
@@ -34,6 +35,9 @@ function Water ({amount}) {
 
 function Wild ({amount}) {
   return <span><img className="icon wild" src={wildIcon} />{flr1(amount)}</span>
+}
+function Move ({amount}) {
+  return <span><img className="icon move" src={moveIcon} />{flr1(amount)}</span>
 }
 
 
@@ -69,5 +73,6 @@ export default {
   Cycle,
   Trash,
   Energy,
-  Day
+  Day,
+  Move
 }

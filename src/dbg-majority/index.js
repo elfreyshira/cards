@@ -18,16 +18,8 @@ import {
   topOrBottomRoller,
   comboTypeRoller,
   comboProportions,
+  comboExclusion,
 } from './CONSTANTS'
-
-
-// attack types: fire, earth, water
-// conflict areas: mountain, forest, island, city
-
-// Top: troops, draw, trash, move, money, energy, discard
-// Bottom: +attack, money, energy, trash
-
-// 50% attack/move, 25% draw/trash/energy, 25% money
 
 console.clear()
 
@@ -110,12 +102,12 @@ _.forEach(cardsArray, cardObj => {
 
   let firstChosenEffect
   if (cardObj.priority === 'top') {
-    firstChosenEffect = effectRoller.roll({only: _.without(topEffectList, 'wildTop')})
+    firstChosenEffect = effectRoller.roll({only: _.without(topEffectList, ...comboExclusion)})
     topObj[firstChosenEffect] = 0.5
     topObj.combo = firstChosenEffect
   }
   else { // bottom priority
-    firstChosenEffect = effectRoller.roll({only: _.without(bottomEffectList, 'wildBottom')})
+    firstChosenEffect = effectRoller.roll({only: _.without(bottomEffectList, ...comboExclusion)})
     bottomObj[firstChosenEffect] = 0.5
     bottomObj.combo = firstChosenEffect
   }
@@ -263,10 +255,23 @@ _.forEach(cardsArray, cardObj => {
         exclusion = _.uniq(_.concat(exclusion, 'cycle'))
       }
 
-      // max of 4 pull in one card
-      // if (topObj['pull'] >= 4) {
-      //   exclusion = _.uniq(_.concat(exclusion, 'pull'))
-      // }
+      // max of 1 trash in one card
+      if (topObj['trash'] > 0) {
+        exclusion = _.uniq(_.concat(exclusion, 'trash'))
+      }
+
+      // max of 4 move in one card
+      if (topObj['move'] > 3) {
+        exclusion = _.uniq(_.concat(exclusion, 'move'))
+      }
+
+      // move/wildTop cannot be together
+      if (_.intersection(_.keys(topObj), ['move', 'wildTop']).length >= 1) {
+        exclusion = _.uniq(_.concat(
+          exclusion,
+          _.without(['move', 'wildTop'], ..._.keys(topObj))
+        ))
+      }
 
       // draw/cycle/trash cannot be together
       if (_.intersection(_.keys(topObj), ['draw', 'cycle', 'trash']).length >= 1) {
@@ -433,6 +438,7 @@ const forAttack = 0
   + countOccurences('bottom', ['waterBottom'])
   + countOccurences('top', ['energy'])/2
   + countOccurences('bottom', ['energy'])/2
+  + countOccurences('top', ['move'])/2
 
 const forEngine = 0
   + countOccurences('top', ['money'])

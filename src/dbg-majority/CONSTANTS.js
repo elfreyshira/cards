@@ -1,7 +1,7 @@
 import Brng from 'brng'
 
 const ATTACK_TOP_BASE = 4.4
-const WILD_MULTIPLIER = 1.1
+const WILD_MULTIPLIER = 1
 const ATTACK_BOTTOM_MULTIPLIER = 1.2222222
 // const ATTACK_BOTTOM_MULTIPLIER = 1
 
@@ -9,7 +9,7 @@ const effectsProportions = {
   fireTop: ATTACK_TOP_BASE,
   earthTop: ATTACK_TOP_BASE,
   waterTop: ATTACK_TOP_BASE,
-  wildTop: ATTACK_TOP_BASE*WILD_MULTIPLIER,
+  wildTop: ATTACK_TOP_BASE,
   // push: 3,/
   // pull: 6,
 
@@ -18,7 +18,7 @@ const effectsProportions = {
   waterBottom: ATTACK_TOP_BASE*ATTACK_BOTTOM_MULTIPLIER,
   wildBottom: ATTACK_TOP_BASE*ATTACK_BOTTOM_MULTIPLIER*WILD_MULTIPLIER,
 
-  // move: 7,
+  move: 3,
 
   money: 13.7,
 
@@ -53,7 +53,7 @@ const effectRoller = new Brng(effectsProportions, {bias: 4})
 
 const topEffectList = [
   'fireTop', 'earthTop', 'waterTop', 'wildTop',
-  'money', 'draw', 'cycle', 'trash'
+  'move', 'money', 'draw', 'cycle', 'trash'
 ]
 const bottomEffectList = ['fireBottom', 'earthBottom', 'waterBottom', 'wildBottom', 'money', 'trash']
 
@@ -65,8 +65,10 @@ const attackList = [
 const effectDisplayPriority = [
   'fireTop', 'earthTop', 'waterTop', 'wildTop',
   'fireBottom', 'earthBottom', 'waterBottom', 'wildBottom',
-  'money', 'draw', 'cycle', 'trash', 'energy'
+  'move', 'money', 'draw', 'cycle', 'trash', 'energy'
 ]
+
+const comboExclusion = ['move', 'wildTop', 'wildBottom']
 
 const attackListMapping = {
   fireTop: 'fireBottom',
@@ -91,6 +93,8 @@ const effectToValueMapping = {
   earthBottom: 100,
   waterBottom: 100,
   wildBottom: 150,
+
+  move: 50,
 
   money: 100,
 
@@ -130,6 +134,7 @@ const topOrBottomRoller = new Brng({top: 1, bottom: 1}, {bias: 4})
 const comboTypeRoller = new Brng({AA: 1, BB: 1, CC: 1, ABC: 1}, {bias: 4})
 
 
+
 export {
   proportionsCardCost,
   comboProportions,
@@ -144,4 +149,5 @@ export {
   topOrBottomRoller,
   comboTypeRoller,
   effectDisplayPriority,
+  comboExclusion,
 }
