@@ -17,6 +17,7 @@ import {
   costToMaxValueMapping,
   topOrBottomRoller,
   comboTypeRoller,
+  comboProportions,
 } from './CONSTANTS'
 
 
@@ -98,6 +99,8 @@ function getCurrentValue(effectObj) {
 
 //////////////// COMBO ////////////////////////////////////
 //////////////// COMBO ////////////////////////////////////
+effectRoller.updateProportions(comboProportions)
+
 // effectRoller.setBias(EFFECT_ROLLER_BIAS/2)
 cardsArray = _.sortBy(cardsArray, cardsSortOrder)
 _.forEach(cardsArray, cardObj => {
@@ -107,12 +110,12 @@ _.forEach(cardsArray, cardObj => {
 
   let firstChosenEffect
   if (cardObj.priority === 'top') {
-    firstChosenEffect = effectRoller.roll({only: topEffectList})
+    firstChosenEffect = effectRoller.roll({only: _.without(topEffectList, 'wildTop')})
     topObj[firstChosenEffect] = 0.5
     topObj.combo = firstChosenEffect
   }
   else { // bottom priority
-    firstChosenEffect = effectRoller.roll({only: bottomEffectList})
+    firstChosenEffect = effectRoller.roll({only: _.without(bottomEffectList, 'wildBottom')})
     bottomObj[firstChosenEffect] = 0.5
     bottomObj.combo = firstChosenEffect
   }
@@ -122,6 +125,7 @@ _.forEach(cardsArray, cardObj => {
 })
 // effectRoller.setBias(EFFECT_ROLLER_BIAS)
 effectRoller.setBias(EFFECT_ROLLER_BIAS*2) // this makes it 8, which is higher than max
+effectRoller.updateProportions(effectsProportions)
 
 
 ///////// CUSTOM CARDS //////////////////////////////
@@ -446,7 +450,7 @@ console.log('forEngine', _.round(forEngine/totalValue*100, 2))
 console.log('forDrawing', _.round(forDrawing/totalValue*100, 2))
 
 
-// console.log(effectRoller.proportions)
+console.log(effectRoller.proportions)
 // console.log(effectRoller)
 console.log(cardsArray)
 

@@ -1,7 +1,7 @@
 import Brng from 'brng'
 
 const ATTACK_TOP_BASE = 4.4
-const WILD_MULTIPLIER = 1
+const WILD_MULTIPLIER = 1.1
 const ATTACK_BOTTOM_MULTIPLIER = 1.2222222
 // const ATTACK_BOTTOM_MULTIPLIER = 1
 
@@ -17,6 +17,27 @@ const effectsProportions = {
   earthBottom: ATTACK_TOP_BASE*ATTACK_BOTTOM_MULTIPLIER,
   waterBottom: ATTACK_TOP_BASE*ATTACK_BOTTOM_MULTIPLIER,
   wildBottom: ATTACK_TOP_BASE*ATTACK_BOTTOM_MULTIPLIER*WILD_MULTIPLIER,
+
+  // move: 7,
+
+  money: 13.7,
+
+  draw: 6,
+  cycle: 2.8,
+  trash: 1.8,
+  // energy: 7,
+}
+
+const comboProportions = {
+  fireTop: ATTACK_TOP_BASE,
+  earthTop: ATTACK_TOP_BASE,
+  waterTop: ATTACK_TOP_BASE,
+  // push: 3,/
+  // pull: 6,
+
+  fireBottom: ATTACK_TOP_BASE*ATTACK_BOTTOM_MULTIPLIER,
+  earthBottom: ATTACK_TOP_BASE*ATTACK_BOTTOM_MULTIPLIER,
+  waterBottom: ATTACK_TOP_BASE*ATTACK_BOTTOM_MULTIPLIER,
 
   // move: 7,
 
@@ -111,6 +132,7 @@ const comboTypeRoller = new Brng({AA: 1, BB: 1, CC: 1, ABC: 1}, {bias: 4})
 
 export {
   proportionsCardCost,
+  comboProportions,
   effectsProportions,
   topEffectList,
   bottomEffectList,
