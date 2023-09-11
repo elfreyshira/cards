@@ -26,7 +26,7 @@ console.clear()
 
 
 const EFFECT_ROLLER_BIAS = 4
-const effectRoller = new Brng(effectsProportions, {bias: 4})
+const effectRoller = new Brng(effectsProportions, {bias: 4, keepHistory: true})
 
 ///////////////////////////////////////
 ///////////////////////////////////////
@@ -45,6 +45,7 @@ const cardsSortOrder = [
 ]
 
 // const CARD_QUANTITY = 5
+// const CARD_QUANTITY = 15
 // const CARD_QUANTITY = 0
 // const CARD_QUANTITY = 1
 // const CARD_QUANTITY = 42
@@ -124,53 +125,58 @@ effectRoller.updateProportions(effectsProportions)
 
 ///////// CUSTOM CARDS //////////////////////////////
 ///////// CUSTOM CARDS //////////////////////////////
-cardsArray.push({
-  cost: '9',
-  priority: 'top',
-  bottom: {wildBottom: 4},
-  // customBottom: "For each card played this turn that costs $2 or less: [Wild]"
-  customCard: 'gainForEachCard',
-  customSide: 'bottom',
-})
-_.times(4, () => effectRoller.roll('wildBottom'))
+// const shouldDoCustomCards = true
+const shouldDoCustomCards = false
 
-cardsArray.push({
-  cost: '9',
-  priority: 'bottom',
-  top: {draw: 3},
-  // customTop: "When you purchase a card: [Draw]",
-  customCard: 'drawWhenPurchase',
-  customSide: 'top',
-})
-_.times(3, () => effectRoller.roll('draw'))
+if (shouldDoCustomCards) {
+  cardsArray.push({
+    cost: '9',
+    priority: 'top',
+    bottom: {wildBottom: 4},
+    // customBottom: "For each card played this turn that costs $2 or less: [Wild]"
+    customCard: 'gainForEachCard',
+    customSide: 'bottom',
+  })
+  _.times(4, () => effectRoller.roll('wildBottom'))
 
-cardsArray.push({
-  cost: '8',
-  priority: 'top',
-  top: {wildTop: 4},
-  // customTop: "Any location: gain units equal to the number of your units already there."
-  customCard: 'doubleUnits',
-  customSide: 'top',
-})
-_.times(4, () => effectRoller.roll('wildTop'))
+  cardsArray.push({
+    cost: '9',
+    priority: 'bottom',
+    top: {draw: 3},
+    // customTop: "When you purchase a card: [Draw]",
+    customCard: 'drawWhenPurchase',
+    customSide: 'top',
+  })
+  _.times(3, () => effectRoller.roll('draw'))
 
-cardsArray.push({
-  cost: '8',
-  priority: 'bottom',
-  bottom: {wildBottom: 4},
-  customCard: 'lossForEachCard',
-  customSide: 'bottom',
-})
-_.times(4, () => effectRoller.roll('wildBottom'))
+  cardsArray.push({
+    cost: '8',
+    priority: 'top',
+    top: {wildTop: 4},
+    // customTop: "Any location: gain units equal to the number of your units already there."
+    customCard: 'doubleUnits',
+    customSide: 'top',
+  })
+  _.times(4, () => effectRoller.roll('wildTop'))
 
-cardsArray.push({
-  cost: '8',
-  priority: 'bottom',
-  bottom: {money: 6},
-  customCard: 'moneyForEachUnit',
-  customSide: 'bottom',
-})
-_.times(6, () => effectRoller.roll('money'))
+  cardsArray.push({
+    cost: '8',
+    priority: 'bottom',
+    bottom: {wildBottom: 4},
+    customCard: 'lossForEachCard',
+    customSide: 'bottom',
+  })
+  _.times(4, () => effectRoller.roll('wildBottom'))
+
+  cardsArray.push({
+    cost: '8',
+    priority: 'bottom',
+    bottom: {money: 6},
+    customCard: 'moneyForEachUnit',
+    customSide: 'bottom',
+  })
+  _.times(6, () => effectRoller.roll('money'))
+}
 
 ///////// CUSTOM CARDS //////////////////////////////
 
@@ -180,27 +186,14 @@ _.forEach(cardsArray, cardObj => {
 })
 ////// adding unique ids ///////
 
-
-//////////////////////////////////// FILL THE REST ///////////////////////////
-//////////////////////////////////// FILL THE REST ///////////////////////////
-cardsArray = _.sortBy(cardsArray, cardsSortOrder)
-_.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
-  // not a feature on brng yet
-  // effectRoller.biasMultiplier = 4-Math.round(cardObj.cost/3)
-
+////////////////////////////////////
+////////////////////////////////////
+function getTopAndBottomEffect (cardObj, topMaxValue, bottomMaxValue) {
   const topObj = _.cloneDeep(cardObj.top) || {}
   const bottomObj = _.cloneDeep(cardObj.bottom) || {}
 
-  let topMaxValue, bottomMaxValue
-  if (cardObj.priority === 'top') {
-    topMaxValue = costToMaxValueMapping[cardObj.cost].first
-    bottomMaxValue = costToMaxValueMapping[cardObj.cost].second
-  }
-  else { // bottom priority
-    bottomMaxValue = costToMaxValueMapping[cardObj.cost].first
-    topMaxValue = costToMaxValueMapping[cardObj.cost].second
-  }
-
+  let timesRolled = 0
+  const effectsRolledArray = []
 
   let attempts = 0
   while (
@@ -309,10 +302,12 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
       )
 
       if (!_.isError(chosenEffect)) {
-        topObj[chosenEffect] = topObj[chosenEffect] ? topObj[chosenEffect]+1 : 1  
+        topObj[chosenEffect] = topObj[chosenEffect] ? topObj[chosenEffect]+1 : 1
+        effectsRolledArray.push(chosenEffect)
+        timesRolled++
       }
       else {
-        topObj.energy = topObj.energy ? topObj.energy+1 : 1  
+        topObj.energy = topObj.energy ? topObj.energy+1 : 1
       }
     }
 
@@ -379,13 +374,15 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
       )
 
       if (!_.isError(chosenEffect)) {
-        bottomObj[chosenEffect] = bottomObj[chosenEffect] ? bottomObj[chosenEffect]+1 : 1  
+        bottomObj[chosenEffect] = bottomObj[chosenEffect] ? bottomObj[chosenEffect]+1 : 1
+        effectsRolledArray.push(chosenEffect)
+        timesRolled++
       }
       else {
-        bottomObj.energy = bottomObj.energy ? bottomObj.energy+1 : 1  
+        bottomObj.energy = bottomObj.energy ? bottomObj.energy+1 : 1
       }
     }
-    
+  
 
     attempts++
     if (attempts > 39) {
@@ -394,18 +391,82 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
 
   }
 
-  cardObj.top = topObj
-  cardObj.bottom = bottomObj
-  cardObj.topValue = getCurrentValue(topObj)
-  cardObj.bottomValue = getCurrentValue(bottomObj)
+  return {topObj, bottomObj, timesRolled, effectsRolledArray}
+}
 
-  const {similarityRatio, mostSimilarCardObj} = checkSimilarity(
-    cardsArray.slice(0, cardsArrayIndex), cardObj
-  )
+function rollWithSetValues (givenBrngRoller, effectsRolledArray) {
+  _.forEach(effectsRolledArray, chosenEffect => {
+    givenBrngRoller.roll(chosenEffect)
+  })
+  return givenBrngRoller
+}
+
+////////////////////// FILL THE REST ///////////////////////////
+////////////////////// FILL THE REST ///////////////////////////
+const similarityRatioArray = []
+cardsArray = _.sortBy(cardsArray, cardsSortOrder)
+_.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
+
+  let topMaxValue, bottomMaxValue
+  if (cardObj.priority === 'top') {
+    topMaxValue = costToMaxValueMapping[cardObj.cost].first
+    bottomMaxValue = costToMaxValueMapping[cardObj.cost].second
+  }
+  else { // bottom priority
+    bottomMaxValue = costToMaxValueMapping[cardObj.cost].first
+    topMaxValue = costToMaxValueMapping[cardObj.cost].second
+  }
+
+  /////////////////
+  let attemptsToFillEffects = 0
+  const maxAttemptsToFillEffects = 10
+  const fillEffectsAttemptsArray = []
+
+  while (attemptsToFillEffects < maxAttemptsToFillEffects) {
+    attemptsToFillEffects++
+    const {
+      topObj, bottomObj, timesRolled, effectsRolledArray
+    } = getTopAndBottomEffect(cardObj, topMaxValue, bottomMaxValue)
+
+    const newCardObj = _.cloneDeep(cardObj) || {}
+    newCardObj.top = topObj
+    newCardObj.bottom = bottomObj
+    // newCardObj.topValue = getCurrentValue(topObj)
+    // newCardObj.bottomValue = getCurrentValue(bottomObj)
+
+    const {similarityRatio, mostSimilarCardObj} = checkSimilarity(
+      cardsArray.slice(0, cardsArrayIndex), newCardObj
+    )
+    fillEffectsAttemptsArray.push({
+      similarityRatio,
+      mostSimilarCardObj,
+      effectsRolledArray,
+      top: _.cloneDeep(topObj),
+      bottom: _.cloneDeep(bottomObj),
+    })
+
+    _.times(timesRolled, () => effectRoller.undo())
+  }
+  const {
+    top, bottom, effectsRolledArray,
+    similarityRatio, mostSimilarCardObj,
+  } = _.sortBy(fillEffectsAttemptsArray, 'similarityRatio')[0]
+
+  rollWithSetValues(effectRoller, effectsRolledArray)
+
+  similarityRatioArray.push(similarityRatio)
+
+  /////////////////
+
+
+  cardObj.top = top
+  cardObj.bottom = bottom
+  cardObj.topValue = getCurrentValue(top)
+  cardObj.bottomValue = getCurrentValue(bottom)
   console.log(cardObj.uuid, similarityRatio, mostSimilarCardObj)
 
 })
-
+console.log('_.mean(similarityRatioArray)', _.mean(similarityRatioArray))
 
 
 const cardsImportantKeys = ['cost', 'top']

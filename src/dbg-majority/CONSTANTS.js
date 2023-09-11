@@ -49,8 +49,6 @@ const comboProportions = {
   // energy: 7,
 }
 
-const effectRoller = new Brng(effectsProportions, {bias: 4})
-
 const topEffectList = [
   'fireTop', 'earthTop', 'waterTop', 'wildTop',
   'move', 'money', 'draw', 'cycle', 'trash'

@@ -1,5 +1,8 @@
 import _ from 'lodash'
-import {effectToValueMapping, topEffectList, bottomEffectList} from './CONSTANTS.js'
+import {
+  effectToValueMapping, topEffectList, bottomEffectList,
+  attackList,
+} from './CONSTANTS.js'
 
 
 // for the entire card
@@ -15,18 +18,6 @@ import {effectToValueMapping, topEffectList, bottomEffectList} from './CONSTANTS
 // 2 max. +2 if the resources are exactly the same.
 // 2 max. +2 if the same location crossover. (fireTop same as fireBottom)
 
-
-// writes!
-function cleanupCardObj (cardObj) {
-
-  _.forEach(cardObj.gain, (val, key)=>{
-      if (_.includes(key, 'Level')) {
-          delete cardObj.gain[key]
-          cardObj.gain[key.replace(/level\d/i,'')] = val
-      }
-  })
-  return cardObj
-}
 
 function compareAllResources (newCardObj, prevCardObj, comparisonSpaceArg, similarityPointsArg) {
   let comparisonSpace = comparisonSpaceArg
@@ -65,9 +56,6 @@ function compareAllResources (newCardObj, prevCardObj, comparisonSpaceArg, simil
 
 export default function checkSimilarity(cardsArray, newCardObjArg) {
 
-  // console.log('cardsArray, newCardObjArg')
-  // console.log(cardsArray, newCardObjArg)
-
   const newCardObj = _.cloneDeep(newCardObjArg)
 
   let highestSimilarityRatio = 0
@@ -103,6 +91,42 @@ export default function checkSimilarity(cardsArray, newCardObjArg) {
     if (newCardCombo === prevCardCombo) {
       similarityPoints += 1
     }
+
+
+    // compare attack location effects. ex: fireTop and fireBottom are similar.
+    const newCardAttackTop = _.chain(newCardObj.top)
+      .keys()
+      .intersection(attackList)
+      .map((attackEffect) => _.chain(attackEffect).trimEnd('Bottom').trimEnd('Top').value())
+      .value()
+    const newCardAttackBottom = _.chain(newCardObj.bottom)
+      .keys()
+      .intersection(attackList)
+      .map((attackEffect) => _.chain(attackEffect).trimEnd('Bottom').trimEnd('Top').value())
+      .value()
+    const prevCardAttackTop = _.chain(prevCardObj.top)
+      .keys()
+      .intersection(attackList)
+      .map((attackEffect) => _.chain(attackEffect).trimEnd('Bottom').trimEnd('Top').value())
+      .value()
+    const prevCardAttackBottom = _.chain(prevCardObj.bottom)
+      .keys()
+      .intersection(attackList)
+      .map((attackEffect) => _.chain(attackEffect).trimEnd('Bottom').trimEnd('Top').value())
+      .value()
+
+    // console.log(newCardAttackTop, newCardAttackBottom, prevCardAttackTop, prevCardAttackBottom)
+    if (newCardAttackTop.length && prevCardAttackBottom.length) {
+      comparisonSpace += 1
+      similarityPoints += _.intersection(newCardAttackTop, prevCardAttackBottom).length ? 1 : 0
+      // console.log(_.intersection(newCardAttackTop, prevCardAttackBottom))
+    }
+    if (newCardAttackBottom.length && prevCardAttackTop.length) {
+      comparisonSpace += 1
+      similarityPoints += _.intersection(newCardAttackBottom, prevCardAttackTop).length ? 1 : 0
+      // console.log(_.intersection(newCardAttackBottom, prevCardAttackTop))
+    }
+
 
     // compare all resources
     [comparisonSpace, similarityPoints] = compareAllResources(
