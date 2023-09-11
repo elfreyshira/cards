@@ -2,6 +2,7 @@ import _ from 'lodash'
 import Brng from 'brng'
 
 import Card from './Card.js'
+import checkSimilarity from './check-similarity.js'
 
 import './index.css'
 
@@ -44,6 +45,7 @@ const cardsSortOrder = [
 ]
 
 // const CARD_QUANTITY = 5
+// const CARD_QUANTITY = 0
 // const CARD_QUANTITY = 1
 // const CARD_QUANTITY = 42
 const CARD_QUANTITY = _.sum(_.values(proportionsCardCost))
@@ -172,10 +174,17 @@ _.times(6, () => effectRoller.roll('money'))
 
 ///////// CUSTOM CARDS //////////////////////////////
 
+////// adding unique ids ///////
+_.forEach(cardsArray, cardObj => {
+  cardObj.uuid = Math.random().toString(36).slice(2)
+})
+////// adding unique ids ///////
+
+
 //////////////////////////////////// FILL THE REST ///////////////////////////
 //////////////////////////////////// FILL THE REST ///////////////////////////
 cardsArray = _.sortBy(cardsArray, cardsSortOrder)
-_.forEach(cardsArray, cardObj => {
+_.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
   // not a feature on brng yet
   // effectRoller.biasMultiplier = 4-Math.round(cardObj.cost/3)
 
@@ -389,6 +398,11 @@ _.forEach(cardsArray, cardObj => {
   cardObj.bottom = bottomObj
   cardObj.topValue = getCurrentValue(topObj)
   cardObj.bottomValue = getCurrentValue(bottomObj)
+
+  const {similarityRatio, mostSimilarCardObj} = checkSimilarity(
+    cardsArray.slice(0, cardsArrayIndex), cardObj
+  )
+  console.log(cardObj.uuid, similarityRatio, mostSimilarCardObj)
 
 })
 
