@@ -125,8 +125,8 @@ effectRoller.updateProportions(effectsProportions)
 
 ///////// CUSTOM CARDS //////////////////////////////
 ///////// CUSTOM CARDS //////////////////////////////
-// const shouldDoCustomCards = true
-const shouldDoCustomCards = false
+const shouldDoCustomCards = true
+// const shouldDoCustomCards = false
 
 if (shouldDoCustomCards) {
   cardsArray.push({
@@ -467,6 +467,8 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
 
 })
 console.log('_.mean(similarityRatioArray)', _.mean(similarityRatioArray))
+similarityRatioArray.sort(function(a, b){return b-a});
+console.log(similarityRatioArray.slice(0,4))
 
 
 const cardsImportantKeys = ['cost', 'top']
