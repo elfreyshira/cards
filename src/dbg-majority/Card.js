@@ -5,10 +5,18 @@ import ICONS from './icons'
 
 import {effectDisplayPriority} from './CONSTANTS'
 
-function Cost({cost}) {
+function Cost({cost, index}) {
   return (
-    <div className="cost">
+    <div className={classnames('cost', _.toString(cost) === '0' ? 'dark-mode' : '')}>
       ${cost}
+      {!_.isNumber(index) ? null :
+        <>
+          <br/>
+          <span style={{fontSize: '1rem', verticalAlign: 'top', float: 'right'}}>
+            ({index})
+          </span>
+        </>
+      }
     </div>
   )
 }
@@ -109,13 +117,13 @@ function EffectContainer({effectSide, effects, comboType, customCard, customSide
 
 function Card (props) {
   const {
-    cost, comboType, top, bottom, customCard, customSide
+    cost, comboType, top, bottom, customCard, customSide, index
   } = props.cardObj
 
 
   return (
     <div className="card">
-      <Cost cost={cost}/>
+      <Cost cost={cost} index={index}/>
       <EffectContainer
         effectSide="top" effects={top} comboType={comboType}
         customCard={customCard} customSide={customSide}

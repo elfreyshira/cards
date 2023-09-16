@@ -3,6 +3,7 @@ import Brng from 'brng'
 
 import Card from './Card.js'
 import checkSimilarity from './check-similarity.js'
+import starterCards from './starter-cards.js'
 
 import './index.css'
 
@@ -262,18 +263,18 @@ function getTopAndBottomEffect (cardObj, topMaxValue, bottomMaxValue) {
         exclusion = _.uniq(_.concat(exclusion, 'trash'))
       }
 
-      // max of 4 move in one card
-      if (topObj['move'] > 3) {
-        exclusion = _.uniq(_.concat(exclusion, 'move'))
-      }
+      // // max of 4 move in one card
+      // if (topObj['move'] > 3) {
+      //   exclusion = _.uniq(_.concat(exclusion, 'move'))
+      // }
 
-      // move/wildTop cannot be together
-      if (_.intersection(_.keys(topObj), ['move', 'wildTop']).length >= 1) {
-        exclusion = _.uniq(_.concat(
-          exclusion,
-          _.without(['move', 'wildTop'], ..._.keys(topObj))
-        ))
-      }
+      // // move/wildTop cannot be together
+      // if (_.intersection(_.keys(topObj), ['move', 'wildTop']).length >= 1) {
+      //   exclusion = _.uniq(_.concat(
+      //     exclusion,
+      //     _.without(['move', 'wildTop'], ..._.keys(topObj))
+      //   ))
+      // }
 
       // draw/cycle/trash cannot be together
       if (_.intersection(_.keys(topObj), ['draw', 'cycle', 'trash']).length >= 1) {
@@ -351,9 +352,9 @@ function getTopAndBottomEffect (cardObj, topMaxValue, bottomMaxValue) {
       }
 
       // (ONLY BOTTOM) money and attack cannot be together
-      if (_.includes(_.keys(bottomObj), 'money') && bottomObj.money > 0) {
-        exclusion = _.uniq(_.concat(exclusion, attackList))
-      }
+      // if (_.includes(_.keys(bottomObj), 'money') && bottomObj.money > 0) {
+      //   exclusion = _.uniq(_.concat(exclusion, attackList))
+      // }
 
       // limit 1 attack type per side
       if (_.intersection(attackList, _.keys(bottomObj)).length >= 1) {
@@ -471,6 +472,11 @@ similarityRatioArray.sort(function(a, b){return b-a});
 console.log(similarityRatioArray.slice(0,4))
 
 
+//////////////// START: STARTER CARDS ////////////
+// cardsArray = starterCards.concat(starterCards)
+cardsArray = cardsArray.concat(starterCards).concat(starterCards)
+//////////////// END: STARTER CARDS ////////////
+
 const cardsImportantKeys = ['cost', 'top']
 
 function Cards () {
@@ -515,7 +521,7 @@ const forAttack = 0
   + countOccurences('bottom', ['waterBottom'])
   + countOccurences('top', ['energy'])/2
   + countOccurences('bottom', ['energy'])/2
-  + countOccurences('top', ['move'])/2
+  // + countOccurences('top', ['move'])/2
 
 const forEngine = 0
   + countOccurences('top', ['money'])

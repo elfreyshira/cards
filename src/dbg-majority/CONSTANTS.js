@@ -18,9 +18,9 @@ const effectsProportions = {
   waterBottom: ATTACK_TOP_BASE*ATTACK_BOTTOM_MULTIPLIER,
   wildBottom: ATTACK_TOP_BASE*ATTACK_BOTTOM_MULTIPLIER*WILD_MULTIPLIER,
 
-  move: 3,
+  // move: 3,
 
-  money: 13.7,
+  money: 14,
 
   draw: 6,
   cycle: 2.8,
@@ -41,7 +41,7 @@ const comboProportions = {
 
   // move: 7,
 
-  money: 13.7,
+  money: 14,
 
   draw: 6,
   cycle: 2.8,
@@ -51,7 +51,7 @@ const comboProportions = {
 
 const topEffectList = [
   'fireTop', 'earthTop', 'waterTop', 'wildTop',
-  'move', 'money', 'draw', 'cycle', 'trash'
+  'money', 'draw', 'cycle', 'trash'
 ]
 const bottomEffectList = ['fireBottom', 'earthBottom', 'waterBottom', 'wildBottom', 'money', 'trash']
 
@@ -63,10 +63,10 @@ const attackList = [
 const effectDisplayPriority = [
   'fireTop', 'earthTop', 'waterTop', 'wildTop',
   'fireBottom', 'earthBottom', 'waterBottom', 'wildBottom',
-  'move', 'money', 'draw', 'cycle', 'trash', 'energy'
+  'money', 'draw', 'cycle', 'trash', 'energy'
 ]
 
-const comboExclusion = ['move', 'wildTop', 'wildBottom']
+const comboExclusion = ['wildTop', 'wildBottom']
 
 const attackListMapping = {
   fireTop: 'fireBottom',
@@ -92,7 +92,7 @@ const effectToValueMapping = {
   waterBottom: 100,
   wildBottom: 150,
 
-  move: 50,
+  // move: 50,
 
   money: 100,
 

@@ -24,6 +24,11 @@ html {
   /* 0.5px for printing */
   margin:  10px;
 }
+@media print {
+  .card {
+    margin: 1px;
+  }
+}
 
 .cost {
   position: absolute;
@@ -117,4 +122,9 @@ html {
 .small-icon img.icon {
   height: 1.1rem;
   vertical-align: text-bottom;
+}
+
+.dark-mode {
+  background-color: black;
+  color: white;
 }
