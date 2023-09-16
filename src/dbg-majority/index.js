@@ -50,7 +50,8 @@ const cardsSortOrder = [
 // const CARD_QUANTITY = 0
 // const CARD_QUANTITY = 1
 // const CARD_QUANTITY = 42
-const CARD_QUANTITY = _.sum(_.values(proportionsCardCost))
+// const CARD_QUANTITY = _.sum(_.values(proportionsCardCost))
+const CARD_QUANTITY = _.sum(_.values(proportionsCardCost))*2
 
 // filling in the card cost
 _.times(CARD_QUANTITY, () => {
@@ -126,8 +127,8 @@ effectRoller.updateProportions(effectsProportions)
 
 ///////// CUSTOM CARDS //////////////////////////////
 ///////// CUSTOM CARDS //////////////////////////////
-const shouldDoCustomCards = true
-// const shouldDoCustomCards = false
+// const shouldDoCustomCards = true
+const shouldDoCustomCards = false
 
 if (shouldDoCustomCards) {
   cardsArray.push({
@@ -464,7 +465,7 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
   cardObj.bottom = bottom
   cardObj.topValue = getCurrentValue(top)
   cardObj.bottomValue = getCurrentValue(bottom)
-  console.log(cardObj.uuid, similarityRatio, mostSimilarCardObj)
+  // console.log(cardObj.uuid, similarityRatio, mostSimilarCardObj)
 
 })
 console.log('_.mean(similarityRatioArray)', _.mean(similarityRatioArray))

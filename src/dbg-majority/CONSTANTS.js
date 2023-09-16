@@ -22,9 +22,9 @@ const effectsProportions = {
 
   money: 14,
 
-  draw: 6,
-  cycle: 2.8,
-  trash: 1.8,
+  draw: 8,
+  cycle: 3,
+  trash: 2,
   // energy: 7,
 }
 
@@ -43,9 +43,9 @@ const comboProportions = {
 
   money: 14,
 
-  draw: 6,
-  cycle: 2.8,
-  trash: 1.8,
+  draw: 8,
+  cycle: 3,
+  trash: 2,
   // energy: 7,
 }
 
@@ -102,14 +102,25 @@ const effectToValueMapping = {
   energy: 50,
 }
 
+// const proportionsCardCost = {
+//   1: 4,
+//   2: 5,
+//   3: 6,
+//   4: 7, // middle
+//   5: 6,
+//   6: 5,
+//   // 7: 4,
+//   // 8: 3,
+//   // 9: 2,
+// }
 const proportionsCardCost = {
-  1: 4,
-  2: 5,
-  3: 6,
-  4: 7, // middle
-  5: 6,
-  6: 5,
-  7: 4,
+  1: 3,
+  2: 4,
+  3: 5, // middle
+  4: 4,
+  5: 3,
+  6: 2,
+  // 7: 4,
   // 8: 3,
   // 9: 2,
 }

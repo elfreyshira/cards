@@ -117,13 +117,13 @@ export default function checkSimilarity(cardsArray, newCardObjArg) {
 
     // console.log(newCardAttackTop, newCardAttackBottom, prevCardAttackTop, prevCardAttackBottom)
     if (newCardAttackTop.length && prevCardAttackBottom.length) {
-      comparisonSpace += 1
-      similarityPoints += _.intersection(newCardAttackTop, prevCardAttackBottom).length ? 1 : 0
+      comparisonSpace += 2
+      similarityPoints += _.intersection(newCardAttackTop, prevCardAttackBottom).length ? 2 : 0
       // console.log(_.intersection(newCardAttackTop, prevCardAttackBottom))
     }
     if (newCardAttackBottom.length && prevCardAttackTop.length) {
-      comparisonSpace += 1
-      similarityPoints += _.intersection(newCardAttackBottom, prevCardAttackTop).length ? 1 : 0
+      comparisonSpace += 2
+      similarityPoints += _.intersection(newCardAttackBottom, prevCardAttackTop).length ? 2 : 0
       // console.log(_.intersection(newCardAttackBottom, prevCardAttackTop))
     }
 
