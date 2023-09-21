@@ -6,7 +6,8 @@ import './App.css';
 // import Cards from './mechalane/index.js';
 // import Cards from './anemoia/index.js';
 // import Cards from './dbg-simple/index.js';
-import Cards from './dbg-majority/index.js';
+// import Cards from './dbg-majority/index.js';
+import Cards from './astg/index.js';
 // import Cards from './fantasy-realms/index.js';
 
 

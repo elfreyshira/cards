@@ -28,6 +28,9 @@ html {
   .card {
     margin: 1px;
   }
+  .noprint {
+    display: none;
+  }
 }
 
 .cost {

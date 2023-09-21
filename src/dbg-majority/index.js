@@ -362,7 +362,7 @@ function getTopAndBottomEffect (cardObj, topMaxValue, bottomMaxValue) {
         exclusion = _.uniq(_.concat(
           exclusion,
           _.without(attackList, ..._.keys(bottomObj)),
-          'money' // (ONLY BOTTOM) money and attack cannot be together
+          // 'money' // (ONLY BOTTOM) money and attack cannot be together
         ))
       }
 
@@ -486,7 +486,7 @@ function Cards () {
       {
         _.map(cardsArray, (cardObj, idx) => <Card key={idx} cardObj={cardObj} /> )
       }
-      <pre>
+      <pre className="noprint">
         {/*{JSON.stringify(_.pick(cardsArray, cardsImportantKeys), null, 2)}*/}
         {/*{JSON.stringify(_.chain(cardsArray).map((obj) => _.pick(obj, cardsImportantKeys)).value(), null, 2)}*/}
         {JSON.stringify(cardsArray,null,2)}

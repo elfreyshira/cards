@@ -40,20 +40,20 @@ export default [
 
   {
     cost: "0",
-    top: {fireTop: 1},
-    bottom: {wildBottom: 1},
+    top: {wildTop: 1},
+    bottom: {money: 1},
     index: 4,
   },
   {
     cost: "0",
-    top: {waterTop: 1},
-    bottom: {wildBottom: 1},
+    top: {wildTop: 1},
+    bottom: {money: 1},
     index: 5,
   },
   {
     cost: "0",
-    top: {earthTop: 1},
-    bottom: {wildBottom: 1},
+    top: {wildTop: 1},
+    bottom: {money: 1},
     index: 6,
   },
 
@@ -78,8 +78,8 @@ export default [
 
   {
     cost: "0",
-    top: {wildTop: 1},
-    bottom: {money: 1},
+    top: {money: 1},
+    bottom: {wildBottom: 1},
     index: 10,
   },
 ]
