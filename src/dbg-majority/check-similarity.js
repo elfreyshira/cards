@@ -34,17 +34,23 @@ function compareAllResources (newCardObj, prevCardObj, comparisonSpaceArg, simil
     }
 
     _.forEach(effectList, (effectName) => {
-      const newObjEffect = _.get(newCardObj, [cardSide, effectName]) || 0
-      const prevObjEffect = _.get(prevCardObj, [cardSide, effectName]) || 0
-      if (newObjEffect && prevObjEffect) {
-        comparisonSpace += 2
-        similarityPoints += 2
+
+      let uniqueBonus = 0
+      if (_.includes(['draw','action','trash'], effectName)) {
+        uniqueBonus = 2
+      }
+
+      const newObjEffectAmt = _.get(newCardObj, [cardSide, effectName]) || 0
+      const prevObjEffectAmt = _.get(prevCardObj, [cardSide, effectName]) || 0
+      if (newObjEffectAmt && prevObjEffectAmt) {
+        comparisonSpace += 2 + uniqueBonus
+        similarityPoints += 2 + uniqueBonus
 
         comparisonSpace += 2
-        const differenceInQuantity = Math.abs(newObjEffect - prevObjEffect)
+        const differenceInQuantity = Math.abs(newObjEffectAmt - prevObjEffectAmt)
         similarityPoints += _.max([0, 2 - differenceInQuantity])
       }
-      else if ((newObjEffect && !prevObjEffect) || (!newObjEffect && prevObjEffect)) {
+      else if ((newObjEffectAmt && !prevObjEffectAmt) || (!newObjEffectAmt && prevObjEffectAmt)) {
         comparisonSpace += 1
       }
     })

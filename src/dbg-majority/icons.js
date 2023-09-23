@@ -11,6 +11,7 @@ import cycleIcon from './images/cycle.png'
 import moneyIcon from './images/money.png'
 import dayIcon from './images/day.png'
 import moveIcon from './images/move.png'
+import actionIcon from './images/action.png'
 
 
 const flr1 = (amount) => {
@@ -62,6 +63,10 @@ function Day () {
   return <img className="icon day" src={dayIcon} />
 }
 
+function Action () {
+  return <img className="icon action" src={actionIcon} />
+}
+
 
 export default {
   Earth,
@@ -74,5 +79,6 @@ export default {
   Trash,
   Energy,
   Day,
-  Move
+  Move,
+  Action
 }

@@ -1,6 +1,7 @@
 import Brng from 'brng'
+import _ from 'lodash'
 
-const ATTACK_TOP_BASE = 4.4
+const ATTACK_TOP_BASE = 4.6
 const WILD_MULTIPLIER = 1
 const ATTACK_BOTTOM_MULTIPLIER = 1.2222222
 // const ATTACK_BOTTOM_MULTIPLIER = 1
@@ -22,36 +23,37 @@ const effectsProportions = {
 
   money: 14,
 
-  draw: 8,
-  cycle: 3,
+  action: 5,
+  draw: 7,
+  // cycle: 1,
   trash: 2,
   // energy: 7,
 }
 
-const comboProportions = {
-  fireTop: ATTACK_TOP_BASE,
-  earthTop: ATTACK_TOP_BASE,
-  waterTop: ATTACK_TOP_BASE,
-  // push: 3,/
-  // pull: 6,
-
-  fireBottom: ATTACK_TOP_BASE*ATTACK_BOTTOM_MULTIPLIER,
-  earthBottom: ATTACK_TOP_BASE*ATTACK_BOTTOM_MULTIPLIER,
-  waterBottom: ATTACK_TOP_BASE*ATTACK_BOTTOM_MULTIPLIER,
-
-  // move: 7,
-
-  money: 14,
-
-  draw: 8,
-  cycle: 3,
-  trash: 2,
-  // energy: 7,
-}
+const comboProportions = _.pick(effectsProportions, [
+  'fireTop',
+  'earthTop',
+  'waterTop',
+  // 'push',
+  // 'pull',
+  'fireBottom',
+  'earthBottom',
+  'waterBottom',
+  // 'move',
+  'money',
+  'action',
+  'draw',
+  // 'cycle',
+  'trash',
+  // 'energy',
+])
 
 const topEffectList = [
   'fireTop', 'earthTop', 'waterTop', 'wildTop',
-  'money', 'draw', 'cycle', 'trash'
+  'money', 'draw',
+  // 'cycle',
+  'trash',
+  'action',
 ]
 const bottomEffectList = ['fireBottom', 'earthBottom', 'waterBottom', 'wildBottom', 'money', 'trash']
 
@@ -63,7 +65,7 @@ const attackList = [
 const effectDisplayPriority = [
   'fireTop', 'earthTop', 'waterTop', 'wildTop',
   'fireBottom', 'earthBottom', 'waterBottom', 'wildBottom',
-  'money', 'draw', 'cycle', 'trash', 'energy'
+  'money', 'draw', 'cycle', 'trash', 'energy', 'action',
 ]
 
 const comboExclusion = ['wildTop', 'wildBottom']
@@ -94,6 +96,7 @@ const effectToValueMapping = {
 
   // move: 50,
 
+  action: 100,
   money: 100,
 
   draw: 200,
@@ -114,10 +117,10 @@ const effectToValueMapping = {
 //   // 9: 2,
 // }
 const proportionsCardCost = {
-  1: 3,
-  2: 4,
-  3: 5, // middle
-  4: 4,
+  1: 2,
+  2: 3,
+  3: 4, // middle
+  4: 4, // middle
   5: 3,
   6: 2,
   // 7: 4,

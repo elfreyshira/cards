@@ -213,7 +213,10 @@ function getTopAndBottomEffect (cardObj, topMaxValue, bottomMaxValue) {
     ////////// TOP ///////////////////////////////////////////////////////////////////////////
     ////////// TOP ///////////////////////////////////////////////////////////////////////////
     ////////// TOP ///////////////////////////////////////////////////////////////////////////
-    if (cardObj.priority === 'top' ? topValue <= bottomValue : topValue < bottomValue) {
+    if (cardObj.priority === 'top'
+      ? (topValue - TOP_VALUE_EXTRA) <= bottomValue
+      : (topValue - TOP_VALUE_EXTRA) < bottomValue
+    ) {
       let onlyList = _.intersection(
         topEffectList,
         getAvailableEffects(topMaxValue - topValue)
@@ -264,6 +267,11 @@ function getTopAndBottomEffect (cardObj, topMaxValue, bottomMaxValue) {
         exclusion = _.uniq(_.concat(exclusion, 'trash'))
       }
 
+      // max of 1 action in one card
+      if (topObj['action'] > 0) {
+        exclusion = _.uniq(_.concat(exclusion, 'action'))
+      }
+
       // // max of 4 move in one card
       // if (topObj['move'] > 3) {
       //   exclusion = _.uniq(_.concat(exclusion, 'move'))
@@ -277,11 +285,11 @@ function getTopAndBottomEffect (cardObj, topMaxValue, bottomMaxValue) {
       //   ))
       // }
 
-      // draw/cycle/trash cannot be together
-      if (_.intersection(_.keys(topObj), ['draw', 'cycle', 'trash']).length >= 1) {
+      // draw/cycle/trash/action cannot be together
+      if (_.intersection(_.keys(topObj), ['draw', 'cycle', 'trash', 'action']).length >= 1) {
         exclusion = _.uniq(_.concat(
           exclusion,
-          _.without(['draw', 'cycle', 'trash'], ..._.keys(topObj))
+          _.without(['draw', 'cycle', 'trash', 'action'], ..._.keys(topObj))
         ))
       }
 
@@ -352,17 +360,23 @@ function getTopAndBottomEffect (cardObj, topMaxValue, bottomMaxValue) {
         exclusion = _.uniq(_.concat(exclusion, ['trash', 'draw', 'cycle']))
       }
 
+
       // (ONLY BOTTOM) money and attack cannot be together
-      // if (_.includes(_.keys(bottomObj), 'money') && bottomObj.money > 0) {
-      //   exclusion = _.uniq(_.concat(exclusion, attackList))
-      // }
+      if (
+        _.intersection(_.keys(bottomObj), attackList.concat('money')).length >= 1
+        && bottomMaxValue <= 300
+      ) {
+        exclusion = _.uniq(_.concat(
+          exclusion,
+          _.without(attackList.concat('money'), ..._.keys(bottomObj))
+        ))
+      }
 
       // limit 1 attack type per side
       if (_.intersection(attackList, _.keys(bottomObj)).length >= 1) {
         exclusion = _.uniq(_.concat(
           exclusion,
-          _.without(attackList, ..._.keys(bottomObj)),
-          // 'money' // (ONLY BOTTOM) money and attack cannot be together
+          _.without(attackList, ..._.keys(bottomObj))
         ))
       }
 
@@ -405,18 +419,22 @@ function rollWithSetValues (givenBrngRoller, effectsRolledArray) {
 
 ////////////////////// FILL THE REST ///////////////////////////
 ////////////////////// FILL THE REST ///////////////////////////
+
+// const TOP_VALUE_EXTRA = 0
+const TOP_VALUE_EXTRA = 100 // if you include action cost
+
 const similarityRatioArray = []
 cardsArray = _.sortBy(cardsArray, cardsSortOrder)
 _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
 
   let topMaxValue, bottomMaxValue
   if (cardObj.priority === 'top') {
-    topMaxValue = costToMaxValueMapping[cardObj.cost].first
+    topMaxValue = costToMaxValueMapping[cardObj.cost].first + TOP_VALUE_EXTRA
     bottomMaxValue = costToMaxValueMapping[cardObj.cost].second
   }
   else { // bottom priority
     bottomMaxValue = costToMaxValueMapping[cardObj.cost].first
-    topMaxValue = costToMaxValueMapping[cardObj.cost].second
+    topMaxValue = costToMaxValueMapping[cardObj.cost].second + TOP_VALUE_EXTRA
   }
 
   /////////////////
@@ -433,8 +451,8 @@ _.forEach(cardsArray, (cardObj, cardsArrayIndex) => {
     const newCardObj = _.cloneDeep(cardObj) || {}
     newCardObj.top = topObj
     newCardObj.bottom = bottomObj
-    // newCardObj.topValue = getCurrentValue(topObj)
-    // newCardObj.bottomValue = getCurrentValue(bottomObj)
+    newCardObj.topValue = getCurrentValue(topObj)
+    newCardObj.bottomValue = getCurrentValue(bottomObj)
 
     const {similarityRatio, mostSimilarCardObj} = checkSimilarity(
       cardsArray.slice(0, cardsArrayIndex), newCardObj
@@ -500,8 +518,12 @@ function Cards () {
 function countOccurences (key, resources) {
   let countTotal = 0
   _.forEach(
-    cardsArray, obj => {
-      const resourcesToCount = _.pick(obj[key], resources)
+    cardsArray, cardObj => {
+      if (cardObj.cost === '0') {
+        // IGNORE starter cards
+        return
+      }
+      const resourcesToCount = _.pick(cardObj[key], resources)
       countTotal += _.sum(_.values(resourcesToCount))
       return resourcesToCount
     }
@@ -530,14 +552,15 @@ const forEngine = 0
   + countOccurences('top', ['trash'])*2
   + countOccurences('bottom', ['trash'])*2
 
-const forDrawing = 0
+const forMorePlays = 0
   + countOccurences('top', ['draw'])*2
-  + countOccurences('top', ['cycle'])
+  // + countOccurences('top', ['cycle'])
+  + countOccurences('top', ['action'])
 
-const totalValue = forAttack + forEngine + forDrawing
+const totalValue = forAttack + forEngine + forMorePlays
 console.log('forAttack', _.round(forAttack/totalValue*100, 2))
 console.log('forEngine', _.round(forEngine/totalValue*100, 2))
-console.log('forDrawing', _.round(forDrawing/totalValue*100, 2))
+console.log('forMorePlays', _.round(forMorePlays/totalValue*100, 2))
 
 
 console.log(effectRoller.proportions)
