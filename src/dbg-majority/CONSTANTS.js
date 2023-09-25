@@ -1,7 +1,7 @@
 import Brng from 'brng'
 import _ from 'lodash'
 
-const ATTACK_TOP_BASE = 4.6
+const ATTACK_TOP_BASE = 4
 const WILD_MULTIPLIER = 1
 const ATTACK_BOTTOM_MULTIPLIER = 1.2222222
 // const ATTACK_BOTTOM_MULTIPLIER = 1
@@ -23,9 +23,9 @@ const effectsProportions = {
 
   money: 14,
 
-  action: 5,
-  draw: 7,
-  // cycle: 1,
+  // action: 5,
+  draw: 8,
+  cycle: 3,
   trash: 2,
   // energy: 7,
 }
@@ -41,9 +41,9 @@ const comboProportions = _.pick(effectsProportions, [
   'waterBottom',
   // 'move',
   'money',
-  'action',
+  // 'action',
   'draw',
-  // 'cycle',
+  'cycle',
   'trash',
   // 'energy',
 ])
@@ -51,9 +51,9 @@ const comboProportions = _.pick(effectsProportions, [
 const topEffectList = [
   'fireTop', 'earthTop', 'waterTop', 'wildTop',
   'money', 'draw',
-  // 'cycle',
+  'cycle',
   'trash',
-  'action',
+  // 'action',
 ]
 const bottomEffectList = ['fireBottom', 'earthBottom', 'waterBottom', 'wildBottom', 'money', 'trash']
 
@@ -65,7 +65,8 @@ const attackList = [
 const effectDisplayPriority = [
   'fireTop', 'earthTop', 'waterTop', 'wildTop',
   'fireBottom', 'earthBottom', 'waterBottom', 'wildBottom',
-  'money', 'draw', 'cycle', 'trash', 'energy', 'action',
+  'money', 'draw', 'cycle', 'trash', 'energy',
+  // 'action',
 ]
 
 const comboExclusion = ['wildTop', 'wildBottom']
@@ -96,7 +97,7 @@ const effectToValueMapping = {
 
   // move: 50,
 
-  action: 100,
+  // action: 100,
   money: 100,
 
   draw: 200,
@@ -132,9 +133,9 @@ const cardCostRoller = new Brng(proportionsCardCost, {bias: 4, keepHistory: fals
 const costToMaxValueMapping = {
   1: {first: 200, second: 200}, // 2
   2: {first: 300, second: 250}, // 275, // 2.5+3
-  3: {first: 350, second: 350}, // 350, // 3.5 or 3+4
+  3: {first: 350, second: 350}, // 350, // 3.5
   4: {first: 400, second: 400}, // 400, // 4
-  5: {first: 450, second: 450}, // 450, // 4.5 or 4+5
+  5: {first: 450, second: 450}, // 450, // 4.5
   6: {first: 500, second: 500}, // 500, // 5
   7: {first: 550, second: 500}, // 525, // 5+5.5
   8: {first: 600, second: 550}, // 575, // 5.5+6

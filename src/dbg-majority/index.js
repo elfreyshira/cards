@@ -267,10 +267,10 @@ function getTopAndBottomEffect (cardObj, topMaxValue, bottomMaxValue) {
         exclusion = _.uniq(_.concat(exclusion, 'trash'))
       }
 
-      // max of 1 action in one card
-      if (topObj['action'] > 0) {
-        exclusion = _.uniq(_.concat(exclusion, 'action'))
-      }
+      // // max of 1 action in one card
+      // if (topObj['action'] > 0) {
+      //   exclusion = _.uniq(_.concat(exclusion, 'action'))
+      // }
 
       // // max of 4 move in one card
       // if (topObj['move'] > 3) {
@@ -285,12 +285,10 @@ function getTopAndBottomEffect (cardObj, topMaxValue, bottomMaxValue) {
       //   ))
       // }
 
-      // draw/cycle/trash/action cannot be together
-      // if (_.intersection(_.keys(topObj), ['draw', 'cycle', 'trash', 'action']).length >= 1) {
+      // draw/cycle/trash cannot be together
       if (_.intersection(_.keys(topObj), ['draw', 'cycle', 'trash']).length >= 1) {
         exclusion = _.uniq(_.concat(
           exclusion,
-          // _.without(['draw', 'cycle', 'trash', 'action'], ..._.keys(topObj))
           _.without(['draw', 'cycle', 'trash'], ..._.keys(topObj))
         ))
       }
@@ -422,8 +420,8 @@ function rollWithSetValues (givenBrngRoller, effectsRolledArray) {
 ////////////////////// FILL THE REST ///////////////////////////
 ////////////////////// FILL THE REST ///////////////////////////
 
-// const TOP_VALUE_EXTRA = 0
-const TOP_VALUE_EXTRA = 100 // if you include action cost
+const TOP_VALUE_EXTRA = 0 // if no actions
+// const TOP_VALUE_EXTRA = 100 // if you include action cost
 
 const similarityRatioArray = []
 cardsArray = _.sortBy(cardsArray, cardsSortOrder)
@@ -556,8 +554,8 @@ const forEngine = 0
 
 const forMorePlays = 0
   + countOccurences('top', ['draw'])*2
-  // + countOccurences('top', ['cycle'])
-  + countOccurences('top', ['action'])
+  + countOccurences('top', ['cycle'])
+  // + countOccurences('top', ['action'])
 
 const totalValue = forAttack + forEngine + forMorePlays
 console.log('forAttack', _.round(forAttack/totalValue*100, 2))
