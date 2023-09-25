@@ -5,7 +5,6 @@ import {std} from 'mathjs'
 import {default as regression } from 'regression'
 
 // import './index.css'
-console.clear()
 
 const strengthArray = [2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6]
 
@@ -57,13 +56,31 @@ const result = regression.linear([
 
 
 //////////////////////// WP RECALL
+const wpStrengthToValueMapping = {
+  // strength*100 * 4/3 / 1.2
+  // value * 3 / 4 * 1.2 = expected strength
+  1:    150,
+  1.5:  200,
+  2:    225,
+  2.5:  275,
+  3:    325,
+  3.5:  400,
+  4:    450,
+  4.5:  500,
+  5:    550,
+  5.5:  600,
+  6:    675,
+}
 const WORKER_COUNT = 3
 function recallValueForStrength(strength) {
   const recallValueArray = []
-  _.times(1000000, () => {
+  _.times(100000, () => {
 
     const cardValueArray = []
-    _.times(WORKER_COUNT, () => cardValueArray.push(_.random(2, strength*2)/2))
+    // _.times(WORKER_COUNT, () => cardValueArray.push( _.random(2, strength*2)/2 ))
+    _.times(WORKER_COUNT, () => cardValueArray.push(
+      wpStrengthToValueMapping[ _.random(2, strength*2)/2 ] / 100
+    ))
 
     const sumOfCardValues = _.sum(cardValueArray)
     const recallValue = (sumOfCardValues + _.max(cardValueArray))/(WORKER_COUNT+2)*(WORKER_COUNT+1)
@@ -79,7 +96,8 @@ function doAllRecallValue () {
   _.forEach(strengthArray, (strength) => recallValueForStrength(strength))
   console.log('\n')
 }
-// doAllRecallValue()
+console.log('lol')
+doAllRecallValue()
 
 
 const recallRegressionResult = regression.linear([
@@ -96,12 +114,16 @@ const recallRegressionResult = regression.linear([
 // console.log(recallRegressionResult.equation[0], recallRegressionResult.equation[1])
 // m = 0.30559518666668356. b = -0.03914186888898352
 
+////////////////////// WP SEND ////////////////
 function sendValueForStrength(strength) {
   const sendValueArray = []
-  _.times(1000000, () => {
+  _.times(100000, () => {
 
     const cardValueArray = []
-    _.times(WORKER_COUNT, () => cardValueArray.push(_.random(2, strength*2)/2))
+    // _.times(WORKER_COUNT, () => cardValueArray.push(_.random(2, strength*2)/2))
+    _.times(WORKER_COUNT, () => cardValueArray.push(
+      wpStrengthToValueMapping[ _.random(2, strength*2)/2 ] / 100
+    ))
 
     const sumOfCardValues = _.sum(cardValueArray)
     const sendValue = sumOfCardValues/WORKER_COUNT*(WORKER_COUNT+1) - sumOfCardValues
@@ -116,7 +138,7 @@ function doAllSendValue () {
   _.forEach(strengthArray, (strength) => sendValueForStrength(strength))
   console.log('\n')
 }
-// doAllSendValue()
+doAllSendValue()
 
 
 const sendRegressionResult = regression.linear([
@@ -293,6 +315,6 @@ const DropNthResult = regression.linear([
   [5.5, 0.736990249999927], // 0.6402985605685588
   [6.0, 0.8392703333332372], // 0.7330131387359751
 ], {precision: 20})
-console.log(DropNthResult.equation[0], DropNthResult.equation[1])
+// console.log(DropNthResult.equation[0], DropNthResult.equation[1])
 // m = 0.16644334166665967, b = -0.1676560888888886
 

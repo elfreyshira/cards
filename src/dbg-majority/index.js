@@ -286,10 +286,12 @@ function getTopAndBottomEffect (cardObj, topMaxValue, bottomMaxValue) {
       // }
 
       // draw/cycle/trash/action cannot be together
-      if (_.intersection(_.keys(topObj), ['draw', 'cycle', 'trash', 'action']).length >= 1) {
+      // if (_.intersection(_.keys(topObj), ['draw', 'cycle', 'trash', 'action']).length >= 1) {
+      if (_.intersection(_.keys(topObj), ['draw', 'cycle', 'trash']).length >= 1) {
         exclusion = _.uniq(_.concat(
           exclusion,
-          _.without(['draw', 'cycle', 'trash', 'action'], ..._.keys(topObj))
+          // _.without(['draw', 'cycle', 'trash', 'action'], ..._.keys(topObj))
+          _.without(['draw', 'cycle', 'trash'], ..._.keys(topObj))
         ))
       }
 
@@ -361,10 +363,10 @@ function getTopAndBottomEffect (cardObj, topMaxValue, bottomMaxValue) {
       }
 
 
-      // (ONLY BOTTOM) money and attack cannot be together
+      // (ONLY BOTTOM ONLY) money and attack cannot be together
       if (
         _.intersection(_.keys(bottomObj), attackList.concat('money')).length >= 1
-        && bottomMaxValue <= 300
+        // && bottomMaxValue <= 300 // for low value cards
       ) {
         exclusion = _.uniq(_.concat(
           exclusion,
