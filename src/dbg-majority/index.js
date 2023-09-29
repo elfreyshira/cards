@@ -108,11 +108,13 @@ _.forEach(cardsArray, cardObj => {
   let firstChosenEffect
   if (cardObj.priority === 'top') {
     firstChosenEffect = effectRoller.roll({only: _.without(topEffectList, ...comboExclusion)})
+    // firstChosenEffect = effectRoller.roll({only: topEffectList}) // once brng is at ^1.12.0
     topObj[firstChosenEffect] = 0.5
     topObj.combo = firstChosenEffect
   }
   else { // bottom priority
     firstChosenEffect = effectRoller.roll({only: _.without(bottomEffectList, ...comboExclusion)})
+    // firstChosenEffect = effectRoller.roll({only: bottomEffectList})
     bottomObj[firstChosenEffect] = 0.5
     bottomObj.combo = firstChosenEffect
   }

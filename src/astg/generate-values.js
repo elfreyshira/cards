@@ -10,10 +10,10 @@ const strengthArray = [2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6]
 
 
 /// RONDEL MOVE
-const RONDEL_LENGTH = 6
+const RONDEL_LENGTH = 4
 function moveValueForStrength(strength) {
   const moveValueArray = []
-  _.times(1000000, () => {
+  _.times(100000, () => {
 
     let cardValueArray = []
     // _.times(4, () => cardValueArray.push(_.random(1, strength)))
@@ -25,6 +25,7 @@ function moveValueForStrength(strength) {
       (sumOfCardValues-cardValueArray[0])/(RONDEL_LENGTH-1)*RONDEL_LENGTH - sumOfCardValues,
       (sumOfCardValues-cardValueArray[1])/(RONDEL_LENGTH-1)*RONDEL_LENGTH - sumOfCardValues,
       // (sumOfCardValues-cardValueArray[2])/(RONDEL_LENGTH-1)*RONDEL_LENGTH - sumOfCardValues,
+      // (sumOfCardValues-cardValueArray[3])/(RONDEL_LENGTH-1)*RONDEL_LENGTH - sumOfCardValues,
     ])
     moveValueArray.push(moveValue)
   })
@@ -38,7 +39,7 @@ function doAllMoveValue () {
   _.forEach(strengthArray, (strength) => moveValueForStrength(strength))
   console.log('\n')
 }
-// doAllMoveValue()
+doAllMoveValue()
 
 const result = regression.linear([
   [2.0, 0.4626053000001173], // 0.15189775997239793
@@ -77,10 +78,10 @@ function recallValueForStrength(strength) {
   _.times(100000, () => {
 
     const cardValueArray = []
-    // _.times(WORKER_COUNT, () => cardValueArray.push( _.random(2, strength*2)/2 ))
-    _.times(WORKER_COUNT, () => cardValueArray.push(
-      wpStrengthToValueMapping[ _.random(2, strength*2)/2 ] / 100
-    ))
+    _.times(WORKER_COUNT, () => cardValueArray.push( _.random(2, strength*2)/2 ))
+    // _.times(WORKER_COUNT, () => cardValueArray.push(
+    //   wpStrengthToValueMapping[ _.random(2, strength*2)/2 ] / 100
+    // ))
 
     const sumOfCardValues = _.sum(cardValueArray)
     const recallValue = (sumOfCardValues + _.max(cardValueArray))/(WORKER_COUNT+2)*(WORKER_COUNT+1)
