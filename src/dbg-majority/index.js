@@ -21,6 +21,7 @@ import {
   comboTypeRoller,
   comboProportions,
   comboExclusion,
+  getComboValueFraction
 } from './CONSTANTS'
 
 console.clear()
@@ -107,15 +108,19 @@ _.forEach(cardsArray, cardObj => {
 
   let firstChosenEffect
   if (cardObj.priority === 'top') {
-    firstChosenEffect = effectRoller.roll({only: _.without(topEffectList, ...comboExclusion)})
-    // firstChosenEffect = effectRoller.roll({only: topEffectList}) // once brng is at ^1.12.0
-    topObj[firstChosenEffect] = 0.5
+    // firstChosenEffect = effectRoller.roll({only: _.without(topEffectList, ...comboExclusion)})
+    firstChosenEffect = effectRoller.roll({only: topEffectList}) // once brng is at ^1.12.0
+    
+    // topObj[firstChosenEffect] = 0.5
+    topObj[firstChosenEffect] = getComboValueFraction(firstChosenEffect)
     topObj.combo = firstChosenEffect
   }
   else { // bottom priority
     firstChosenEffect = effectRoller.roll({only: _.without(bottomEffectList, ...comboExclusion)})
     // firstChosenEffect = effectRoller.roll({only: bottomEffectList})
-    bottomObj[firstChosenEffect] = 0.5
+    
+    // bottomObj[firstChosenEffect] = 0.5
+    bottomObj[firstChosenEffect] = getComboValueFraction(firstChosenEffect)
     bottomObj.combo = firstChosenEffect
   }
 
@@ -248,8 +253,11 @@ function getTopAndBottomEffect (cardObj, topMaxValue, bottomMaxValue) {
       }
 
       // don't have trash/draw/cycle on both sides
+      // if (_.includes(_.keys(bottomObj), 'trash')) {
+      //   exclusion = _.uniq(_.concat(exclusion, ['trash', 'draw', 'cycle']))
+      // }
       if (_.includes(_.keys(bottomObj), 'trash')) {
-        exclusion = _.uniq(_.concat(exclusion, ['trash', 'draw', 'cycle']))
+        exclusion = _.uniq(_.concat(exclusion, 'trash'))
       }
 
       if (
@@ -358,8 +366,11 @@ function getTopAndBottomEffect (cardObj, topMaxValue, bottomMaxValue) {
       }
 
       // don't have trash/draw/cycle on both sides
-      if (_.intersection(_.keys(topObj), ['trash', 'draw', 'cycle']).length > 0) {
-        exclusion = _.uniq(_.concat(exclusion, ['trash', 'draw', 'cycle']))
+      // if (_.intersection(_.keys(topObj), ['trash', 'draw', 'cycle']).length > 0) {
+      //   exclusion = _.uniq(_.concat(exclusion, ['trash', 'draw', 'cycle']))
+      // }
+      if (_.includes(_.keys(topObj), 'trash')) {
+        exclusion = _.uniq(_.concat(exclusion, 'trash'))
       }
 
 
@@ -546,13 +557,13 @@ const forAttack = 0
   + countOccurences('bottom', ['waterBottom'])
   + countOccurences('top', ['energy'])/2
   + countOccurences('bottom', ['energy'])/2
-  // + countOccurences('top', ['move'])/2
+  + countOccurences('top', ['move'])/2
 
 const forEngine = 0
   + countOccurences('top', ['money'])
   + countOccurences('bottom', ['money'])
-  + countOccurences('top', ['trash'])*2
-  + countOccurences('bottom', ['trash'])*2
+  + countOccurences('top', ['trash'])*1.5
+  + countOccurences('bottom', ['trash'])*1.5
 
 const forMorePlays = 0
   + countOccurences('top', ['draw'])*2

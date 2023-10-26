@@ -1,33 +1,35 @@
 import Brng from 'brng'
 import _ from 'lodash'
 
-const ATTACK_TOP_BASE = 4
-const WILD_MULTIPLIER = 1
-const ATTACK_BOTTOM_MULTIPLIER = 1.2222222
+const ATTACK_TOP_BASE_PROPORTION = 3
+
+const ATTACK_TOP_VALUE = 100
+
+const ATTAK_BOTTOM_BASE_PROPORTION = 3
 const ATTACK_BOTTOM_RELATIVE_VALUE = 1
-// const ATTACK_BOTTOM_MULTIPLIER = 1
+const MOVE_VALUE = ATTACK_TOP_VALUE/2
 
 const effectsProportions = {
-  fireTop: ATTACK_TOP_BASE,
-  earthTop: ATTACK_TOP_BASE,
-  waterTop: ATTACK_TOP_BASE,
-  wildTop: ATTACK_TOP_BASE,
+  fireTop: ATTACK_TOP_BASE_PROPORTION,
+  earthTop: ATTACK_TOP_BASE_PROPORTION,
+  waterTop: ATTACK_TOP_BASE_PROPORTION,
+  // wildTop: ATTACK_TOP_BASE_PROPORTION,
   // push: 3,
   // pull: 6,
 
-  fireBottom: ATTACK_TOP_BASE*ATTACK_BOTTOM_MULTIPLIER*ATTACK_BOTTOM_RELATIVE_VALUE,
-  earthBottom: ATTACK_TOP_BASE*ATTACK_BOTTOM_MULTIPLIER*ATTACK_BOTTOM_RELATIVE_VALUE,
-  waterBottom: ATTACK_TOP_BASE*ATTACK_BOTTOM_MULTIPLIER*ATTACK_BOTTOM_RELATIVE_VALUE,
-  wildBottom: ATTACK_TOP_BASE*ATTACK_BOTTOM_MULTIPLIER*ATTACK_BOTTOM_RELATIVE_VALUE*WILD_MULTIPLIER,
+  fireBottom: ATTAK_BOTTOM_BASE_PROPORTION,
+  earthBottom: ATTAK_BOTTOM_BASE_PROPORTION,
+  waterBottom: ATTAK_BOTTOM_BASE_PROPORTION,
+  wildBottom: ATTAK_BOTTOM_BASE_PROPORTION,
 
-  // move: 3,
+  move: 5,
 
-  money: 14,
+  money: 13,
 
   // action: 5,
-  draw: 8,
-  cycle: 3,
-  trash: 2,
+  draw: 10,
+  // cycle: 3,
+  trash: 3,
   // energy: 7,
 }
 
@@ -35,42 +37,53 @@ const comboProportions = _.pick(effectsProportions, [
   'fireTop',
   'earthTop',
   'waterTop',
+  // 'wildTop',
   // 'push',
   // 'pull',
   'fireBottom',
   'earthBottom',
   'waterBottom',
+  'wildBottom',
   // 'move',
   'money',
   // 'action',
   'draw',
-  'cycle',
+  // 'cycle',
   'trash',
   // 'energy',
 ])
 
+
 const topEffectList = [
-  'fireTop', 'earthTop', 'waterTop', 'wildTop',
+  'fireTop', 'earthTop', 'waterTop',
+  // 'wildTop',
   'money', 'draw',
-  'cycle',
+  // 'cycle',
   'trash',
+  'move',
   // 'action',
 ]
 const bottomEffectList = ['fireBottom', 'earthBottom', 'waterBottom', 'wildBottom', 'money', 'trash']
 
 const attackList = [
-  'fireTop', 'earthTop', 'waterTop', 'wildTop',
+  'fireTop', 'earthTop', 'waterTop',
+  // 'wildTop',
   'fireBottom', 'earthBottom', 'waterBottom', 'wildBottom',
 ]
 
 const effectDisplayPriority = [
-  'fireTop', 'earthTop', 'waterTop', 'wildTop',
+  'fireTop', 'earthTop', 'waterTop',
+  // 'wildTop',
   'fireBottom', 'earthBottom', 'waterBottom', 'wildBottom',
-  'money', 'draw', 'cycle', 'trash', 'energy',
+  'move',
+  'money', 'draw',
+  'cycle',
+  'trash', 'energy',
   // 'action',
 ]
 
-const comboExclusion = ['wildTop', 'wildBottom']
+// const comboExclusion = ['wildTop', 'wildBottom']
+const comboExclusion = []
 
 const attackListMapping = {
   fireTop: 'fireBottom',
@@ -86,25 +99,39 @@ const attackListMapping = {
 
 
 const effectToValueMapping = {
-  fireTop: 100,
-  earthTop: 100,
-  waterTop: 100,
-  wildTop: 150,
+  fireTop: ATTACK_TOP_VALUE,
+  earthTop: ATTACK_TOP_VALUE,
+  waterTop: ATTACK_TOP_VALUE,
+  // wildTop: ATTACK_TOP_VALUE + MOVE_VALUE,
 
-  fireBottom: 100,
-  earthBottom: 100,
-  waterBottom: 100,
-  wildBottom: 150,
+  fireBottom: ATTACK_TOP_VALUE,
+  earthBottom: ATTACK_TOP_VALUE,
+  waterBottom: ATTACK_TOP_VALUE,
+  wildBottom: ATTACK_TOP_VALUE + MOVE_VALUE,
 
-  // move: 50,
+  move: 100,
 
   // action: 100,
   money: 100,
 
   draw: 200,
   cycle: 100,
-  trash: 200,
+  trash: 150,
   energy: 50,
+}
+
+const COMBO_VALUE_FRACTION = {
+  // wildTop: 2/3,
+  wildBottom: 1/3,
+  trash: 1/3,
+}
+function getComboValueFraction (effect) {
+  if (_.has(COMBO_VALUE_FRACTION, effect)) {
+    return COMBO_VALUE_FRACTION[effect]
+  }
+  else {
+    return 0.5
+  }
 }
 
 // const proportionsCardCost = {
@@ -164,4 +191,5 @@ export {
   comboTypeRoller,
   effectDisplayPriority,
   comboExclusion,
+  getComboValueFraction
 }
