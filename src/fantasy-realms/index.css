@@ -10,10 +10,17 @@
   --flood-filter-color: invert(44%) sepia(99%) saturate(2230%) hue-rotate(191deg) brightness(100%) contrast(103%);
   --wild-filter-color: invert(87%) sepia(45%) saturate(600%) hue-rotate(3deg) brightness(109%) contrast(104%);
   --artifact-filter-color: invert(68%) sepia(22%) saturate(7435%) hue-rotate(296deg) brightness(102%) contrast(101%);
+  --drop-shadow-outline-white: drop-shadow(0px 0px 1px white);
+  --drop-shadow-outline-black: drop-shadow(0px 0px 1px black);
 }
 
 /*@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap');*/
-@import url('https://fonts.googleapis.com/css2?family=Almendra+SC&display=swap');
+/*@import url('https://fonts.googleapis.com/css2?family=Almendra+SC&display=swap');*/
+@import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
+/*@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');*/
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@500&display=swap');
+/*@import url('https://fonts.googleapis.com/css2?family=Cinzel&display=swap');*/
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap');
 
 body {
   -webkit-print-color-adjust:exact;
@@ -36,7 +43,8 @@ body {
   font-size: 7mm;
 /*  font-family: 'Roboto Slab', serif;*/
 /*  font-family: 'Almendra SC', serif;*/
-  font-family: serif;
+/*  font-family: sans-serif;*/
+  font-family: 'Open Sans', sans-serif;
 
 
   /*so that \n triggers a new line*/
@@ -67,18 +75,10 @@ body {
 }
 
 .value {
-      /* background-color: black; */
-    font-weight: bolder;
-    display: inline-block;
-/*    color: white;*/
-/*    width: 50px;*/
-/*    text-align: center;*/
-/*    height: 50px;*/
-/*    border-radius: 100%;*/
-/*    padding-top: 5px;*/
-    margin: 5px 10px;
-/*    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;*/
-/*    filter: drop-shadow(0px 0px 15px rgba(0,0,0,70%)) drop-shadow(0px 0px 15px rgba(0,0,0,70%)) drop-shadow(0px 0px 15px rgba(0,0,0,70%)) drop-shadow(0px 0px 15px rgba(0,0,0,70%)) drop-shadow(0px 0px 15px rgba(0,0,0,70%));*/
+  font-family: 'MedievalSharp', cursive;
+  font-weight: bolder;
+  display: inline-block;
+  margin: 5px 8px;
 }
 
 .scroll {
@@ -86,36 +86,41 @@ body {
   z-index: -1;
   position: absolute;
   top: -22px;
+  opacity: .7;
 }
 
 .name {
   display: inline-block;
-  font-size: 17px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
   position: absolute;
   top: 11px;
+  font-family: 'Cinzel', serif;
 }
 
 .suit-text-container {
   display: block;
   position: absolute;
   /* transform: rotate(-90deg); */
-  top: 42px;
-  left: 8px;
+  top: 85px;
+  left: 5px;
+  background-color: rgba(0,0,0,70%);
+  border-radius: 4px;
+  padding: 1px 4px;
 }
 .suit-text {
   color: white;
   font-size: 12px;
-  font-weight: 500;
-  text-shadow: 0 0 3px rgba(0,0,0,80%), 0 0 1px black;
-  filter: drop-shadow(0px 0px 2px black);
+  font-weight: 600;
+/*  text-shadow: 0 0 3px rgba(0,0,0,80%), 0 0 1px black;*/
+/*  filter: drop-shadow(0px 0px 2px black);*/
 }
 
 
 .suit-container {
   display: inline-block;
   position: absolute;
-  top: 60px;
+  top: 48px;
   left: 8px;
 /*  filter: drop-shadow(0px 0px 1px black) drop-shadow(0px 0px 3px white);*/
 /*  filter: drop-shadow(0px 0px 1px white) drop-shadow(0px 0px 3px black);*/
@@ -152,57 +157,58 @@ body {
 
 .card.suit-army { border-color: #2f4f4f; }
 img.army {
-  filter: var(--army-filter-color) drop-shadow(0px 0px 1px white);
+  filter: var(--army-filter-color) var(--drop-shadow-outline-white);
 }
 
 .card.suit-beast { border-color: #008000; }
 img.beast {
-  filter: var(--beast-filter-color) drop-shadow(0px 0px 1px white);
+  filter: var(--beast-filter-color) var(--drop-shadow-outline-white);
 }
 
 .card.suit-land { border-color: #cd853f; }
 img.land {
-  filter: var(--land-filter-color) drop-shadow(0px 0px 1px black);
+  filter: var(--land-filter-color) var(--drop-shadow-outline-white);
 }
 
 .card.suit-leader { border-color: #00008b; }
 img.leader {
-  filter: var(--leader-filter-color) drop-shadow(0px 0px 1px white);
+  filter: var(--leader-filter-color) var(--drop-shadow-outline-white);
 }
 
 .card.suit-flame { border-color: #ff0000; }
 img.flame {
-  filter: var(--flame-filter-color) drop-shadow(0px 0px 1px black);
+/*  filter: var(--flame-filter-color) var(--drop-shadow-outline-black);*/
+  filter: var(--flame-filter-color) var(--drop-shadow-outline-white);
 }
 
 .card.suit-weapon { border-color: #00ff00; }
 img.weapon {
-  filter: var(--weapon-filter-color) drop-shadow(0px 0px 1px black);
+  filter: var(--weapon-filter-color) var(--drop-shadow-outline-black);
 }
 
 .card.suit-weather { border-color: #00ffff; }
 img.weather {
-  filter: var(--weather-filter-color) drop-shadow(0px 0px 1px black);
+  filter: var(--weather-filter-color) var(--drop-shadow-outline-black);
 }
 
 .card.suit-wizard { border-color: #ff00ff; }
 img.wizard {
-  filter: var(--wizard-filter-color) drop-shadow(0px 0px 1px black);
+  filter: var(--wizard-filter-color) var(--drop-shadow-outline-white);
 }
 
 .card.suit-flood { border-color: #1e90ff; }
 img.flood {
-  filter: var(--flood-filter-color) drop-shadow(0px 0px 1px white);
+  filter: var(--flood-filter-color) var(--drop-shadow-outline-white);
 }
 
 .card.suit-wild { border-color: #ffff54; }
 img.wild {
-  filter: var(--wild-filter-color) drop-shadow(0px 0px 1px black);
+  filter: var(--wild-filter-color) var(--drop-shadow-outline-black);
 }
 
 .card.suit-artifact { border-color: #ff69b4; }
 img.artifact {
-  filter: var(--artifact-filter-color) drop-shadow(0px 0px 1px black);
+  filter: var(--artifact-filter-color) var(--drop-shadow-outline-white);
 }
 
 
@@ -244,16 +250,21 @@ artifact
 
 .effect-container {
   position: absolute;
-  bottom: 6px;
+  bottom: 8px;
 /*  background-color: red;*/
 /*  padding: 6px;*/
-  width: 90%;
-  transform: translateX(5%);
-  font-size: 14px;
+  width: 92%;
+/*  font-weight: 600;*/
+  transform: translateX(4%);
+  font-size: 12px;
+}
+
+.effect-container > div:not(:first-child) {
+  margin-top: 7px;
 }
 
 .bonus {
-  background-color: rgba(255, 255, 255, 90%);
+  background-color: rgba(225, 255, 225, 90%);
   border-radius: 10px;
   width: 100%;
   padding: 5px 8px;
@@ -264,6 +275,12 @@ artifact
     drop-shadow(0px 0px 8px white)
     drop-shadow(0px 0px 8px white)
   ;*/
+}
+.neutral {
+  background-color: rgba(255, 255, 255, 90%);
+  border-radius: 10px;
+  width: 100%;
+  padding: 5px 8px;
 }
 .penalty {
   background-color: rgba(255, 210, 210, 90%);
@@ -281,7 +298,8 @@ artifact
 
 .suit-in-text {
   height: 13px;
-  margin-left: 2px;
+  margin-left: 1px;
+  margin-right: 2px;
   vertical-align: middle;
   transform: translateY(-2px);
   filter: drop-shadow(0px 0px 1px black);
