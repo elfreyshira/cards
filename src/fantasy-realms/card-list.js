@@ -4,30 +4,35 @@ export default [
     suit: "army",
     name: "celestial-knights",
     value: 20,
+    penalty: "-8 unless with at least one Leader",
   },
   {
     id: "army-dwarvish-infantry",
     suit: "army",
     name: "dwarvish-infantry",
     value: 15,
+    penalty: "-2 for each other Army",
   },
   {
     id: "army-elven-archers",
     suit: "army",
     name: "elven-archers",
     value: 10,
+    bonus: "+5 if no Weather in hand"
   },
   {
     id: "army-light-calvary",
     suit: "army",
     name: "light-calvary",
     value: 17,
+    penalty: "-2 for each Land"
   },
   {
     id: "army-rangers",
     suit: "army",
     name: "rangers",
     value: 5,
+    bonus: "+10 for each Land \n\nCLEARS the word Army from Penalty section of all cards in hand",
   },
   {
     id: "artifact-book-of-changes",

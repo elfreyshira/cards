@@ -1,3 +1,17 @@
+:root {
+  --army-filter-color: invert(23%) sepia(64%) saturate(276%) hue-rotate(131deg) brightness(92%) contrast(85%);
+  --beast-filter-color: invert(20%) sepia(97%) saturate(2495%) hue-rotate(101deg) brightness(102%) contrast(101%);
+  --land-filter-color: invert(56%) sepia(39%) saturate(720%) hue-rotate(348deg) brightness(94%) contrast(87%);
+  --leader-filter-color: invert(12%) sepia(28%) saturate(5690%) hue-rotate(230deg) brightness(120%) contrast(156%);
+  --flame-filter-color: invert(22%) sepia(96%) saturate(6317%) hue-rotate(2deg) brightness(96%) contrast(127%);
+  --weapon-filter-color: invert(71%) sepia(53%) saturate(4613%) hue-rotate(78deg) brightness(109%) contrast(143%);
+  --weather-filter-color: invert(88%) sepia(92%) saturate(851%) hue-rotate(101deg) brightness(101%) contrast(105%);
+  --wizard-filter-color: invert(21%) sepia(100%) saturate(2016%) hue-rotate(284deg) brightness(116%) contrast(148%);
+  --flood-filter-color: invert(44%) sepia(99%) saturate(2230%) hue-rotate(191deg) brightness(100%) contrast(103%);
+  --wild-filter-color: invert(87%) sepia(45%) saturate(600%) hue-rotate(3deg) brightness(109%) contrast(104%);
+  --artifact-filter-color: invert(68%) sepia(22%) saturate(7435%) hue-rotate(296deg) brightness(102%) contrast(101%);
+}
+
 /*@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap');*/
 @import url('https://fonts.googleapis.com/css2?family=Almendra+SC&display=swap');
 
@@ -110,7 +124,7 @@ body {
     drop-shadow(0px 0px 4px rgba(0, 0, 0, 60%))
     drop-shadow(0px 0px 3px rgba(0, 0, 0, 50%))
     drop-shadow(0px 0px 2px rgba(0, 0, 0, 40%))
-    drop-shadow(0px 0px 1px rgba(0, 0, 0, 100%))
+/*    drop-shadow(0px 0px 1px rgba(0, 0, 0, 100%))*/
   ;
 
 /*  filter: drop-shadow(0px 0px 4px rgba(255,255,255,80%)) drop-shadow(0px 0px 1px white);*/
@@ -122,7 +136,8 @@ body {
     drop-shadow(0px 0px 4px rgba(255, 255, 255, 60%))
     drop-shadow(0px 0px 3px rgba(255, 255, 255, 50%))
     drop-shadow(0px 0px 2px rgba(255, 255, 255, 40%))
-    drop-shadow(0px 0px 1px rgba(255, 255, 255, 100%))
+/*    drop-shadow(0px 0px 1px rgba(255, 255, 255, 100%))*/
+  ;
 }
 
 .suit {
@@ -136,55 +151,59 @@ body {
 }
 
 .card.suit-army { border-color: #2f4f4f; }
-.suit.army {
-  filter: invert(23%) sepia(64%) saturate(276%) hue-rotate(131deg) brightness(92%) contrast(85%); 
+img.army {
+  filter: var(--army-filter-color) drop-shadow(0px 0px 1px white);
 }
 
 .card.suit-beast { border-color: #008000; }
-.suit.beast {
-  filter: invert(20%) sepia(97%) saturate(2495%) hue-rotate(101deg) brightness(102%) contrast(101%);
+img.beast {
+  filter: var(--beast-filter-color) drop-shadow(0px 0px 1px white);
 }
 
 .card.suit-land { border-color: #cd853f; }
-.suit.land {
-  filter: invert(56%) sepia(39%) saturate(720%) hue-rotate(348deg) brightness(94%) contrast(87%);
+img.land {
+  filter: var(--land-filter-color) drop-shadow(0px 0px 1px black);
 }
+
 .card.suit-leader { border-color: #00008b; }
-.suit.leader {
-  filter: invert(12%) sepia(28%) saturate(5690%) hue-rotate(230deg) brightness(120%) contrast(156%);
+img.leader {
+  filter: var(--leader-filter-color) drop-shadow(0px 0px 1px white);
 }
+
 .card.suit-flame { border-color: #ff0000; }
-.suit.flame {
-  filter: invert(22%) sepia(96%) saturate(6317%) hue-rotate(2deg) brightness(96%) contrast(127%);
+img.flame {
+  filter: var(--flame-filter-color) drop-shadow(0px 0px 1px black);
 }
+
 .card.suit-weapon { border-color: #00ff00; }
-.suit.weapon {
-  filter: invert(71%) sepia(53%) saturate(4613%) hue-rotate(78deg) brightness(109%) contrast(143%);
+img.weapon {
+  filter: var(--weapon-filter-color) drop-shadow(0px 0px 1px black);
 }
+
 .card.suit-weather { border-color: #00ffff; }
-.suit.weather {
-  filter: invert(88%) sepia(92%) saturate(851%) hue-rotate(101deg) brightness(101%) contrast(105%);
+img.weather {
+  filter: var(--weather-filter-color) drop-shadow(0px 0px 1px black);
 }
+
 .card.suit-wizard { border-color: #ff00ff; }
-.suit.wizard {
-  filter: invert(21%) sepia(100%) saturate(2016%) hue-rotate(284deg) brightness(116%) contrast(148%);
+img.wizard {
+  filter: var(--wizard-filter-color) drop-shadow(0px 0px 1px black);
 }
 
 .card.suit-flood { border-color: #1e90ff; }
-.suit.flood {
-  filter: invert(44%) sepia(99%) saturate(2230%) hue-rotate(191deg) brightness(100%) contrast(103%);
+img.flood {
+  filter: var(--flood-filter-color) drop-shadow(0px 0px 1px white);
 }
 
 .card.suit-wild { border-color: #ffff54; }
-.suit.wild {
-  filter: invert(87%) sepia(45%) saturate(600%) hue-rotate(3deg) brightness(109%) contrast(104%);
+img.wild {
+  filter: var(--wild-filter-color) drop-shadow(0px 0px 1px black);
 }
 
 .card.suit-artifact { border-color: #ff69b4; }
-.suit.artifact {
-  filter: invert(68%) sepia(22%) saturate(7435%) hue-rotate(296deg) brightness(102%) contrast(101%);
+img.artifact {
+  filter: var(--artifact-filter-color) drop-shadow(0px 0px 1px black);
 }
-
 
 
 /*
@@ -221,3 +240,50 @@ wild
 #ff69b4
 artifact
 */
+
+
+.effect-container {
+  position: absolute;
+  bottom: 6px;
+/*  background-color: red;*/
+/*  padding: 6px;*/
+  width: 90%;
+  transform: translateX(5%);
+  font-size: 14px;
+}
+
+.bonus {
+  background-color: rgba(255, 255, 255, 90%);
+  border-radius: 10px;
+  width: 100%;
+  padding: 5px 8px;
+  /*filter:
+    drop-shadow(0px 0px 8px white)
+    drop-shadow(0px 0px 8px white)
+    drop-shadow(0px 0px 8px white)
+    drop-shadow(0px 0px 8px white)
+    drop-shadow(0px 0px 8px white)
+  ;*/
+}
+.penalty {
+  background-color: rgba(255, 210, 210, 90%);
+  /*filter:
+    drop-shadow(0px 0px 8px rgba(255, 200, 200, 100%))
+    drop-shadow(0px 0px 8px rgba(255, 200, 200, 100%))
+    drop-shadow(0px 0px 8px rgba(255, 200, 200, 100%))
+    drop-shadow(0px 0px 8px rgba(255, 200, 200, 100%))
+    drop-shadow(0px 0px 8px rgba(255, 200, 200, 100%))
+  ;*/
+  border-radius: 10px;
+  width: 100%;
+  padding: 5px 8px;
+}
+
+.suit-in-text {
+  height: 13px;
+  margin-left: 2px;
+  vertical-align: middle;
+  transform: translateY(-2px);
+  filter: drop-shadow(0px 0px 1px black);
+}
+/*.suit-in-text*/

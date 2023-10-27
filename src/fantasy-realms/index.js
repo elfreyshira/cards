@@ -18,12 +18,33 @@ const suitImages = importAll(require.context('./suits', false, /\.(png|jpe?g|svg
 const suitsThatNeedWhiteShadow = ['army', 'beast', 'flood', 'leader']
 
 
+const suitArray = ['army', 'beast', 'land', 'leader',
+  'flame', 'weapon', 'weather', 'wizard', 'flood', 'wild', 'artifact',]
+
+function Effect ({text}) {
+  return _.map(_.split(text, ' '), (word) => {
+    const lowerCaseWord = _.toLower(word)
+    if (_.includes(suitArray, lowerCaseWord)) {
+      return <span style={{display: 'inline-block'}}>
+        <img
+          src={suitImages[lowerCaseWord+'.png']}
+          className={classnames("suit-in-text", lowerCaseWord)}
+        /> {word} </span>
+    }
+    else {
+      // return <span>{word}</span>
+      return word+' '
+    }
+  })
+}
+
 function Card ({
-  baseStr, bonus, penalty, baseText,
   imageSrc,
   value,
   name,
   suit,
+  bonus,
+  penalty,
 }) {
 
   let whiteShadow = ''
@@ -53,6 +74,24 @@ function Card ({
       <div className="value">{value}</div>
       <div className="name">{_.upperCase(name)}</div>
 
+      <div className="effect-container">
+        {!!bonus ?
+          <div className="bonus">
+            <div>BONUS:</div>
+            <Effect text={bonus} />
+          </div>
+          : null
+        }
+
+        {!!penalty ?
+          <div className="penalty">
+            <div>PENALTY:</div>
+            <Effect text={penalty} />
+          </div>
+          : null
+        }
+      </div>
+
 
     </div>
   )
@@ -68,6 +107,8 @@ function Cards () {
       value={cardObj.value}
       name={cardObj.name}
       suit={cardObj.suit}
+      bonus={cardObj.bonus}
+      penalty={cardObj.penalty}
     />
   ))
 
@@ -75,7 +116,6 @@ function Cards () {
     <Card
       suit="army"
       name="celestial-knight"
-      baseStr={20}
       bonus="Just a random test."
       penalty="-8 unless with at least one Leader"
       baseText="Putting more filler text here."
