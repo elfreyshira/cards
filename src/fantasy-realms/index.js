@@ -4,7 +4,7 @@ import classnames from 'classnames'
 import './index.css'
 import cardList from './card-list.js'
 
-// import celestialKnight from './images/army-celestial-knight.png'
+import scrollImg from './scroll.png'
 
 function importAll(r) {
   let images = {};
@@ -33,6 +33,7 @@ function Card ({
 
   return (
     <div className={classnames('card', 'suit-' + suit)}>
+      <img src={scrollImg} className="scroll" />
       <img
         // src={'./images/fantasy-realms/'+ suit + '-' + name + '.' + filetype}
         // src={celestialKnight}
@@ -44,7 +45,7 @@ function Card ({
       <div className={classnames("suit-container", whiteShadow)}>
         <img src={suitImages[suit + '.png']} className={classnames("suit", suit)} />
       </div>
-      
+
       <div className="suit-text-container">
         <div className="suit-text">{_.toUpper(suit)}</div>
       </div>
