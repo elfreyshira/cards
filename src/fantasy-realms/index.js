@@ -17,7 +17,7 @@ const suitImages = importAll(require.context('./suits', false, /\.(png|jpe?g|svg
 
 // const suitsThatNeedWhiteShadow = ['army', 'beast', 'flood', 'leader', 'flame']
 const suitsThatNeedWhiteShadow = ['wild', 'beast', 'land', 'leader',
-  'flame', 'wizard', 'flood',]
+  'flame', 'wizard', 'flood', 'artifact']
 
 
 const suitArray = ['army', 'beast', 'land', 'leader',

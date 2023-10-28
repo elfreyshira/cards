@@ -211,7 +211,7 @@ img.wild {
 
 .card.suit-artifact { border-color: #ff69b4; }
 img.artifact {
-  filter: var(--artifact-filter-color) var(--drop-shadow-outline-black);
+  filter: var(--artifact-filter-color) var(--drop-shadow-outline-white);
 }
 
 

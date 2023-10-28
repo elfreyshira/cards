@@ -281,7 +281,8 @@ export default [
     suit: "weapon",
     name: "warship",
     value: 23,
-    penalty: "BLANKED unless with at least one Flood. \n\nCLEARS the word Army from all Penalties of all Flood."
+    penalty: "BLANKED unless with at least one Flood.",
+    neutral: "CLEARS the word Army from all Penalties of all Flood."
   },
   {
     id: "weather-air-elemental",
