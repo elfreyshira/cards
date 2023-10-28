@@ -1,17 +1,20 @@
 :root {
-  --army-filter-color: invert(23%) sepia(64%) saturate(276%) hue-rotate(131deg) brightness(92%) contrast(85%);
+  --army-filter-color: invert(72%) sepia(54%) saturate(593%) hue-rotate(338deg) brightness(102%) contrast(101%);
   --beast-filter-color: invert(20%) sepia(97%) saturate(2495%) hue-rotate(101deg) brightness(102%) contrast(101%);
-  --land-filter-color: invert(56%) sepia(39%) saturate(720%) hue-rotate(348deg) brightness(94%) contrast(87%);
+  --land-filter-color: invert(35%) sepia(14%) saturate(2241%) hue-rotate(348deg) brightness(96%) contrast(90%);
   --leader-filter-color: invert(12%) sepia(28%) saturate(5690%) hue-rotate(230deg) brightness(120%) contrast(156%);
-  --flame-filter-color: invert(22%) sepia(96%) saturate(6317%) hue-rotate(2deg) brightness(96%) contrast(127%);
-  --weapon-filter-color: invert(71%) sepia(53%) saturate(4613%) hue-rotate(78deg) brightness(109%) contrast(143%);
-  --weather-filter-color: invert(88%) sepia(92%) saturate(851%) hue-rotate(101deg) brightness(101%) contrast(105%);
-  --wizard-filter-color: invert(21%) sepia(100%) saturate(2016%) hue-rotate(284deg) brightness(116%) contrast(148%);
+  --flame-filter-color: invert(11%) sepia(60%) saturate(6301%) hue-rotate(357deg) brightness(88%) contrast(113%);
+  --weapon-filter-color: invert(78%) sepia(59%) saturate(410%) hue-rotate(29deg) brightness(106%) contrast(107%);
+  --weather-filter-color: invert(88%) sepia(8%) saturate(2009%) hue-rotate(153deg) brightness(108%) contrast(96%);
+  --wizard-filter-color: invert(16%) sepia(86%) saturate(5935%) hue-rotate(281deg) brightness(81%) contrast(105%);
   --flood-filter-color: invert(44%) sepia(99%) saturate(2230%) hue-rotate(191deg) brightness(100%) contrast(103%);
-  --wild-filter-color: invert(87%) sepia(45%) saturate(600%) hue-rotate(3deg) brightness(109%) contrast(104%);
+  --wild-filter-color: invert(23%) sepia(64%) saturate(276%) hue-rotate(131deg) brightness(92%) contrast(85%);
   --artifact-filter-color: invert(68%) sepia(22%) saturate(7435%) hue-rotate(296deg) brightness(102%) contrast(101%);
   --drop-shadow-outline-white: drop-shadow(0px 0px 1px white);
   --drop-shadow-outline-black: drop-shadow(0px 0px 1px black);
+
+  --paper-background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAUVBMVEWFhYWDg4N3d3dtbW17e3t1dXWBgYGHh4d5eXlzc3OLi4ubm5uVlZWPj4+NjY19fX2JiYl/f39ra2uRkZGZmZlpaWmXl5dvb29xcXGTk5NnZ2c8TV1mAAAAG3RSTlNAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEAvEOwtAAAFVklEQVR4XpWWB67c2BUFb3g557T/hRo9/WUMZHlgr4Bg8Z4qQgQJlHI4A8SzFVrapvmTF9O7dmYRFZ60YiBhJRCgh1FYhiLAmdvX0CzTOpNE77ME0Zty/nWWzchDtiqrmQDeuv3powQ5ta2eN0FY0InkqDD73lT9c9lEzwUNqgFHs9VQce3TVClFCQrSTfOiYkVJQBmpbq2L6iZavPnAPcoU0dSw0SUTqz/GtrGuXfbyyBniKykOWQWGqwwMA7QiYAxi+IlPdqo+hYHnUt5ZPfnsHJyNiDtnpJyayNBkF6cWoYGAMY92U2hXHF/C1M8uP/ZtYdiuj26UdAdQQSXQErwSOMzt/XWRWAz5GuSBIkwG1H3FabJ2OsUOUhGC6tK4EMtJO0ttC6IBD3kM0ve0tJwMdSfjZo+EEISaeTr9P3wYrGjXqyC1krcKdhMpxEnt5JetoulscpyzhXN5FRpuPHvbeQaKxFAEB6EN+cYN6xD7RYGpXpNndMmZgM5Dcs3YSNFDHUo2LGfZuukSWyUYirJAdYbF3MfqEKmjM+I2EfhA94iG3L7uKrR+GdWD73ydlIB+6hgref1QTlmgmbM3/LeX5GI1Ux1RWpgxpLuZ2+I+IjzZ8wqE4nilvQdkUdfhzI5QDWy+kw5Wgg2pGpeEVeCCA7b85BO3F9DzxB3cdqvBzWcmzbyMiqhzuYqtHRVG2y4x+KOlnyqla8AoWWpuBoYRxzXrfKuILl6SfiWCbjxoZJUaCBj1CjH7GIaDbc9kqBY3W/Rgjda1iqQcOJu2WW+76pZC9QG7M00dffe9hNnseupFL53r8F7YHSwJWUKP2q+k7RdsxyOB11n0xtOvnW4irMMFNV4H0uqwS5ExsmP9AxbDTc9JwgneAT5vTiUSm1E7BSflSt3bfa1tv8Di3R8n3Af7MNWzs49hmauE2wP+ttrq+AsWpFG2awvsuOqbipWHgtuvuaAE+A1Z/7gC9hesnr+7wqCwG8c5yAg3AL1fm8T9AZtp/bbJGwl1pNrE7RuOX7PeMRUERVaPpEs+yqeoSmuOlokqw49pgomjLeh7icHNlG19yjs6XXOMedYm5xH2YxpV2tc0Ro2jJfxC50ApuxGob7lMsxfTbeUv07TyYxpeLucEH1gNd4IKH2LAg5TdVhlCafZvpskfncCfx8pOhJzd76bJWeYFnFciwcYfubRc12Ip/ppIhA1/mSZ/RxjFDrJC5xifFjJpY2Xl5zXdguFqYyTR1zSp1Y9p+tktDYYSNflcxI0iyO4TPBdlRcpeqjK/piF5bklq77VSEaA+z8qmJTFzIWiitbnzR794USKBUaT0NTEsVjZqLaFVqJoPN9ODG70IPbfBHKK+/q/AWR0tJzYHRULOa4MP+W/HfGadZUbfw177G7j/OGbIs8TahLyynl4X4RinF793Oz+BU0saXtUHrVBFT/DnA3ctNPoGbs4hRIjTok8i+algT1lTHi4SxFvONKNrgQFAq2/gFnWMXgwffgYMJpiKYkmW3tTg3ZQ9Jq+f8XN+A5eeUKHWvJWJ2sgJ1Sop+wwhqFVijqWaJhwtD8MNlSBeWNNWTa5Z5kPZw5+LbVT99wqTdx29lMUH4OIG/D86ruKEauBjvH5xy6um/Sfj7ei6UUVk4AIl3MyD4MSSTOFgSwsH/QJWaQ5as7ZcmgBZkzjjU1UrQ74ci1gWBCSGHtuV1H2mhSnO3Wp/3fEV5a+4wz//6qy8JxjZsmxxy5+4w9CDNJY09T072iKG0EnOS0arEYgXqYnXcYHwjTtUNAcMelOd4xpkoqiTYICWFq0JSiPfPDQdnt+4/wuqcXY47QILbgAAAABJRU5ErkJggg==);
+/*  --paper-background: url(https://www.transparenttextures.com/patterns/textured-paper.png);*/
 }
 
 /*@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap');*/
@@ -151,13 +154,13 @@ body {
   top: 0;
   position: absolute;
 /*  https://isotropic.co/tool/hex-color-to-css-filter/*/
-  filter: invert(48%) sepia(18%) saturate(5873%) hue-rotate(162deg) brightness(96%) contrast(101%);
+/*  filter: invert(48%) sepia(18%) saturate(5873%) hue-rotate(162deg) brightness(96%) contrast(101%);*/
 
 }
 
-.card.suit-army { border-color: #2f4f4f; }
+.card.suit-army { border-color: #ffb74b; }
 img.army {
-  filter: var(--army-filter-color) var(--drop-shadow-outline-white);
+  filter: var(--army-filter-color) var(--drop-shadow-outline-black);
 }
 
 .card.suit-beast { border-color: #008000; }
@@ -165,7 +168,7 @@ img.beast {
   filter: var(--beast-filter-color) var(--drop-shadow-outline-white);
 }
 
-.card.suit-land { border-color: #cd853f; }
+.card.suit-land { border-color: #885422; }
 img.land {
   filter: var(--land-filter-color) var(--drop-shadow-outline-white);
 }
@@ -175,23 +178,23 @@ img.leader {
   filter: var(--leader-filter-color) var(--drop-shadow-outline-white);
 }
 
-.card.suit-flame { border-color: #ff0000; }
+.card.suit-flame { border-color: #a80101; }
 img.flame {
 /*  filter: var(--flame-filter-color) var(--drop-shadow-outline-black);*/
   filter: var(--flame-filter-color) var(--drop-shadow-outline-white);
 }
 
-.card.suit-weapon { border-color: #00ff00; }
+.card.suit-weapon { border-color: #ceff5a; }
 img.weapon {
   filter: var(--weapon-filter-color) var(--drop-shadow-outline-black);
 }
 
-.card.suit-weather { border-color: #00ffff; }
+.card.suit-weather { border-color: #a1fafa; }
 img.weather {
   filter: var(--weather-filter-color) var(--drop-shadow-outline-black);
 }
 
-.card.suit-wizard { border-color: #ff00ff; }
+.card.suit-wizard { border-color: #8e0cc4; }
 img.wizard {
   filter: var(--wizard-filter-color) var(--drop-shadow-outline-white);
 }
@@ -201,14 +204,14 @@ img.flood {
   filter: var(--flood-filter-color) var(--drop-shadow-outline-white);
 }
 
-.card.suit-wild { border-color: #ffff54; }
+.card.suit-wild { border-color: #2f4f4f; }
 img.wild {
-  filter: var(--wild-filter-color) var(--drop-shadow-outline-black);
+  filter: var(--wild-filter-color) var(--drop-shadow-outline-white);
 }
 
 .card.suit-artifact { border-color: #ff69b4; }
 img.artifact {
-  filter: var(--artifact-filter-color) var(--drop-shadow-outline-white);
+  filter: var(--artifact-filter-color) var(--drop-shadow-outline-black);
 }
 
 
@@ -219,28 +222,28 @@ army
 #008000
 beast
 
-#cd853f
+#885422
 land
 
 #00008b
 leader
 
-#ff0000
+#a80101
 flame
 
-#00ff00
+#ceff5a
 weapon
 
-#00ffff
+#a1fafa
 weather
 
-#ff00ff
+#8e0cc4
 wizard
 
 #1e90ff
 flood
 
-#ffff54
+#ffb74b
 wild
 
 #ff69b4
@@ -250,50 +253,39 @@ artifact
 
 .effect-container {
   position: absolute;
-  bottom: 8px;
+  bottom: 6px;
 /*  background-color: red;*/
 /*  padding: 6px;*/
   width: 92%;
 /*  font-weight: 600;*/
   transform: translateX(4%);
   font-size: 12px;
+  line-height: 135%;
 }
 
+.effect-container > div {
+  border-radius: 10px;
+  width: 100%;
+  padding: 4px 7px;
+}
 .effect-container > div:not(:first-child) {
-  margin-top: 7px;
+  margin-top: 5px;
 }
 
 .bonus {
-  background-color: rgba(225, 255, 225, 90%);
-  border-radius: 10px;
-  width: 100%;
-  padding: 5px 8px;
-  /*filter:
-    drop-shadow(0px 0px 8px white)
-    drop-shadow(0px 0px 8px white)
-    drop-shadow(0px 0px 8px white)
-    drop-shadow(0px 0px 8px white)
-    drop-shadow(0px 0px 8px white)
-  ;*/
+  background-color: rgb(236 251 213 / 85%);
+  background-image: var(--paper-background);
+  border: 1px solid forestgreen;
 }
 .neutral {
-  background-color: rgba(255, 255, 255, 90%);
-  border-radius: 10px;
-  width: 100%;
-  padding: 5px 8px;
+  background-color: rgba(255, 255, 255, 85%);
+  background-image: var(--paper-background);
+  border: 1px solid rgb(230 230 230);
 }
 .penalty {
-  background-color: rgba(255, 210, 210, 90%);
-  /*filter:
-    drop-shadow(0px 0px 8px rgba(255, 200, 200, 100%))
-    drop-shadow(0px 0px 8px rgba(255, 200, 200, 100%))
-    drop-shadow(0px 0px 8px rgba(255, 200, 200, 100%))
-    drop-shadow(0px 0px 8px rgba(255, 200, 200, 100%))
-    drop-shadow(0px 0px 8px rgba(255, 200, 200, 100%))
-  ;*/
-  border-radius: 10px;
-  width: 100%;
-  padding: 5px 8px;
+  background-color: rgb(255 238 238 / 85%);
+  background-image: var(--paper-background);
+  border: 1px solid darkred;
 }
 
 .suit-in-text {
@@ -302,6 +294,6 @@ artifact
   margin-right: 2px;
   vertical-align: middle;
   transform: translateY(-2px);
-  filter: drop-shadow(0px 0px 1px black);
+/*  filter: drop-shadow(0px 0px 1px black);*/
 }
 /*.suit-in-text*/

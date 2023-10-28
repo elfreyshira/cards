@@ -16,8 +16,8 @@ const backgroundImages = importAll(require.context('./images', false, /\.(png|jp
 const suitImages = importAll(require.context('./suits', false, /\.(png|jpe?g|svg)$/));
 
 // const suitsThatNeedWhiteShadow = ['army', 'beast', 'flood', 'leader', 'flame']
-const suitsThatNeedWhiteShadow = ['army', 'beast', 'land', 'leader',
-  'flame', 'wizard', 'flood', 'artifact',]
+const suitsThatNeedWhiteShadow = ['wild', 'beast', 'land', 'leader',
+  'flame', 'wizard', 'flood',]
 
 
 const suitArray = ['army', 'beast', 'land', 'leader',
@@ -80,8 +80,16 @@ function Card ({
       <div className="effect-container">
         {!!bonus ?
           <div className="bonus">
-            <div>BONUS:</div>
+            <div><b>BONUS:</b></div>
             <Effect text={bonus} />
+          </div>
+          : null
+        }
+
+        {!!penalty ?
+          <div className="penalty">
+            <div><b>PENALTY:</b></div>
+            <Effect text={penalty} />
           </div>
           : null
         }
@@ -89,14 +97,6 @@ function Card ({
         {!!neutral ?
           <div className="neutral">
             <Effect text={neutral} />
-          </div>
-          : null
-        }        
-
-        {!!penalty ?
-          <div className="penalty">
-            <div>PENALTY:</div>
-            <Effect text={penalty} />
           </div>
           : null
         }

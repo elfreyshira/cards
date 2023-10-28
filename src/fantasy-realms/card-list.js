@@ -34,35 +34,35 @@ export default [
     suit: "army",
     name: "rangers",
     value: 5,
-    bonus: "+10 for each Land. \n\nCLEARS the word Army from Penalty section of all cards in hand.",
+    bonus: "+10 for each Land. \n\nCLEARS the word Army from Penalties.",
   },
   {
     id: "artifact-book-of-changes",
     suit: "artifact",
     name: "book-of-changes",
     value: 3,
-    bonus: "You may change the suit of one other card. Its name, bonuses and penalties remain the same."
+    bonus: "You may change the suit of one other card. Its name, bonuses, and penalties remain the same."
   },
   {
     id: "artifact-gem-of-order",
     suit: "artifact",
     name: "gem-of-order",
     value: 5,
-    bonus: "+10 for 3-card run;\n+30 for 4-card run;\n+60 for 5-card run;\n+100 for 6-card run;\n+150 for 7-card run."
+    bonus: "+10 for 3-card run,\n+30 for 4-card run,\n+60 for 5-card run,\n+100 for 6-card run,\n+150 for 7-card run.\n(For base strength numbers)"
   },
   {
     id: "artifact-protection-rune",
     suit: "artifact",
     name: "protection-rune",
     value: 1,
-    bonus: "CLEARS the Penalty sections on all cards in hand."
+    bonus: "CLEARS the Penalty on all cards."
   },
   {
     id: "artifact-shield-of-keth",
     suit: "artifact",
     name: "shield-of-keth",
     value: 4,
-    bonus: "+15 with any one Leader \n+40 with both Leader and Sword of Keth."
+    bonus: "+15 with any one Leader. \n[OR] +40 with both Leader and Sword of Keth."
   },
   {
     id: "artifact-world-tree",
@@ -97,7 +97,7 @@ export default [
     suit: "beast",
     name: "unicorn",
     value: 9,
-    bonus: "+30 with Princess\n+15 with Empress, Queen, or Elemental Enchantress."
+    bonus: "+30 with Princess. \n[OR] +15 with Empress, Queen, or Elemental Enchantress."
   },
   {
     id: "beast-warhorse",
@@ -139,7 +139,7 @@ export default [
     suit: "flame",
     name: "wildfire",
     value: 40,
-    neutral: "BLANKS all cards except Flame, Weather, Wizard, Weapon, Artifact, Deluge, Island, Mountain, Unicorn, and Dragon."
+    penalty: "BLANKS all cards except Flame, Weather, Wizard, Weapon, Artifact, Deluge, Island, Mountain, Unicorn, and Dragon."
   },
   {
     // originally Great Flood (great-flood, greatflood)
@@ -154,14 +154,14 @@ export default [
     suit: "flood",
     name: "fountain-of-life",
     value: 1,
-    bonus: "Add the base strength of any Weapon, Flood, Flame, Land, or Weather in your hand."
+    bonus: "Add the base strength of any one Weapon, Flood, Flame, Land, or Weather."
   },
   {
     id: "flood-island",
     suit: "flood",
     name: "island",
     value: 14,
-    neutral: "CLEARS the Penalty on any one Flood or Flame."
+    bonus: "CLEARS the Penalty on any one Flood or Flame."
   },
   {
     id: "flood-swamp",
@@ -189,7 +189,7 @@ export default [
     suit: "land",
     name: "cavern",
     value: 6,
-    bonus: "+25 with Dwarvish Infantry or Dragon. \nCLEARS the Penalty on all Weather."
+    bonus: "+25 with Dwarvish Infantry or Dragon. \n\nCLEARS the Penalty on all Weather."
   },
   {
     id: "land-earth-elemental",
@@ -210,7 +210,7 @@ export default [
     suit: "land",
     name: "mountain",
     value: 9,
-    bonus: "+50 with both Smoke and Wildfire.\nCLEARS the Penalty on all Flood."
+    bonus: "+50 with both Smoke and Wildfire. \n\nCLEARS the Penalty on all Flood."
   },
   {
     id: "leader-empress",
@@ -225,7 +225,7 @@ export default [
     suit: "leader",
     name: "king",
     value: 8,
-    bonus: "+5 for each Army \n[OR] +20 for each Army if in the same hand with Queen."
+    bonus: "+5 for each Army. \n[OR] +20 for each Army if with Queen."
   },
   {
     id: "leader-princess",
@@ -239,14 +239,14 @@ export default [
     suit: "leader",
     name: "queen",
     value: 6,
-    bonus: "+5 for each Army \n[OR] +20 for each Army if in the same hand with King."
+    bonus: "+5 for each Army. \n[OR] +20 for each Army if with King."
   },
   {
     id: "leader-warlord",
     suit: "leader",
     name: "warlord",
     value: 4,
-    bonus: "Equal to the base strengths of all Army in your hand."
+    bonus: "Equal to the base strengths of all Army."
   },
   {
     id: "weapon-elven-longbow",
@@ -274,14 +274,14 @@ export default [
     suit: "weapon",
     name: "war-dirigible",
     value: 35,
-    penalty: "BLANKED unless with at least one Army. \nBLANKED if hand contains any Weather."
+    penalty: "BLANKED unless with at least one Army. \n\nBLANKED with any Weather."
   },
   {
     id: "weapon-warship",
     suit: "weapon",
     name: "warship",
     value: 23,
-    penalty: "BLANKED unless with at least one Flood. \nCLEARS the word Army from all Penalties of all Floods."
+    penalty: "BLANKED unless with at least one Flood. \n\nCLEARS the word Army from all Penalties of all Flood."
   },
   {
     id: "weather-air-elemental",
@@ -295,7 +295,7 @@ export default [
     suit: "weather",
     name: "blizzard",
     value: 30,
-    penalty: "BLANKS all Flood. \n−5 for each Army, Leader, Beast, and Flame."
+    penalty: "BLANKS all Flood. \n\n−5 for each Army, Leader, Beast, and Flame."
   },
   {
     id: "weather-rainstorm",
@@ -345,7 +345,7 @@ export default [
     suit: "wizard",
     name: "beastmaster",
     value: 9,
-    bonus: "+9 for each Beast. \nCLEARS the Penalty on all Beast."
+    bonus: "+9 for each Beast. \n\nCLEARS the Penalty on all Beast."
   },
   {
     id: "wizard-collector",
