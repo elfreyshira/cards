@@ -97,7 +97,7 @@ export default [
     suit: "beast",
     name: "unicorn",
     value: 9,
-    bonus: "+30 with Princess. \n[OR] +15 with Empress, Queen, or Elemental Enchantress."
+    bonus: "+30 with Princess. \n[OR] +15 with Empress, Queen, or Enchantress."
   },
   {
     id: "beast-warhorse",
