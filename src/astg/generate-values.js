@@ -10,7 +10,7 @@ const strengthArray = [2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6]
 
 
 /// RONDEL MOVE
-const RONDEL_LENGTH = 4
+const RONDEL_LENGTH = 6
 function moveValueForStrength(strength) {
   const moveValueArray = []
   _.times(100000, () => {
@@ -52,7 +52,7 @@ const result = regression.linear([
   [5.5, 1.698659999999992], // 0.4917341011186827
   [6.0, 1.8732233999999341], // 0.5398159733608531
 ], {precision: 20})
-// console.log(result.equation[0], result.equation[1])
+console.log(result.equation[0], result.equation[1])
 // m = 0.3514782366666686. b = -0.23139118000001965
 
 
@@ -78,14 +78,20 @@ function recallValueForStrength(strength) {
   _.times(100000, () => {
 
     const cardValueArray = []
-    _.times(WORKER_COUNT, () => cardValueArray.push( _.random(2, strength*2)/2 ))
-    // _.times(WORKER_COUNT, () => cardValueArray.push(
-    //   wpStrengthToValueMapping[ _.random(2, strength*2)/2 ] / 100
-    // ))
+    // _.times(WORKER_COUNT, () => cardValueArray.push( _.random(2, strength*2)/2 ))
+    _.times(WORKER_COUNT, () => cardValueArray.push(
+      wpStrengthToValueMapping[ _.random(2, strength*2)/2 ] / 100
+    ))
 
     const sumOfCardValues = _.sum(cardValueArray)
-    const recallValue = (sumOfCardValues + _.max(cardValueArray))/(WORKER_COUNT+2)*(WORKER_COUNT+1)
-      - sumOfCardValues
+    // const recallValue = (sumOfCardValues + _.max(cardValueArray))/(WORKER_COUNT+2)*(WORKER_COUNT+1)
+    //   - sumOfCardValues
+
+    // (sum / 4) = (total + max - recallvalue) / 5
+    const recallValue = sumOfCardValues
+      + _.max(cardValueArray)
+      - (sumOfCardValues / (WORKER_COUNT+1) * (WORKER_COUNT+ 2))
+
     recallValueArray.push(recallValue)
   })
 
@@ -102,18 +108,18 @@ doAllRecallValue()
 
 
 const recallRegressionResult = regression.linear([
-  [2.0, 0.5663976999996491], // 0.15168104180020758
-  [2.5, 0.725159600000222], // 0.20170219436481562
-  [3.0, 0.8801106999999994], // 0.2517380565539586
-  [3.5, 1.0330384999999433], // 0.3013686751151561
-  [4.0, 1.186020700000055], // 0.35096588487849345
-  [4.5, 1.3380297999999557], // 0.4009263960555027
-  [5.0, 1.4886481999999694], // 0.45137868844182627
-  [5.5, 1.6401199000000464], // 0.5014111437110476
-  [6.0, 1.7916247999999162], // 0.5507786119496556
+  [2.0, 0.70917], // 0.18855325275171037
+  [2.5, 0.9059825], // 0.25249524199919204
+  [3.0, 1.09928375], // 0.3139174910351995
+  [3.5, 1.29098625], // 0.3763045802435601
+  [4.0, 1.48325125], // 0.438614648012998
+  [4.5, 1.6703525], // 0.502212029836883
+  [5.0, 1.8652625], // 0.5636493108300261
+  [5.5, 2.04844875], // 0.6256316120709814
+  [6.0, 2.23996], // 0.688405676126909
 ], {precision: 20})
-// console.log(recallRegressionResult.equation[0], recallRegressionResult.equation[1])
-// m = 0.30559518666668356. b = -0.03914186888898352
+console.log(recallRegressionResult.equation[0], recallRegressionResult.equation[1])
+// m = 0.38206275000000006 // b = -0.04906238888888902
 
 ////////////////////// WP SEND ////////////////
 function sendValueForStrength(strength) {
@@ -127,8 +133,16 @@ function sendValueForStrength(strength) {
     ))
 
     const sumOfCardValues = _.sum(cardValueArray)
-    const sendValue = sumOfCardValues/WORKER_COUNT*(WORKER_COUNT+1) - sumOfCardValues
+    // const sendValue = sumOfCardValues/WORKER_COUNT*(WORKER_COUNT+1) - sumOfCardValues
+
+    // (send + sum) / 4 = sum / 3
+
+    // sum / 4 = (sum - sendValue) / 3
+    const sendValue = sumOfCardValues - (sumOfCardValues / (WORKER_COUNT+1) * WORKER_COUNT)
+
     sendValueArray.push(sendValue)
+
+
   })
 
   // console.log(strength, _.round(_.mean(sendValueArray), 3), _.round(std(sendValueArray), 3))
@@ -318,4 +332,3 @@ const DropNthResult = regression.linear([
 ], {precision: 20})
 // console.log(DropNthResult.equation[0], DropNthResult.equation[1])
 // m = 0.16644334166665967, b = -0.1676560888888886
-

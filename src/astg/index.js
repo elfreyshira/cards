@@ -2,6 +2,7 @@ import _ from 'lodash'
 import Brng from 'brng'
 
 import generateValues from './generate-values.js'
+import CONSTANTS from './CONSTANTS.js'
 
 // import './index.css'
 
