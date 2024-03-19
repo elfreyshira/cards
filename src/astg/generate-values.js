@@ -24,7 +24,7 @@ function moveValueForStrength(strength) {
     const moveValue = _.mean([
       (sumOfCardValues-cardValueArray[0])/(RONDEL_LENGTH-1)*RONDEL_LENGTH - sumOfCardValues,
       (sumOfCardValues-cardValueArray[1])/(RONDEL_LENGTH-1)*RONDEL_LENGTH - sumOfCardValues,
-      // (sumOfCardValues-cardValueArray[2])/(RONDEL_LENGTH-1)*RONDEL_LENGTH - sumOfCardValues,
+      (sumOfCardValues-cardValueArray[2])/(RONDEL_LENGTH-1)*RONDEL_LENGTH - sumOfCardValues,
       // (sumOfCardValues-cardValueArray[3])/(RONDEL_LENGTH-1)*RONDEL_LENGTH - sumOfCardValues,
     ])
     moveValueArray.push(moveValue)
@@ -42,15 +42,15 @@ function doAllMoveValue () {
 doAllMoveValue()
 
 const result = regression.linear([
-  [2.0, 0.4626053000001173], // 0.15189775997239793
-  [2.5, 0.647680899999702], // 0.19953451227636002
-  [3.0, 0.826763700000148], // 0.2477798937712158
-  [3.5, 1.0034821999999342], // 0.29641498299702473
-  [4.0, 1.1790939000000014], // 0.3451872015831857
-  [4.5, 1.3524259999999888], // 0.3939419623685336
-  [5.0, 1.5267605000000748], // 0.4424326179058796
-  [5.5, 1.698659999999992], // 0.4917341011186827
-  [6.0, 1.8732233999999341], // 0.5398159733608531
+  [2.0, 0.35219100000013154], // 0.11226809680517208
+  [2.5, 0.48908000000001056], // 0.14823283485692115
+  [3.0, 0.6230299999999271], // 0.18422203580892543
+  [3.5, 0.7559939999999954], // 0.21995444019962004
+  [4.0, 0.885333], // 0.2562522892842059
+  [4.5, 1.016376000000017], // 0.29277855764529886
+  [5.0, 1.1462370000000053], // 0.3285579390825095
+  [5.5, 1.2749619999999922], // 0.36419613526812683
+  [6.0, 1.402466000000008], // 0.40235324992523624
 ], {precision: 20})
 console.log(result.equation[0], result.equation[1])
 // m = 0.3514782366666686. b = -0.23139118000001965
