@@ -1,0 +1,33 @@
+.icon {
+  width: 50px;
+}
+
+.icon.draw {
+  width: auto;
+  max-height: 40px;
+  top: -4px;
+  position: relative;
+  margin: auto 7px;
+}
+
+.cost .icon {
+  zoom: .6;
+  margin-right: -5px;
+}
+
+
+.discount {
+  top: 100px;
+  position: absolute;
+}
+
+.discount .icon {
+  display: block;
+  background-color: black;
+  margin-bottom: 10px;
+}
+
+.activation {
+  position: absolute;
+  top: 170px;
+}
