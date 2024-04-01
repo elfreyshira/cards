@@ -3,10 +3,12 @@ import _ from 'lodash'
 import fire from './images/fire.png'
 import earth from './images/earth.png'
 import water from './images/water.png'
-import wild from './images/fire.png'
+import wild from './images/wild.png'
 
-import point from './images/fire.png'
+import point from './images/point.png'
 import draw from './images/draw.png'
+import arrow from './images/arrow-right.png'
+
 // import desertIcon from './images/desert.png'
 // import islandIcon from './images/island.png'
 // import drawIcon from './images/draw.png'
@@ -41,12 +43,12 @@ function Water () {
 }
 
 function Wild () {
-  return <img className="icon" src={wild} />
+  return <img className="icon wild" src={wild} />
 }
 
 
 function Point () {
-  return <img className="icon" src={point} />
+  return <img className="icon point" src={point} />
 }
 
 function Draw () {
@@ -55,50 +57,10 @@ function Draw () {
 
 
 
-// function Earth ({amount}) {
-//   return <span><img className="icon forest" src={forestIcon} />{flr1(amount)}</span>
-// }
+function Arrow () {
+  return <img className="icon arrow-right" src={arrow} />
+}
 
-// function Fire ({amount}) {
-//   return <span><img className="icon desert" src={desertIcon} />{flr1(amount)}</span>
-// }
-
-// function Water ({amount}) {
-//   return <span><img className="icon island" src={islandIcon} />{flr1(amount)}</span>
-// }
-
-// function Wild ({amount}) {
-//   return <span><img className="icon wild" src={wildIcon} />{flr1(amount)}</span>
-// }
-// function Move ({amount}) {
-//   return <span><img className="icon move" src={moveIcon} />{flr1(amount)}</span>
-// }
-
-
-
-// function Money ({amount}) {
-//   return <span><img className="icon money" src={moneyIcon} />{flr1(amount)}</span>
-// }
-// function Draw ({amount}) {
-//   return _.times(_.floor(amount) || 1, (idx) => <img key={idx} className="icon draw" src={drawIcon} />)
-// }
-// function Cycle ({amount}) {
-//   return _.times(_.floor(amount) || 1, (idx) => <img key={idx} className="icon cycle" src={cycleIcon} />)
-// }
-// function Trash ({amount}) {
-//   return <img className="icon trash" src={trashIcon} />
-// }
-// function Energy ({amount}) {
-//   return _.times(_.floor(amount) || 1, (idx) => <img key={idx} className="icon energy" src={energyIcon} />)
-//   // return <img className="icon energy" src={energyIcon} />
-// }
-// function Day () {
-//   return <img className="icon day" src={dayIcon} />
-// }
-
-// function Action () {
-//   return <img className="icon action" src={actionIcon} />
-// }
 
 
 export default {
@@ -109,4 +71,5 @@ export default {
   
   Draw,
   Point, // wind
+  Arrow,
 }

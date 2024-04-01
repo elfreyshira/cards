@@ -1,5 +1,6 @@
 .icon {
-  width: 50px;
+  max-width: 50px;
+  max-height: 50px;
 }
 
 .icon.draw {
@@ -10,24 +11,81 @@
   margin: auto 7px;
 }
 
+
+.icon.point {
+/*  margin-right: 7px;*/
+  padding: 0 6px;
+  zoom: 0.8;
+}
+
+.icon.wild {
+  padding: 5px;
+}
+
+.cost {
+  border-bottom: 1px solid black;
+}
 .cost .icon {
   zoom: .6;
   margin-right: -5px;
 }
 
 
-.discount {
-  top: 100px;
-  position: absolute;
+
+.point-container {
+  margin-top: 10px;
 }
 
-.discount .icon {
-  display: block;
-  background-color: black;
-  margin-bottom: 10px;
+.discount {
+  margin-top: 20px;
 }
+
+.discount-group .icon {
+  margin-left: 5px;
+  display: inline-block;
+  background-color: black;
+  border-radius: 100%;
+  padding: 4px;
+  border-right: 2px solid white;
+}
+.discount-group:not(:first-child) {
+  margin-bottom: 5px;
+}
+
+
 
 .activation {
+/*  position: absolute;*/
+  margin-top: 20px;
+  padding: 5px;
+  background-color: #eee;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+.activation .icon {
+  zoom: .8;
+}
+
+.activation .arrow-right {
+  margin-right: 10px;
+}
+
+.activation .icon.draw:only-child {
+  margin-top: 10px;
+}
+
+
+.storage {
   position: absolute;
-  top: 170px;
+  bottom: 0;
+  margin-left: 10px;
+}
+
+.storage .icon {
+  background: rgb(255,255,255);
+  background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(0,0,0,1) 100%);
+/*  border: 2px solid #999;*/
+  zoom: .9;
+  margin-right: 10px;
+
 }

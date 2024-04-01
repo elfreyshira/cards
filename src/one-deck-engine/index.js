@@ -9,7 +9,7 @@ import './index.css'
 import getNewExcludeList from '../util/getNewExcludeList.js'
 console.clear()
 
-const CARD_QUANTITY = 10
+const CARD_QUANTITY = 30
 
 // const RESOURCE_VALUES_MAPPING = {
 //   draw: 125, // or 300
@@ -274,6 +274,8 @@ _.forEach(cardsArray, (cardObj) => {
           // {resourceList: ['fireDiscount', 'earthDiscount', 'waterDiscount'], max: 2},
           // {resourceList: ['fireDelay', 'earthDelay', 'waterDelay'], max: 1},
 
+          {resourceList: ['fireStorage', 'earthStorage', 'waterStorage', 'wildStorage'], max: 4},
+          {resourceList: ['fireProduce', 'earthProduce', 'waterProduce', 'wildProduce'], max: 4},
           {resourceList: ['draw'], max: 1},
           {resourceList: ['point'], max: 3},
         ],

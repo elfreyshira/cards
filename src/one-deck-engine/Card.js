@@ -29,6 +29,7 @@ const cleanup = (effectKey) => {
 //   }
 // }
 
+
 function Cost({cost}) {
   return (
     <div className="cost">
@@ -43,6 +44,16 @@ function Cost({cost}) {
   )
 }
 
+function Point ({gain}) {
+  if (_.has(gain, 'point')) {
+    // const PointIcon = ICONS.Point
+    return <div className="point-container"> {_.times(gain.point, () => <ICONS.Point />)} </div>
+  }
+  else {
+    return null
+  }
+}
+
 function Discount({gain}) {
   return (
     <div className="discount">
@@ -50,7 +61,9 @@ function Discount({gain}) {
         _.map(gain, (discountQuantity, resource) => {
           if (_.endsWith(resource, 'Discount')) {
             const ChosenIcon = ICONS[cleanup(resource)]
-            return _.times(discountQuantity, () => <ChosenIcon />)
+            return <div className="discount-group">
+            {_.times(discountQuantity, () => <ChosenIcon />)}
+            </div>
           }
           
         })
@@ -59,16 +72,51 @@ function Discount({gain}) {
   )
 }
 
+
+ // _.map(gain, (discountQuantity, resource) => {
+ //          if (_.endsWith(resource, 'Produce') || resource === 'draw') {
+ //            const ChosenIcon = ICONS[cleanup(resource)]
+ //            return _.times(discountQuantity, () => <ChosenIcon />)
+ //          }
+          
+ //        })
+
+
 function Activation({gain}) {
+  const activationList = _.filter(_.keys(gain), (resource) => {
+    return _.endsWith(resource, 'Produce') || resource === 'draw'
+  })
+
+  if (_.isEmpty(activationList)) {
+    return null
+  }
+
   return (
     <div className="activation">
+        <ICONS.Arrow/>
       {
-        _.map(gain, (discountQuantity, resource) => {
-          if (_.endsWith(resource, 'Produce') || resource === 'draw') {
-            const ChosenIcon = ICONS[cleanup(resource)]
-            return _.times(discountQuantity, () => <ChosenIcon />)
-          }
-          
+        _.map(activationList, (resource) => {
+          const ChosenIcon = ICONS[cleanup(resource)]
+          return _.times(gain[resource], () => <ChosenIcon />)
+        })
+      }
+    </div>
+  )
+}
+
+function Storage ({gain}) {
+  const storageList = _.filter(_.keys(gain), (resource) => _.endsWith(resource, 'Storage'))
+
+  if (_.isEmpty(storageList)) {
+    return null
+  }
+
+  return (
+    <div className="storage">
+      {
+        _.map(storageList, (resource) => {
+          const ChosenIcon = ICONS[cleanup(resource)]
+          return _.times(gain[resource], () => <ChosenIcon />)
         })
       }
     </div>
@@ -86,8 +134,10 @@ function Card (props) {
   return (
     <div className="card">
       <Cost cost={cost} />
+      <Point gain={gain} />
       <Discount gain={gain} />
       <Activation gain={gain} />
+      <Storage gain={gain} />
 
 
     </div>
