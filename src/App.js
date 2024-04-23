@@ -8,7 +8,8 @@ import './App.css';
 // import Cards from './dbg-simple/index.js';
 // import Cards from './dbg-majority/index.js';
 // import Cards from './astg/index.js';
-import Cards from './one-deck-engine/index.js';
+// import Cards from './one-deck-engine/index.js';
+import Cards from './one-deck-engine-2/index.js';
 // import Cards from './fantasy-realms/index.js';
 
 import getNewExcludeList from './util/getNewExcludeList.js'
