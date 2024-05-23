@@ -30,28 +30,17 @@ const cleanup = (effectKey) => {
 // }
 
 
-function Cost({cost}) {
+function Cost({costTotal, type, tieBreaker}) {
   return (
     <div className="cost">
       {
-        _.map(cost, (costQuantity, costKey) => {
-          const ChosenIcon = ICONS[cleanup(costKey)]
-          {/*return <span>{_.times(costQuantity, () => <ChosenIcon />)}</span>*/}
-          return _.times(costQuantity, () => <ChosenIcon />)
+        _.times(costTotal, () => {
+          return type === 'engine' ? <ICONS.Fire/> : <ICONS.Water/>
         })
       }
+      <span className="tiebreaker">{_.times(tieBreaker, () => <>&#10607;</>)}</span>
     </div>
   )
-}
-
-function Point ({gain}) {
-  if (_.has(gain, 'point')) {
-    // const PointIcon = ICONS.Point
-    return <div className="point-container"> {_.times(gain.point, () => <ICONS.Point />)} </div>
-  }
-  else {
-    return null
-  }
 }
 
 function Discount({gain}) {
@@ -133,7 +122,7 @@ function Storage ({gain}) {
 }
 
 function Special ({gain}) {
-  const specialResource = _.filter(_.keys(gain), (resource) => _.startsWith(resource, 'build'))[0]
+  const specialResource = _.filter(_.keys(gain), (resource) => _.startsWith(resource, 'drawAfter'))[0]
 
   let specialText = ''
 
@@ -141,11 +130,12 @@ function Special ({gain}) {
     return null
   }
 
-  else if (specialResource === 'buildWithOnlyProduced') {
-    specialText = <>After DEVELOP: play a card using only <span className="special-produced">produced</span> resources.</>
+
+  else if (specialResource === 'drawAfterBuildEngine') {
+    specialText = <>After CONSTRUCT: <ICONS.Draw/></>
   }
-  else if (specialResource === 'buildWithOnlyDiscounted') {
-    specialText = <>After PRODUCE: play a card using only <span className="special-discounted">discounted</span> resources.</>
+  else if (specialResource === 'drawAfterBuildPurchase') {
+    specialText = <>After DEVELOP: <ICONS.Draw/></>
   }
 
   return (
@@ -156,45 +146,90 @@ function Special ({gain}) {
 
 }
 
-function Discard ({discard}) {
-  const ChosenIcon = ICONS[cleanup(discard)]
-  return (
-    <div className="discard">
-      <ChosenIcon />
-    </div>
-  )
-}
+function EngineSide ({cardObj}) {
 
-function TimePassed({timePassed}) {
-  return (
-    <div className="time-passed-container">
-      <ICONS.TimePassed />{timePassed}
-    </div>
-  )
-}
-
-function Card (props) {
   const {
-    cost,
+    costTotal,
     gain,
-    tiebreaker,
-    uuid,
-    discard,
-    timePassed,
-  } = props.cardObj
-
+    tieBreaker
+  } = cardObj
 
   return (
-    <div className="card">
-      <Cost cost={cost} />
-      <Discard discard={discard} />
-      <Point gain={gain} />
+    <div className="engine-side">
+      <Cost costTotal={costTotal} type="engine" tieBreaker={tieBreaker}/>
       <Discount gain={gain} />
       <Activation gain={gain} />
       <Special gain={gain} />
       <Storage gain={gain} />
+    </div>
+  )
+}
 
-      <TimePassed timePassed={timePassed} />
+function PurchasePowerSummary ({purchaseArray}) {
+  return <div className="purchase-power-summary">
+    {purchaseArray[0]} / {purchaseArray[1]} / {purchaseArray[2]}
+    {/*{purchaseArray[0]} &#10148; {purchaseArray[1]} &#10148; {purchaseArray[2]}*/}
+  </div>
+}
+
+function FirstPurchasePower ({purchaseArray}) {
+  return <div className="purchase-power first-purchase-power">{purchaseArray[0]}</div>
+}
+function SecondPurchasePower ({purchaseArray}) {
+  return <div className="purchase-power second-purchase-power">
+    <div className="purchase-power-border-container">{purchaseArray[1]}</div>
+    
+  </div>
+}
+function ThirdPurchasePower ({purchaseArray}) {
+  let purchasePowerStyle = {}
+  if (purchaseArray[2] >= 10) {
+    purchasePowerStyle = {right: '5px', top: '39px'}
+  }
+  return <div className="purchase-power third-purchase-power" style={purchasePowerStyle}>
+    <div className="purchase-power-border-container">
+    <div className="purchase-power-border-container">
+      {purchaseArray[2]}
+    </div>
+    </div>
+  </div>
+}
+
+function PurchaseSide ({cardObj}) {
+
+  const {
+    costPurchaseSide,
+    gain,
+    purchaseArray,
+  } = cardObj
+
+  return <div className="purchase-side">
+    <Cost costTotal={costPurchaseSide} />
+
+    <PurchasePowerSummary purchaseArray={purchaseArray} />
+
+    <FirstPurchasePower purchaseArray={purchaseArray} />
+    <SecondPurchasePower purchaseArray={purchaseArray} />
+    <ThirdPurchasePower purchaseArray={purchaseArray} />
+  </div>
+}
+
+function PointCost ({pointCost}) {
+  return <div className="point-cost">{pointCost}</div>
+}
+
+function Card (props) {
+  
+  const {
+    uuid,
+    pointCost
+  } = props.cardObj
+
+  return (
+    <div className="card">
+      <PointCost pointCost={pointCost} />
+      <EngineSide cardObj={props.cardObj} />
+      <PurchaseSide cardObj={props.cardObj} />
 
       <div className="noprint" style={{position: 'absolute', top: '30px', right: 0, opacity: .1}}>{uuid}</div>
 

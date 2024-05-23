@@ -14,42 +14,36 @@ function WindCollection () {
   return <div className="wind-collection"><ICONS.Point /></div>
 }
 
-
-const FarmOne = () => <>Gain <ICONS.Point /> for every 3 resources only 1 element type paid.</>
-const FarmWild = () => <>Gain <ICONS.Point /> for every 5 resources paid.</>
-const FarmDiscounted = () => <>Gain <ICONS.Point /> for every 4 discounted resources paid.</>
-const FarmProduced = () => <>Gain <ICONS.Point /> for every 4 produced resources paid.</>
-
-const FARM_TYPE_MAPPING = {
-  one: FarmOne,
-  wild: FarmWild,
-  discount: FarmDiscounted,
-  produce: FarmProduced,
-}
-
-function Character ({farmType="one"}) {
-  const ChosenFarmType = FARM_TYPE_MAPPING[farmType]
+function Character () {
 
   return (
     <div className="card">
-      <div className={classnames("character", "character-type-"+farmType)}>
+      <div className="character">
         Each turn, choose 1 action:
         <div className="character-grouping">
-          <span className="character-action">DEVELOP</span> Play 1 card from hand.
+          <span className="character-action">CONSTRUCT</span> Pay <ICONS.Fire/> to play card to top row. For each
+            <span className="rotate-icon" style={{fontSize: '25px', bottom: '24px'}}>&#10607;</span> on the card, draw & discard 2 cards.
         </div>
         <div className="character-grouping">
           <span className="character-action">PRODUCE</span> Trigger <ICONS.Arrow /> effects.
         </div>
         <div className="character-grouping">
-          <span className="character-action">FARM</span> <ChosenFarmType/>
+          <span className="character-action">DEVELOP</span> Pay <ICONS.Water/> to play card to bottom row.
         </div>
         <div className="character-grouping">
-          <span className="character-action">RECYCLE</span> Discard &#119909; cards, draw &#119909; cards. (&#119909; = any number)
+          <span className="character-action">FARM</span> Rotate
+            <span className="rotate-icon">&#10558;</span>
+            all bottom row cards.
+        </div>
+        <div className="character-grouping">
+          <span className="character-action">PURCHASE</span> Pay for any number of point cards.
+          <span style={{display: 'inline-block'}}>Restore<span className="rotate-icon">&#10559;</span></span>
+          any cards used.
         </div>
       </div>
       <hr/>
-      <Crowns />
-      <WindCollection />
+      <div className="end-of-turn">End of turn: <ICONS.Draw /></div>
+      <hr/>
       <Storage gain={{wildStorage: 2}} />
     </div>
   )
