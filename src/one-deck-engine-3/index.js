@@ -1,11 +1,11 @@
 import Brng from 'brng'
 import _ from 'lodash'
 
-// import {Card} from './Card.js'
+import {Card} from './Card.js'
 // import Character from './Character.js'
 
 import '../util/base.css'
-// import './index.css'
+import './index.css'
 
 import getNewExcludeList from '../util/getNewExcludeList.js'
 import getAvailableResources from '../util/getAvailableResources.js'
@@ -15,6 +15,7 @@ global.Brng = Brng
 
 // const CARD_QUANTITY = 0
 const CARD_QUANTITY = 52
+// const CARD_QUANTITY = 100
 console.clear()
 
 const TAG_LIST = ['red', 'green', 'blue']
@@ -80,8 +81,8 @@ const TAG_SIDE_VALUES_MAPPING = _.mapValues({
 
 const resourceGainRoller = new Brng({
   // work = activate
-  draw: 30,
-  money: 30,
+  draw: 40,
+  money: 40,
 
   // increase activate on build
   untapTheCardOnRecruit: 5,
@@ -107,7 +108,7 @@ const resourceGainRoller = new Brng({
 global.resourceGainRoller = resourceGainRoller
 
 
-const tagComboTypeRoller = new Brng({cost: 3, activate: 3, point: 2}, {bias: 4})
+const tagComboTypeRoller = new Brng({cost: 4, activate: 3, point: 2}, {bias: 4})
 
 const tagComboCostRoller = new Brng({
   red: 2, // value 1 -- 1.75
@@ -124,7 +125,7 @@ const tagSideRoller = new Brng({
 const tagSideVarietyRoller = new Brng({1: 1, 2: 1}, {bias: 4})
 
 const CARD_COST_DISTRIBUTION = {
-  // https://boardgamegeek.com/image/5536942/race-galaxy
+  // https://boardgamegeek.com/image/5536942/race-for-the-galaxy
   // 1: 10,
   // 2: 36,
 
@@ -145,6 +146,7 @@ const CARD_COST_DISTRIBUTION = {
 }
 const cardCostRoller = new Brng(CARD_COST_DISTRIBUTION, {bias: 4})
 
+const pointCostRoller = new Brng(_.countBy(_.range(3, 10+1)), {bias: 4})
 
 // activation levels:
 // 1: 100-150
@@ -231,7 +233,7 @@ _.forEach(cardsArray, (cardObj) => {
     const onlyList = getAvailableResources(
       TAG_COMBO_COST_MAPPING,
       cardObj.costForResources - tagComboCostCurrentValue,
-      0.501 // value slack
+      0.63 // value slack
     )
 
     const excludeList = getNewExcludeList(
@@ -263,7 +265,7 @@ _.forEach(cardsArray, (cardObj) => {
 cardsArray = _.sortBy(cardsArray, sortOrderArray)
 
 ////// FILL CARDS FOR: TAG COMBO = ACTIVATE
-const tagComboActivateTypeRoller = new Brng({red: 1.75, green: 1.8, blue: 1.875}, {bias: 4})
+const tagComboActivateTypeRoller = new Brng({red: 1, green: 1.25, blue: 1.333333333}, {bias: 4})
 
 const tagComboActivateRedRoller = new Brng({1:1, 2:1, 3:1, 4:1, 5:1, 6:1}, {bias: 4, repeatTolerance: 0})
 const tagComboActivateGreenRoller = new Brng({1:1, 2:1, 3:1, 4:1, 5:1}, {bias: 4, repeatTolerance: 0})
@@ -325,11 +327,11 @@ cardsArray = _.sortBy(cardsArray, sortOrderArray)
 
 ////// FILL CARDS FOR: TAG COMBO = POINT
 const tcPointRollerForVarietyMapping = {
-  1: new Brng({red: 1, green: 1.1, blue: 1.2}, {bias: 4}),
+  1: new Brng({red: 1, green: 1.25, blue: 1.33333333}, {bias: 4}),
   2: new Brng({
-      red_green: 2.1,
-      red_blue: 2.2,
-      green_blue: 2.3,
+      red_green: 2.25,
+      red_blue: 2.333333333333,
+      green_blue: 2.583333333333,
     }, {bias: 4})
 }
 
@@ -451,7 +453,7 @@ _.forEach(cardsArray, (cardObj) => {
 cardsArray = _.sortBy(cardsArray, sortOrderArray)
 
 
-///////// FILL TAG SIDE ////////
+///////// FILL TAG SIDE GAIN ////////
 _.forEach(cardsArray, (cardObj) => {
   let tagSideCurrentValue = 0
   const tagSideObj = {}
@@ -548,23 +550,34 @@ cardsArray = _.sortBy(cardsArray, sortOrderArray)
 //   cardObj.actualValue = currentValue
 // })
 
-const cardsImportantKeys = ['costForResources']
+const cardsImportantKeys = [
+  'costForResources',
+  'tagComboType',
+  'tagComboActivate',
+  'tagComboCost',
+  'tagComboPoint',
+  'gain',
+  'points',
+  'tagSide',
+  'tagSidePoints',
+  'uuid',
+]
 
 function Cards () {
   return (
     <div>
       {
-        //_.map(cardsArray, (cardObj, idx) => <Card key={idx} cardObj={cardObj} /> )
+        _.map(cardsArray, (cardObj, idx) => <Card key={idx} cardObj={cardObj} /> )
       }
 
       <pre className="noprint">
-        {/*{
+        {
           JSON.stringify(
             _.chain(cardsArray).map((obj) => _.pick(obj, cardsImportantKeys)).value()
           , null, 2)
-        }*/}
+        }
         {
-          JSON.stringify(cardsArray, null, 2)
+          //JSON.stringify(cardsArray, null, 2)
         }
       </pre>
     </div>
@@ -575,7 +588,7 @@ function Cards () {
 console.log(resourceGainRoller.proportions)
 const lol = {}
 _.forEach(RESOURCE_LIST, (key) => {
-  lol[key] = RESOURCE_VALUES_MAPPING[key] * resourceGainRoller.originalProbabilities[key]
+  lol[key] = _.round(RESOURCE_VALUES_MAPPING[key] * resourceGainRoller.originalProbabilities[key], 1)
 })
 global.lol = lol
 console.log(lol)

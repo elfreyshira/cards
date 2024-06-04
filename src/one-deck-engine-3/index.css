@@ -1,0 +1,78 @@
+.icon {
+  display: inline-block;
+  position: relative;
+}
+.icon img {
+  max-height: 100px;
+  position: relative;
+}
+.icon .number {
+  font-size: 57px;
+  display: inline-block;
+  left: 50%;
+  position: absolute;
+  transform: translateX(-50%);
+  bottom: 9%;
+  font-weight: 600;
+  color: white;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+
+}
+.icon {
+/*  max-height: 10px;*/
+}
+
+.icon {
+  transform: translateY(10%);
+}
+
+.cost-resource {
+  font-size: 30px;
+  border-bottom: 1px solid black;
+}
+
+.cost-resource .icon {
+  zoom: .32;
+/*  transform: translateY(10%);*/
+  margin-left: 10px;
+
+}
+
+.tap {
+  width: 100%;
+/*  background: red;*/
+  position: relative;
+  margin-top: 10px;
+  min-height: 43px;
+  background-color: #ddd;
+}
+
+.tap-icon-container {
+  width: 20%;
+/*  background: green;*/
+
+  padding-left: 5px;
+
+  display: inline-block;
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+}
+
+.tap-icon-container .icon {zoom: .3}
+
+.tap-gain-container {
+  font-size: 25px;
+  width: 79%;
+  height: 100%;
+/*  position: absolute;*/
+  margin-left: 20%;
+/*  background: blue;*/
+  display: inline-block;
+  padding-left: 5px;
+  border-left: 1px solid black;
+}
+
+.tap-gain-container .icon {
+  zoom: .3;
+}
