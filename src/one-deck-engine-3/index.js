@@ -15,6 +15,7 @@ global.Brng = Brng
 
 // const CARD_QUANTITY = 0
 const CARD_QUANTITY = 52
+// const CARD_QUANTITY = 1
 // const CARD_QUANTITY = 100
 console.clear()
 
@@ -61,6 +62,13 @@ const DISCOUNT_PASSIVE_RESOURCES = ['discountRecruit', 'discountConstruct', 'dis
 const DRAW_PASSIVE_RESOURCES = ['drawOnRecruit', 'drawOnConstruct', 'drawOnInvite']
 const EXTRA_BUILD_RESOURCES = ['extraRecruit', 'extraConstruct', 'extraInvite']
 
+const RECRUIT_PASSIVE_RESOURCES = [
+  'untapTheCardOnRecruit', 'discountRecruit', 'drawOnRecruit', 'extraRecruit']
+const CONSTRUCT_PASSIVE_RESOURCES = [
+  'untapOnConstruct', 'discountConstruct', 'drawOnConstruct', 'extraConstruct']
+const INVITE_PASSIVE_RESOURCES = [
+  'untapOnInvite', 'discountInvite', 'drawOnInvite', 'extraInvite']
+
 const TAG_COMBO_COST_MAPPING = {
   red: 1.0,
   green: 1.2,
@@ -100,7 +108,7 @@ const resourceGainRoller = new Brng({
   drawOnInvite: 3,
 
   // increase build
-  extraRecruit: 3,
+  extraRecruit: 3.3,
   extraConstruct: 2,
   extraInvite: 2,
 
@@ -108,7 +116,11 @@ const resourceGainRoller = new Brng({
 global.resourceGainRoller = resourceGainRoller
 
 
-const tagComboTypeRoller = new Brng({cost: 4, activate: 3, point: 2}, {bias: 4})
+const tagComboTypeRoller = new Brng({
+  cost: 4,
+  activate: 3,
+  point: 2,
+}, {bias: 4})
 
 const tagComboCostRoller = new Brng({
   red: 2, // value 1 -- 1.75
@@ -135,6 +147,7 @@ const CARD_COST_DISTRIBUTION = {
   // 5: 10,
   // 6: 7,
   //////////
+
   1: 2,
   2: 4,
 
@@ -230,10 +243,20 @@ _.forEach(cardsArray, (cardObj) => {
   let tagComboCostCurrentValue = 0
 
   while(true) {
+
+    let valueSlack = 0.75 // blue
+    if (_.has(tagComboCostObj, 'green')) {
+      valueSlack = 0.6
+    }
+    if (_.has(tagComboCostObj, 'red')) {
+      valueSlack = 0.5
+    }
+    
+
     const onlyList = getAvailableResources(
       TAG_COMBO_COST_MAPPING,
       cardObj.costForResources - tagComboCostCurrentValue,
-      0.63 // value slack
+      valueSlack
     )
 
     const excludeList = getNewExcludeList(
@@ -415,16 +438,18 @@ _.forEach(cardsArray, (cardObj) => {
         groupingMaxVariety: [
           {resourceList: RESOURCE_LIST, max: 3},
           {resourceList: NON_ACTIVATE_RESOURCES, max: cardObj.costForResources >= 4 ? 2 : 1},
-        ]
-      },
-      {
+        ],
         groupingMaxQuantity: [
           {resourceList: UNTAP_PASSIVE_RESOURCES, max: 1},
           {resourceList: DISCOUNT_PASSIVE_RESOURCES, max: 1},
           {resourceList: DRAW_PASSIVE_RESOURCES, max: 1},
           {resourceList: EXTRA_BUILD_RESOURCES, max: 1},
+
+          {resourceList: RECRUIT_PASSIVE_RESOURCES, max: 1},
+          {resourceList: CONSTRUCT_PASSIVE_RESOURCES, max: 1},
+          {resourceList: INVITE_PASSIVE_RESOURCES, max: 1},
         ]
-      },
+      }
     )
 
     const chosenResource = _.attempt(() => resourceGainRoller.roll({

@@ -3,7 +3,7 @@
   position: relative;
 }
 .icon img {
-  max-height: 100px;
+  height: 100px;
   position: relative;
 }
 .icon .number {
@@ -18,6 +18,9 @@
   text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
 
 }
+.icon.draw .number {
+  bottom: 17%;
+}
 .icon {
 /*  max-height: 10px;*/
 }
@@ -28,14 +31,14 @@
 
 .cost-resource {
   font-size: 30px;
-  border-bottom: 1px solid black;
+  border-bottom: 2px dashed black;
 }
+
 
 .cost-resource .icon {
   zoom: .32;
 /*  transform: translateY(10%);*/
   margin-left: 10px;
-
 }
 
 .tap {
@@ -43,7 +46,7 @@
 /*  background: red;*/
   position: relative;
   margin-top: 10px;
-  min-height: 43px;
+/*  min-height: 43px;*/
   background-color: #ddd;
 }
 
@@ -59,10 +62,12 @@
   transform: translate(0, -50%);
 }
 
-.tap-icon-container .icon {zoom: .3}
+.tap .icon {
+  zoom: .25;
+}
 
 .tap-gain-container {
-  font-size: 25px;
+  font-size: 20px;
   width: 79%;
   height: 100%;
 /*  position: absolute;*/
@@ -70,9 +75,31 @@
 /*  background: blue;*/
   display: inline-block;
   padding-left: 5px;
+  padding-top: 3px;
+  padding-bottom: 4px;
   border-left: 1px solid black;
 }
 
-.tap-gain-container .icon {
-  zoom: .3;
+.passive-item {
+  margin-top: 10px;
+  padding: 3px 7px 5px;
+  border-left: 10px solid;
+/*  border-bottom: 1px solid;*/
+/*  border-top: 1px solid;*/
+}
+.passive-item.invite {
+  border-color: #fb5607;
+  background-color: #fb560720;
+}
+.passive-item.recruit {
+  border-color: #8338ec;
+  background-color: #8338ec20;
+
+}
+.passive-item.construct {
+  border-color: #5c8001;
+  background-color: #5c800120;
+}
+.passive .icon {
+  zoom: .2;
 }

@@ -11,14 +11,14 @@ function getNewExcludeList (
   }
 ) {
 
-  log('currentResourceMap', currentResourceMap)
+  // log('currentResourceMap', currentResourceMap)
   let excludeList = []
 
   if (!_.isEmpty(groupingMaxVariety)) {
     _.forEach(groupingMaxVariety, (groupingObj) => {
       let currentResourceKeys = _.keys(currentResourceMap)
 
-      log('groupingObj', groupingObj)
+      // log('groupingObj', groupingObj)
       
       let totalVariety = 0
       _.forEach(groupingObj.resourceList, (resourceObj) => {
@@ -41,12 +41,12 @@ function getNewExcludeList (
         }
       })
 
-      log('totalVariety', totalVariety)
+      // log('totalVariety', totalVariety)
       if (totalVariety >= groupingObj.max) {
         const flattenedResourceList = _.flatten(groupingObj.resourceList)
         
-        log('exclude')
-        log(groupingObj.resourceList, currentResourceKeys, _.difference(flattenedResourceList, currentResourceKeys))
+        // log('exclude')
+        // log(groupingObj.resourceList, currentResourceKeys, _.difference(flattenedResourceList, currentResourceKeys))
 
         excludeList = _.concat(excludeList, _.difference(flattenedResourceList, currentResourceKeys))
       }
@@ -55,7 +55,10 @@ function getNewExcludeList (
   }
 
   if (!_.isEmpty(groupingMaxQuantity)) {
-    _.forEach(groupingMaxQuantity, (groupingObj) => {
+    _.forEach(groupingMaxQuantity, (groupingObj, index) => {
+      log('index = ', index)
+      log('groupingMaxQuantity', groupingMaxQuantity)
+      log('groupingObj', groupingObj)
       
       let totalQuantity = 0
       _.forEach(groupingObj.resourceList, (resource) => {
@@ -64,6 +67,8 @@ function getNewExcludeList (
         }
       })
 
+      log('totalQuantity', totalQuantity)
+
       if (totalQuantity >= groupingObj.max) {
         excludeList = _.concat(excludeList, groupingObj.resourceList)
       }
@@ -71,7 +76,7 @@ function getNewExcludeList (
     })
   }
 
-  log('!!!!!!!!!', _.uniq(excludeList))
+  log('!!!!!!!!! excludeList', _.uniq(excludeList))
   return _.uniq(excludeList)
 }
 
