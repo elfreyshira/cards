@@ -17,11 +17,12 @@ function CostTagCombo ({tagComboCost}) {
   )
 }
 
-function CostResources ({costForResources, tagComboCost}) {
+function CostResources ({costForResources, tagComboCost, points}) {
   return (
     <div className="cost-resource">
       <span>${costForResources}</span>
       <CostTagCombo tagComboCost={tagComboCost} />
+      {points > 0 ? <span className="points-container"><ICONS.Point/>{points}</span> : null}
     </div>
   )
 }
@@ -80,25 +81,35 @@ function Rest ({gain = {}, tagComboActivate = {}}) {
   )
 }
 
+function Qt (props) {
+  return <div className="qualifier-text">{props.children}</div>
+}
+
 const PASSIVE_TO_HTML = {
-  untapTheCardOnRecruit: <>RECRUIT: instantly <ICONS.Rest/> the newly played card</>,
-  untapOnConstruct: <>CONSTRUCT: <ICONS.Rest/> any 1 card</>,
-  untapOnInvite: <>INVITE: <ICONS.Rest/> any 1 card</>,
+  untapTheCardOnRecruit: <><b>RECRUIT</b>: <ICONS.Rest/> the new card
+    <Qt>(does not apply when this card is played)</Qt>
+  </>,
+  untapOnConstruct: <><b>CONSTRUCT</b>: <ICONS.Rest/> any card</>,
+  untapOnInvite: <><b>INVITE</b>: <ICONS.Rest/> any card</>,
 
   // passive build discount
-  discountRecruit: <>RECRUIT: cost -$1</>,
-  discountConstruct: <>CONSTRUCT: cost -$1</>,
-  discountInvite: <>INVITE: cost -$1</>,
+  discountRecruit: <><b>RECRUIT</b>: discount $1</>,
+  discountConstruct: <><b>CONSTRUCT</b>: discount $1</>,
+  discountInvite: <><b>INVITE</b>: discount $1</>,
 
   // passive build draw
-  drawOnRecruit: <>RECRUIT: <ICONS.Draw number={1}/></>,
-  drawOnConstruct: <>CONSTRUCT: <ICONS.Draw number={1}/></>,
-  drawOnInvite: <>INVITE: <ICONS.Draw number={1}/></>,
+  drawOnRecruit: <><b>RECRUIT</b>: <ICONS.Draw number={1}/>
+    <Qt>(does not apply when this card is played)</Qt>
+  </>,
+  drawOnConstruct: <><b>CONSTRUCT</b>: <ICONS.Draw number={1}/></>,
+  drawOnInvite: <><b>INVITE</b>: <ICONS.Draw number={1}/></>,
 
   // increase build
-  extraRecruit: <>RECRUIT: you may recruit 1 additional time</>,
-  extraConstruct: <>CONSTRUCT: you may construct 1 additional time</>,
-  extraInvite: <>INVITE: you may invite 1 additional time</>,
+  extraRecruit: <><b>RECRUIT</b>: you may recruit 1 additional time
+    <Qt>(does not apply when this card is played)</Qt>
+  </>,
+  extraConstruct: <><b>CONSTRUCT</b>: you may construct 1 additional time</>,
+  extraInvite: <><b>INVITE</b>: you may invite 1 additional time</>,
 }
 const passiveKeys = _.keys(PASSIVE_TO_HTML)
 
@@ -134,19 +145,46 @@ function Passive({gain={}}) {
   return null
 }
 
+function ComboPoint ({tagComboPoint={}}) {
+  if (_.isEmpty(tagComboPoint)) {
+    return null
+  }
+  const tags = _(tagComboPoint)
+    .keys()
+    .first()
+    .split('_')
+    .map((tagKey) => {
+      const TagIcon = ICONS[_.capitalize(tagKey)]
+      return <TagIcon key={tagKey} />
+    })
+
+  const pointsPerTags = _.values(tagComboPoint)[0]
+
+  return (
+    <div className="tc-point">
+      <div className="tc-point-inner">
+        <ICONS.Point/>{pointsPerTags} <small>for each</small> {tags}
+      </div>
+    </div>
+  )
+}
+
 function Card (props) {
   
   const {
     uuid,
     costForResources,
     tagComboCost,
+    tagComboPoint,
+    points,
     gain,
     tagComboActivate,
   } = props.cardObj
 
   return (
     <div className="card">
-      <CostResources costForResources={costForResources} tagComboCost={tagComboCost} />
+      <CostResources costForResources={costForResources} tagComboCost={tagComboCost} points={points} />
+      <ComboPoint tagComboPoint={tagComboPoint} />
       <Tap gain={gain} tagComboActivate={tagComboActivate} />
       <Rest gain={gain} tagComboActivate={tagComboActivate} />
       <Passive gain={gain} />

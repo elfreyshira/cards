@@ -21,6 +21,13 @@
 .icon.draw .number {
   bottom: 17%;
 }
+
+.icon.point .number {
+  bottom: 20%;
+  color: black;
+  text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+  font-size: 55px;
+}
 .icon {
 /*  max-height: 10px;*/
 }
@@ -41,6 +48,16 @@
   margin-left: 10px;
 }
 
+.cost-resource .points-container {
+  position: absolute;
+  right: 0;
+  margin-right: 10px;
+}
+.points-container .icon.point {
+  zoom: .28;
+  margin-right: 5px;
+}
+
 .tap {
   width: 100%;
 /*  background: red;*/
@@ -52,14 +69,10 @@
 
 .tap-icon-container {
   width: 20%;
-/*  background: green;*/
-
-  padding-left: 5px;
-
   display: inline-block;
   position: absolute;
   top: 50%;
-  transform: translate(0, -50%);
+  transform: translate(25%, -50%);
 }
 
 .tap .icon {
@@ -102,4 +115,35 @@
 }
 .passive .icon {
   zoom: .2;
+}
+
+.qualifier-text {
+  display: block;
+  line-height: 1.2em;
+  font-size: .8em;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+
+.tc-point {
+  text-align: right;
+  font-size: 24px;
+}
+
+.tc-point .icon {
+  zoom: 0.27;
+}
+.tc-point .icon.point {
+  zoom: 0.2;
+  margin-right: 3px;
+}
+
+.tc-point-inner {
+  display: inline-block;
+  border-left: 2px solid black;
+  /* border-radius: 20px; */
+  border-bottom: 2px solid black;
+  border-bottom-left-radius: 15px;
+  padding: 0px 5px 5px;
 }

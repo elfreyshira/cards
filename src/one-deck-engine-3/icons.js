@@ -7,6 +7,7 @@ import blue from './images/blue.png'
 import tap from './images/tap.png'
 import draw from './images/draw.png'
 import rest from './images/rest.png'
+import point from './images/point.png'
 
 
 // import point from './images/point.png'
@@ -66,7 +67,13 @@ function Draw ({number=0}) {
     <img src={draw} />
     {number > 0 ? <span className="number">{number}</span> : null}
   </span>
-  // return <span className="icon"><img src={draw} /></span>
+}
+
+function Point ({number=0}) {
+  return <span className="icon point">
+    <img src={point} />
+    {number > 0 ? <span className="number">{number}</span> : null}
+  </span>
 }
 
 function Rest () {
@@ -81,4 +88,5 @@ export default {
   Tap,
   Draw,
   Rest,
+  Point
 }

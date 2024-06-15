@@ -14,9 +14,9 @@ import roundToNearest from '../util/roundToNearest.js'
 global.Brng = Brng
 
 // const CARD_QUANTITY = 0
-const CARD_QUANTITY = 52
+// const CARD_QUANTITY = 52
 // const CARD_QUANTITY = 1
-// const CARD_QUANTITY = 100
+const CARD_QUANTITY = 100
 console.clear()
 
 const TAG_LIST = ['red', 'green', 'blue']
@@ -126,7 +126,7 @@ const tagComboCostRoller = new Brng({
   red: 2, // value 1 -- 1.75
   green: 1.66666666666666, // value 1.2 -- 1.8
   blue: 1.33333333333333, // value 1.5 -- 1.875
-}, {bias: 1})
+}, {bias: 4})
 
 const tagSideRoller = new Brng({
   red: 2, // value 1
