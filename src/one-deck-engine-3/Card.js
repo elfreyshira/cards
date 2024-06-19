@@ -1,7 +1,31 @@
 import _ from 'lodash'
 import classnames from 'classnames'
+import Brng from 'brng'
 
 import ICONS from './icons.js'
+
+import crown1 from './images/crowns/crown-1.png'
+import crown2 from './images/crowns/crown-2.png'
+import crown3 from './images/crowns/crown-3.png'
+import crown4 from './images/crowns/crown-4.png'
+import crown5 from './images/crowns/crown-5.png'
+import crown6 from './images/crowns/crown-6.png'
+import crown7 from './images/crowns/crown-7.png'
+import crown8 from './images/crowns/crown-8.png'
+import crown9 from './images/crowns/crown-9.png'
+
+const CROWN_ART_MAPPING = {
+  1: crown1,
+  2: crown2,
+  3: crown3,
+  4: crown4,
+  5: crown5,
+  6: crown6,
+  7: crown7,
+  8: crown8,
+  9: crown9,
+}
+const crownArtRoller = new Brng(_.countBy(_.range(1, 9+1)), {bias: 4})
 
 function CostTagCombo ({tagComboCost}) {
   if (_.isEmpty(tagComboCost)) {
@@ -43,9 +67,9 @@ function ComboActivate ({tagComboActivate, filter='money'}) {
 
     const gainHtml = (filter === 'money' ? '$1' : <ICONS.Draw number={1} />)
 
-    return <div key={tagKey}>
+    return <span key={tagKey} className="combo-activate-item">
       <TagIcon number={number}/> : {gainHtml}
-    </div>
+    </span>
   })
 }
 
@@ -58,7 +82,7 @@ function Tap ({gain = {}, tagComboActivate = {}}) {
     <div className="tap">
       <div className="tap-icon-container"><ICONS.Tap /></div>
       <div className="tap-gain-container">
-        {gain.money ? <div>${gain.money}</div> : null}
+        {gain.money ? <span>${gain.money}</span> : null}
         <ComboActivate tagComboActivate={tagComboActivate} />
       </div>
     </div>
@@ -74,7 +98,7 @@ function Rest ({gain = {}, tagComboActivate = {}}) {
     <div className="tap">
       <div className="tap-icon-container"><ICONS.Rest /></div>
       <div className="tap-gain-container">
-        {gain.draw ? <div><ICONS.Draw number={gain.draw}/></div> : null}
+        {gain.draw ? <span><ICONS.Draw number={gain.draw}/></span> : null}
         <ComboActivate tagComboActivate={tagComboActivate} filter="draw"/>
       </div>
     </div>
@@ -86,36 +110,36 @@ function Qt (props) {
 }
 
 const PASSIVE_TO_HTML = {
-  untapTheCardOnRecruit: <><b>RECRUIT</b>: <ICONS.Rest/> the new card
+  untapTheCardOnHire: <><b>HIRE</b>: <ICONS.Rest/> the new card
     <Qt>(does not apply when this card is played)</Qt>
   </>,
   untapOnConstruct: <><b>CONSTRUCT</b>: <ICONS.Rest/> any card</>,
   untapOnInvite: <><b>INVITE</b>: <ICONS.Rest/> any card</>,
 
   // passive build discount
-  discountRecruit: <><b>RECRUIT</b>: discount $1</>,
+  discountHire: <><b>HIRE</b>: discount $1</>,
   discountConstruct: <><b>CONSTRUCT</b>: discount $1</>,
   discountInvite: <><b>INVITE</b>: discount $1</>,
 
   // passive build draw
-  drawOnRecruit: <><b>RECRUIT</b>: <ICONS.Draw number={1}/>
+  drawOnHire: <><b>HIRE</b>: <ICONS.Draw number={1}/>
     <Qt>(does not apply when this card is played)</Qt>
   </>,
   drawOnConstruct: <><b>CONSTRUCT</b>: <ICONS.Draw number={1}/></>,
   drawOnInvite: <><b>INVITE</b>: <ICONS.Draw number={1}/></>,
 
   // increase build
-  extraRecruit: <><b>RECRUIT</b>: you may recruit 1 additional time
+  extraHire: <><b>HIRE</b>: +1 extra hire
     <Qt>(does not apply when this card is played)</Qt>
   </>,
-  extraConstruct: <><b>CONSTRUCT</b>: you may construct 1 additional time</>,
-  extraInvite: <><b>INVITE</b>: you may invite 1 additional time</>,
+  extraConstruct: <><b>CONSTRUCT</b>: +1 extra construct</>,
+  extraInvite: <><b>INVITE</b>: +1 extra invite</>,
 }
 const passiveKeys = _.keys(PASSIVE_TO_HTML)
 
 function getPassiveActionTrigger (passiveEffect) {
-  if (_.endsWith(passiveEffect, 'Recruit')) {
-    return 'recruit'
+  if (_.endsWith(passiveEffect, 'Hire')) {
+    return 'hire'
   }
   if (_.endsWith(passiveEffect, 'Construct')) {
     return 'construct'
@@ -125,7 +149,7 @@ function getPassiveActionTrigger (passiveEffect) {
   }
 }
 
-function Passive({gain={}}) {
+function Passive ({gain={}}) {
   const passiveList = []
   _.forEach(passiveKeys, (passiveEffect) => {
     if (_.has(gain, passiveEffect)) {
@@ -169,6 +193,41 @@ function ComboPoint ({tagComboPoint={}}) {
   )
 }
 
+function TagSide ({tagSideCost, tagSide, tagSidePoints}) {
+  const tags = _.keys(tagSide)
+
+  const FirstTagIcon = ICONS[_.capitalize(tags[0])]
+
+  return (
+    <div className="tag-side-container">
+      <div className="tag-side-cost">${tagSideCost}</div>
+
+      <div className="ts-tag ts-tag-red">
+        {tagSide.red > 0 ? <ICONS.Red number={tagSide.red}/> : null}
+      </div>
+
+      <div className="ts-tag ts-tag-green">
+        {tagSide.green > 0 ? <ICONS.Green number={tagSide.green}/> : null}
+      </div>
+
+      <div className="ts-tag ts-tag-blue">
+        {tagSide.blue > 0 ? <ICONS.Blue number={tagSide.blue}/> : null}
+      </div>
+      
+      {tagSidePoints > 0 ? <div className="ts-tag ts-points"><ICONS.Point/>{tagSidePoints}</div> : null}
+    </div>
+  )
+}
+
+function CrownCost ({crownCost}) {
+  return (
+    <div className="crown-cost">
+      ${crownCost}
+      <img className="crown-cost-image" src={CROWN_ART_MAPPING[crownArtRoller.roll()]}/>
+    </div>
+  )
+}
+
 function Card (props) {
   
   const {
@@ -179,6 +238,12 @@ function Card (props) {
     points,
     gain,
     tagComboActivate,
+
+    tagSideCost,
+    tagSide,
+    tagSidePoints,
+
+    crownCost,
   } = props.cardObj
 
   return (
@@ -188,10 +253,12 @@ function Card (props) {
       <Tap gain={gain} tagComboActivate={tagComboActivate} />
       <Rest gain={gain} tagComboActivate={tagComboActivate} />
       <Passive gain={gain} />
-      {/*{JSON.stringify(props.cardObj.uuid)}*/}
-      {props.cardObj.uuid}
+      <TagSide tagSideCost={tagSideCost} tagSide={tagSide} tagSidePoints={tagSidePoints} />
+      <CrownCost crownCost={crownCost} />
+      
+      {/*{props.cardObj.uuid}*/}
     </div>
   )
 }
 
-export {Card}
+export {Card, Rest}

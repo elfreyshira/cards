@@ -2,7 +2,7 @@ import Brng from 'brng'
 import _ from 'lodash'
 
 import {Card} from './Card.js'
-// import Character from './Character.js'
+import Reference from './Reference.js'
 
 import '../util/base.css'
 import './index.css'
@@ -14,16 +14,21 @@ import roundToNearest from '../util/roundToNearest.js'
 global.Brng = Brng
 
 // const CARD_QUANTITY = 0
-// const CARD_QUANTITY = 52
-// const CARD_QUANTITY = 1
-const CARD_QUANTITY = 100
+const CARD_QUANTITY = 52
+// const CARD_QUANTITY = 3
+// const CARD_QUANTITY = 100
 console.clear()
 
 const TAG_LIST = ['red', 'green', 'blue']
 
 const ENGINE_MULTIPLIER = 1.5
+
+// the opportunity cost of building a card (not resting and losing the card)
+const BASE_ENGINE_VALUE = 200 // also update Reference.js
+
+
 // WORK = ACTIVATE
-// RECRUIT = BUILD ENGINE
+// HIRE = BUILD ENGINE
 // CONSTRUCT = BUILD TAG
 // INVITE = PURCHASE 10 POINTS
 
@@ -33,22 +38,22 @@ const RESOURCE_VALUES_MAPPING = _.mapValues({
   money: 100,
 
   // increase work on build
-  untapTheCardOnRecruit: 250,
+  untapTheCardOnHire: 250,
   untapOnConstruct: 200,
   untapOnInvite: 200,
 
   // passive build discount
-  discountRecruit: 150,
+  discountHire: 150,
   discountConstruct: 100,
   discountInvite: 100,
 
   // passive build draw
-  drawOnRecruit: 200,
+  drawOnHire: 200,
   drawOnConstruct: 150,
   drawOnInvite: 150,
 
   // increase build
-  extraRecruit: 300,
+  extraHire: 300,
   extraConstruct: 200,
   extraInvite: 200,
   
@@ -57,17 +62,19 @@ const RESOURCE_VALUES_MAPPING = _.mapValues({
 const RESOURCE_LIST = _.keys(RESOURCE_VALUES_MAPPING)
 const NON_ACTIVATE_RESOURCES = _.without(RESOURCE_LIST, 'draw', 'money')
 
-const UNTAP_PASSIVE_RESOURCES = ['untapTheCardOnRecruit', 'untapOnConstruct', 'untapOnInvite']
-const DISCOUNT_PASSIVE_RESOURCES = ['discountRecruit', 'discountConstruct', 'discountInvite']
-const DRAW_PASSIVE_RESOURCES = ['drawOnRecruit', 'drawOnConstruct', 'drawOnInvite']
-const EXTRA_BUILD_RESOURCES = ['extraRecruit', 'extraConstruct', 'extraInvite']
+const UNTAP_PASSIVE_RESOURCES = ['untapTheCardOnHire', 'untapOnConstruct', 'untapOnInvite']
+const DISCOUNT_PASSIVE_RESOURCES = ['discountHire', 'discountConstruct', 'discountInvite']
+const DRAW_PASSIVE_RESOURCES = ['drawOnHire', 'drawOnConstruct', 'drawOnInvite']
+const EXTRA_BUILD_RESOURCES = ['extraHire', 'extraConstruct', 'extraInvite']
 
-const RECRUIT_PASSIVE_RESOURCES = [
-  'untapTheCardOnRecruit', 'discountRecruit', 'drawOnRecruit', 'extraRecruit']
+const HIRE_PASSIVE_RESOURCES = [
+  'untapTheCardOnHire', 'discountHire', 'drawOnHire', 'extraHire']
 const CONSTRUCT_PASSIVE_RESOURCES = [
   'untapOnConstruct', 'discountConstruct', 'drawOnConstruct', 'extraConstruct']
 const INVITE_PASSIVE_RESOURCES = [
   'untapOnInvite', 'discountInvite', 'drawOnInvite', 'extraInvite']
+
+const ALL_DRAW_RESOURCES = ['draw'].concat(DRAW_PASSIVE_RESOURCES)
 
 const TAG_COMBO_COST_MAPPING = {
   red: 1.0,
@@ -93,22 +100,22 @@ const resourceGainRoller = new Brng({
   money: 40,
 
   // increase activate on build
-  untapTheCardOnRecruit: 5,
+  untapTheCardOnHire: 5,
   untapOnConstruct: 3,
   untapOnInvite: 3,
 
   // passive build discount
-  discountRecruit: 5,
+  discountHire: 5,
   discountConstruct: 3,
   discountInvite: 3,
 
   // passive build draw
-  drawOnRecruit: 5,
+  drawOnHire: 5,
   drawOnConstruct: 3,
   drawOnInvite: 3,
 
   // increase build
-  extraRecruit: 3.3,
+  extraHire: 3.3,
   extraConstruct: 2,
   extraInvite: 2,
 
@@ -148,18 +155,18 @@ const CARD_COST_DISTRIBUTION = {
   // 6: 7,
   //////////
 
-  1: 2,
-  2: 4,
+  1: 3,
+  2: 5,
 
-  3: 5,
-  4: 4,
+  3: 3.5,
+  4: 2.5,
 
-  5: 3,
-  6: 2,
+  5: 2,
+  6: 1.5,
 }
 const cardCostRoller = new Brng(CARD_COST_DISTRIBUTION, {bias: 4})
 
-const pointCostRoller = new Brng(_.countBy(_.range(3, 10+1)), {bias: 4})
+const crownCostRoller = new Brng(_.countBy(_.range(1, 7+1)), {bias: 4})
 
 // activation levels:
 // 1: 100-150
@@ -205,7 +212,7 @@ _.times(CARD_QUANTITY, () => {
 
   cardsArray.push({
     costForResources: costTotal,
-    expectedResourcesValue: 200 + costTotal*100, // every card has base value of 200 (build + card)
+    expectedResourcesValue: BASE_ENGINE_VALUE + costTotal*100,
 
     uuid: Math.random().toString(36).slice(2),
     // cost: {},
@@ -214,10 +221,16 @@ _.times(CARD_QUANTITY, () => {
 })
 cardsArray = _.sortBy(cardsArray, sortOrderArray)
 
+////// FILL TAG COMBO TYPE
+_.forEach(cardsArray, (cardObj) => {
+  cardObj.crownCost = _.toNumber(crownCostRoller.roll())
+})
+cardsArray = _.sortBy(cardsArray, sortOrderArray)
+
 ////// FILL TAG SIDE COST
 _.forEach(cardsArray, (cardObj, index) => {
   cardObj.tagSideCost = cardsArray[cardsArray.length - index - 1].costForResources
-  cardObj.tagSideExpectedValue = 200 + cardObj.tagSideCost*100
+  cardObj.tagSideExpectedValue = BASE_ENGINE_VALUE + cardObj.tagSideCost*100
 })
 cardsArray = _.sortBy(cardsArray, sortOrderArray)
 
@@ -263,7 +276,8 @@ _.forEach(cardsArray, (cardObj) => {
       tagComboCostObj,
       {
         groupingMaxVariety: [
-          {resourceList: TAG_LIST, max: cardObj.tagComboVariety}
+          {resourceList: TAG_LIST, max: cardObj.costForResources === 6 ? 1 : cardObj.tagComboVariety} // ELFREY
+          // {resourceList: TAG_LIST, max: 1}
         ]
       }
     )
@@ -294,7 +308,7 @@ const tagComboActivateRedRoller = new Brng({1:1, 2:1, 3:1, 4:1, 5:1, 6:1}, {bias
 const tagComboActivateGreenRoller = new Brng({1:1, 2:1, 3:1, 4:1, 5:1}, {bias: 4, repeatTolerance: 0})
 const tagComboActivateBlueRoller = new Brng({1:1, 2:1, 3:1, 4:1,}, {bias: 4, repeatTolerance: 0})
 
-const tagComboActivateGainRoller = new Brng({draw:1, money:1}, {bias: 0.5})
+const tagComboActivateGainRoller = new Brng({draw:1.1, money:1}, {bias: 0.5})
 
 _.forEach(cardsArray, (cardObj) => {
   if (cardObj.tagComboType !== 'activate') return;
@@ -401,7 +415,7 @@ _.forEach(cardsArray, (cardObj) => {
   const tcType = tcTypeRoller.roll()
 
   let excludeList = []
-  if (cardObj.costForResources <= 3) {
+  if (expectedPointTotalMapping[tcType]['2']*50 > cardObj.expectedResourcesValue - 150) {
     excludeList = ['2']
   }
   const tcPointPerTag = _.toNumber(tcPointPerTagRollerMapping[tcType].roll({exclude: excludeList}))
@@ -432,8 +446,16 @@ _.forEach(cardsArray, (cardObj) => {
       25 // value slack
     )
 
+    /// this is needed to count the tagComboActivate bonuses
+    const tempGainObj = _.cloneDeep(gainObj)
+    if (!_.isEmpty(cardObj.tagComboActivate)) {
+      _.forEach(_.values(cardObj.tagComboActivate), (key) => {
+        tempGainObj[key] = tempGainObj[key] ? tempGainObj[key] + 0.5 : 0.5
+      })
+    }
+
     const excludeList = getNewExcludeList(
-      gainObj,
+      tempGainObj,
       {
         groupingMaxVariety: [
           {resourceList: RESOURCE_LIST, max: 3},
@@ -445,9 +467,11 @@ _.forEach(cardsArray, (cardObj) => {
           {resourceList: DRAW_PASSIVE_RESOURCES, max: 1},
           {resourceList: EXTRA_BUILD_RESOURCES, max: 1},
 
-          {resourceList: RECRUIT_PASSIVE_RESOURCES, max: 1},
+          {resourceList: HIRE_PASSIVE_RESOURCES, max: 1},
           {resourceList: CONSTRUCT_PASSIVE_RESOURCES, max: 1},
           {resourceList: INVITE_PASSIVE_RESOURCES, max: 1},
+
+          {resourceList: ALL_DRAW_RESOURCES, max: 1.5},
         ]
       }
     )
@@ -459,7 +483,7 @@ _.forEach(cardsArray, (cardObj) => {
     if (_.isError(chosenResource)) {
       break // means no more available options to pick
     }
-    else {
+    else { // !!!! WRITE TO gainObj
       gainObj[chosenResource] = gainObj[chosenResource] ? gainObj[chosenResource] + 1 : 1
       currentValue += RESOURCE_VALUES_MAPPING[chosenResource]
     }
@@ -517,63 +541,6 @@ cardsArray = _.sortBy(cardsArray, sortOrderArray)
 // // // // // // // // // // // // // // // // // // // // // // // // // // // 
 // // // // // // // // // // // // // // // // // // // // // // // // // // // 
 
-// _.forEach(cardsArray, (cardObj) => {
-//   let currentValue = 0
-//   const gainObj = {}
-
-//   // while (currentValue < (cardObj.expectedValue - 99)) {
-//   while (true) {
-
-//     const newExcludeList = getNewExcludeList(
-//       gainObj,
-//       {
-//         groupingMaxVariety: [
-//           {resourceList: ['wildStorage', 'wildProduce'], max: 1},
-//           {resourceList: ['fireDiscount', 'waterDiscount'], max: 1},
-//         ],
-
-//         groupingMaxQuantity: [
-//           {resourceList: ['wildStorage'], max: 3},
-//           {resourceList: ['wildProduce'], max: 3},
-//           {resourceList: ['wildProduce', 'draw'], max: 5},
-//           {resourceList: ['drawAfterBuildEngine', 'drawAfterBuildPurchase'], max: 1},
-//         ],
-
-//       },
-//     )
-
-//     const onlyList = _.intersection(
-//       RESOURCE_LIST,
-//       getAvailableResources(cardObj.expectedValue - currentValue)
-//     )
-//     const newResourceToAdd = _.attempt(() => 
-//       resourceGainRoller.roll({
-//         exclude: newExcludeList,
-//         only: onlyList
-//       })
-//     )
-//     if (_.isError(newResourceToAdd)) {
-//       if (cardObj.expectedValue - currentValue >= VALUE_TIEBREAKER) {
-//         cardObj.tieBreaker = _.floor((cardObj.expectedValue - currentValue)/VALUE_TIEBREAKER)
-//       }
-//       if (currentValue > cardObj.expectedValue) {
-//         cardObj.advantage = true
-//       }
-//       else if (currentValue < cardObj.expectedValue) {
-//         cardObj.loss = true
-//       }
-      
-//       break // !!!!!!!!!!!!!!!!
-//     }
-
-//     gainObj[newResourceToAdd] = gainObj[newResourceToAdd] ?
-//       gainObj[newResourceToAdd] + 1 : 1
-//     currentValue += RESOURCE_VALUES_MAPPING[newResourceToAdd]
-//   }
-
-//   cardObj.gain = gainObj
-//   cardObj.actualValue = currentValue
-// })
 
 const cardsImportantKeys = [
   'costForResources',
@@ -583,27 +550,25 @@ const cardsImportantKeys = [
   'tagComboPoint',
   'gain',
   'points',
+  'tagSideCost',
   'tagSide',
   'tagSidePoints',
+  'crownCost',
   'uuid',
 ]
 
 function Cards () {
   return (
     <div>
-      {
-        _.map(cardsArray, (cardObj, idx) => <Card key={idx} cardObj={cardObj} /> )
-      }
+      {_.map(cardsArray, (cardObj, idx) => <Card key={idx} cardObj={cardObj} /> )}
+      {/*{_.map(_.sampleSize(cardsArray, 5), (cardObj, idx) => <Card key={idx} cardObj={cardObj} /> )}*/}
+
+      <Reference />
+      <Reference />
 
       <pre className="noprint">
-        {
-          JSON.stringify(
-            _.chain(cardsArray).map((obj) => _.pick(obj, cardsImportantKeys)).value()
-          , null, 2)
-        }
-        {
-          //JSON.stringify(cardsArray, null, 2)
-        }
+        {/*{JSON.stringify(_.chain(cardsArray).map((obj) => _.pick(obj, cardsImportantKeys)).value(), null, 2)}*/}
+        {JSON.stringify(cardsArray, null, 2)}
       </pre>
     </div>
     

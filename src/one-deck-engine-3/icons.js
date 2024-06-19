@@ -77,7 +77,7 @@ function Point ({number=0}) {
 }
 
 function Rest () {
-  return <span className="icon"><img src={rest} /></span>
+  return <span className="icon rest"><img src={rest} /></span>
 }
 
 
