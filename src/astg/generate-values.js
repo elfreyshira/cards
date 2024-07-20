@@ -8,16 +8,47 @@ import {default as regression } from 'regression'
 
 const strengthArray = [2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6]
 
+const TIMES_RUN = 0
+// const TIMES_RUN = 100000
+
+function getRandomStrength (thisCardStrength) {
+  const randomStrength = _.random(2, thisCardStrength*2)/2
+  if (randomStrength === 1.5) {
+    return getRandomStrength(thisCardStrength)
+  }
+  else {
+    return randomStrength
+  }
+}
+
+function regressionAndLogMB (functionToRun) {
+  if (!TIMES_RUN) {
+    return
+  }
+
+  const result = regression.linear(
+    _.map(strengthArray, (strength) => functionToRun(strength)),
+    {precision: 20}
+  )
+  console.log(`m = ${result.equation[0]}\nb = ${result.equation[1]}`)
+}
+
+//////////////////////////////////////
+//////////////////////////////////////
+//////////////////////////////////////
+//////////////////////////////////////
+//////////////////////////////////////
+//////////////////////////////////////
 
 /// RONDEL MOVE
 const RONDEL_LENGTH = 6
 function moveValueForStrength(strength) {
   const moveValueArray = []
-  _.times(100000, () => {
+  _.times(TIMES_RUN, () => {
 
     let cardValueArray = []
     // _.times(4, () => cardValueArray.push(_.random(1, strength)))
-    _.times(RONDEL_LENGTH, () => cardValueArray.push(_.random(2, strength*2)/2))
+    _.times(RONDEL_LENGTH, () => cardValueArray.push(getRandomStrength(strength)))
     cardValueArray = _.sortBy(cardValueArray)
 
     const sumOfCardValues = _.sum(cardValueArray)
@@ -31,12 +62,13 @@ function moveValueForStrength(strength) {
   })
 
   // console.log(strength, _.round(_.mean(moveValueArray), 3), _.round(std(moveValueArray), 3))
-  console.log(strength, _.identity(_.mean(moveValueArray), 3), _.identity(std(moveValueArray), 3))
+  // console.log(strength, _.identity(_.mean(moveValueArray), 3), _.identity(std(moveValueArray), 3))
+  return [strength, _.mean(moveValueArray)]
 }
 
 function doAllMoveValue () {
   console.log('RD: MOVE')
-  _.forEach(strengthArray, (strength) => moveValueForStrength(strength))
+  regressionAndLogMB(moveValueForStrength)
   console.log('\n')
 }
 doAllMoveValue()
@@ -52,7 +84,7 @@ const result = regression.linear([
   [5.5, 1.2749619999999922], // 0.36419613526812683
   [6.0, 1.402466000000008], // 0.40235324992523624
 ], {precision: 20})
-console.log(result.equation[0], result.equation[1])
+// console.log(result.equation[0], result.equation[1])
 // m = 0.3514782366666686. b = -0.23139118000001965
 
 
@@ -75,12 +107,13 @@ const wpStrengthToValueMapping = {
 const WORKER_COUNT = 3
 function recallValueForStrength(strength) {
   const recallValueArray = []
-  _.times(100000, () => {
+  _.times(TIMES_RUN, () => {
 
     const cardValueArray = []
-    // _.times(WORKER_COUNT, () => cardValueArray.push( _.random(2, strength*2)/2 ))
+    // _.times(WORKER_COUNT, () => cardValueArray.push( getRandomStrength(strength) ))
     _.times(WORKER_COUNT, () => cardValueArray.push(
-      wpStrengthToValueMapping[ _.random(2, strength*2)/2 ] / 100
+      getRandomStrength(strength) * 4 / 3
+      // wpStrengthToValueMapping[ getRandomStrength(strength) ] / 100
     ))
 
     const sumOfCardValues = _.sum(cardValueArray)
@@ -96,14 +129,14 @@ function recallValueForStrength(strength) {
   })
 
   // console.log(strength, _.round(_.mean(recallValueArray), 3), _.round(std(recallValueArray), 3))
-  console.log(strength, _.identity(_.mean(recallValueArray), 3), _.identity(std(recallValueArray), 3))
+  // console.log(strength, _.identity(_.mean(recallValueArray), 3), _.identity(std(recallValueArray), 3))
+  return [strength, _.mean(recallValueArray)]
 }
 function doAllRecallValue () {
   console.log('WP: RECALL')
-  _.forEach(strengthArray, (strength) => recallValueForStrength(strength))
+  regressionAndLogMB(recallValueForStrength)
   console.log('\n')
 }
-console.log('lol')
 doAllRecallValue()
 
 
@@ -118,18 +151,18 @@ const recallRegressionResult = regression.linear([
   [5.5, 2.04844875], // 0.6256316120709814
   [6.0, 2.23996], // 0.688405676126909
 ], {precision: 20})
-console.log(recallRegressionResult.equation[0], recallRegressionResult.equation[1])
+// console.log(recallRegressionResult.equation[0], recallRegressionResult.equation[1])
 // m = 0.38206275000000006 // b = -0.04906238888888902
 
 ////////////////////// WP SEND ////////////////
 function sendValueForStrength(strength) {
   const sendValueArray = []
-  _.times(100000, () => {
+  _.times(TIMES_RUN, () => {
 
     const cardValueArray = []
-    // _.times(WORKER_COUNT, () => cardValueArray.push(_.random(2, strength*2)/2))
+    // _.times(WORKER_COUNT, () => cardValueArray.push(getRandomStrength(strength)))
     _.times(WORKER_COUNT, () => cardValueArray.push(
-      wpStrengthToValueMapping[ _.random(2, strength*2)/2 ] / 100
+      wpStrengthToValueMapping[ getRandomStrength(strength) ] / 100
     ))
 
     const sumOfCardValues = _.sum(cardValueArray)
@@ -146,11 +179,12 @@ function sendValueForStrength(strength) {
   })
 
   // console.log(strength, _.round(_.mean(sendValueArray), 3), _.round(std(sendValueArray), 3))
-  console.log(strength, _.identity(_.mean(sendValueArray), 3), _.identity(std(sendValueArray), 3))
+  // console.log(strength, _.identity(_.mean(sendValueArray), 3), _.identity(std(sendValueArray), 3))
+  return [strength, _.mean(sendValueArray)]
 }
 function doAllSendValue () {
   console.log('WP: SEND')
-  _.forEach(strengthArray, (strength) => sendValueForStrength(strength))
+  regressionAndLogMB(sendValueForStrength)
   console.log('\n')
 }
 doAllSendValue()
@@ -180,27 +214,43 @@ const sendRegressionResult = regression.linear([
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
 
+// const crStrengthToAvailableValueMapping = {
+//   1.0: [[0,0,1,1]],
+//   1.5: [[0,0,0,1.5],[0,1.25,1.25,1.25]],
+//   2.0: [[0,0,0,2],[0,0,1.75,1.75],[0,1.5,1.5,1.5],[1.25,1.25,1.25,1.25]],
+//   2.5: [[0,0,0,2.5],[0,1.75,1.75,1.75]],
+//   3.0: [[0,0,0,3],[0,0,2.5,2.5],[0,2,2,2],[1.5,1.5,1.5,1.5]],
+//   3.5: [[0,0,0,3.5],[0,2.25,2.25,2.25]],
+//   4.0: [[0,0,0,4],[0,0,3.25,3.25],[0,2.5,2.5,2.5],[1.75,1.75,1.75,1.75]],
+//   4.5: [[0,0,0,4.5],[0,2.75,2.75,2.75]],
+//   5.0: [[0,0,0,5],[0,0,4,4],[0,3,3,3],[2,2,2,2]],
+//   5.5: [[0,0,0,5.5],[0,3.25,3.25,3.25]],
+//   6.0: [[0,0,0,6],[0,0,4.75,4.75],[0,3.5,3.5,3.5],[2.25,2.25,2.25,2.25]],
+// }
+
+////// without the 1.5 strength, and without activation on the lowest value
 const crStrengthToAvailableValueMapping = {
   1.0: [[0,0,1,1]],
-  1.5: [[0,0,0,1.5],[0,1.25,1.25,1.25]],
-  2.0: [[0,0,0,2],[0,0,1.75,1.75],[0,1.5,1.5,1.5],[1.25,1.25,1.25,1.25]],
-  2.5: [[0,0,0,2.5],[0,1.75,1.75,1.75]],
-  3.0: [[0,0,0,3],[0,0,2.5,2.5],[0,2,2,2],[1.5,1.5,1.5,1.5]],
-  3.5: [[0,0,0,3.5],[0,2.25,2.25,2.25]],
-  4.0: [[0,0,0,4],[0,0,3.25,3.25],[0,2.5,2.5,2.5],[1.75,1.75,1.75,1.75]],
-  4.5: [[0,0,0,4.5],[0,2.75,2.75,2.75]],
-  5.0: [[0,0,0,5],[0,0,4,4],[0,3,3,3],[2,2,2,2]],
-  5.5: [[0,0,0,5.5],[0,3.25,3.25,3.25]],
-  6.0: [[0,0,0,6],[0,0,4.75,4.75],[0,3.5,3.5,3.5],[2.25,2.25,2.25,2.25]],
+  2.0: [[0,0,0,2], [0,0,1.75,1.75], [0,1.5,1.5,1.5]],
+  2.5: [[0,0,0,2.5], [0,1.75,1.75,1.75]],
+  3.0: [[0,0,0,3], [0,0,2.5,2.5], [0,2,2,2]],
+  3.5: [[0,0,0,3.5], [0,2.25,2.25,2.25]],
+  4.0: [[0,0,0,4], [0,0,3.25,3.25], [0,2.5,2.5,2.5]],
+  4.5: [[0,0,0,4.5], [0,2.75,2.75,2.75]],
+  5.0: [[0,0,0,5], [0,0,4,4], [0,3,3,3]],
+  5.5: [[0,0,0,5.5], [0,3.25,3.25,3.25]],
+  6.0: [[0,0,0,6], [0,0,4.75,4.75], [0,3.5,3.5,3.5]],
 }
 
 const CARD_RIVER_QUANTITY = 4
 function activateNthSpotValue(strength, nth) {
   const nthValueArray = []
-  _.times(1000000, () => {
+  _.times(TIMES_RUN, () => {
 
     const cardValueArray = []
-    const randomCardStrength = _.random(2, strength*2)/2
+
+    const randomCardStrength = getRandomStrength(strength)
+
     _.times(CARD_RIVER_QUANTITY, () => {
       cardValueArray.push( _.sample(crStrengthToAvailableValueMapping[randomCardStrength]) )
     })
@@ -215,78 +265,79 @@ function activateNthSpotValue(strength, nth) {
   })
 
   // console.log(strength, _.round(_.mean(recallValueArray), 3), _.round(std(recallValueArray), 3))
-  console.log(strength, _.identity(_.mean(nthValueArray), 3), _.identity(std(nthValueArray), 3))
+  // console.log(strength, _.identity(_.mean(nthValueArray), 3), _.identity(std(nthValueArray), 3))
+  return [strength, _.mean(nthValueArray)]
 }
 
 function doAllActivateNthSpot () {
   console.log('CR: ACTIVATE 2ND SPOT')
-  _.forEach(strengthArray, (strength) => activateNthSpotValue(strength, 2))
+  regressionAndLogMB((strength) => activateNthSpotValue(strength, 2))
   console.log('\n')
 
   console.log('CR: ACTIVATE 3RD SPOT')
-  _.forEach(strengthArray, (strength) => activateNthSpotValue(strength, 3))
+  regressionAndLogMB((strength) => activateNthSpotValue(strength, 3))
   console.log('\n')
 
   console.log('CR: ACTIVATE 4TH SPOT')
-  _.forEach(strengthArray, (strength) => activateNthSpotValue(strength, 4))
+  regressionAndLogMB((strength) => activateNthSpotValue(strength, 4))
   console.log('\n')
 }
-// doAllActivateNthSpot()
+doAllActivateNthSpot()
 
 // // CR: ACTIVATE 2ND SPOT
 const ACTIVATE2NDSPOTResult = regression.linear([
-  [2.0, 0.7430335], // 0.6151133286377936
-  [2.5, 0.911467625], // 0.6627565569873305
-  [3.0, 1.0389235], // 0.6834990908802595
-  [3.5, 1.17109325], // 0.7425085650755213
-  [4.0, 1.273405375], // 0.7692150218893555
-  [4.5, 1.39380275], // 0.8382827471679121
-  [5.0, 1.483871875], // 0.8694590248705265
-  [5.5, 1.601053], // 0.946678414530621
-  [6.0, 1.687729625], // 0.979018938915834
+  [2.0, 0.4539375], // 0.6029156115087433
+  [2.5, 0.776625375], // 0.7365906835467559
+  [3.0, 0.885398625], // 0.7627739039499994
+  [3.5, 1.073828125], // 0.8360174175874362
+  [4.0, 1.1463875], // 0.8691011622261804
+  [4.5, 1.30154925], // 0.9431181669332585
+  [5.0, 1.365249375], // 0.9824603363068019
+  [5.5, 1.508364375], // 1.0612009224225423
+  [6.0, 1.56814025], // 1.1025395954003012
 ], {precision: 20})
 // console.log(ACTIVATE2NDSPOTResult.equation[0], ACTIVATE2NDSPOTResult.equation[1])
-// m = 0.2320048958333338, b = 0.3280226944444423
+// m = 0.261315020833333, b = 0.07468218055555664
 
 
 // // CR: ACTIVATE 3RD SPOT
 const ACTIVATE3RDSPOTResult = regression.linear([
-  [2.0, 1.2481505], // 0.3152316672505743
-  [2.5, 1.345904], // 0.3851193362987559
-  [3.0, 1.508141625], // 0.4928322874056602
-  [3.5, 1.6071445], // 0.5502152317374158
-  [4.0, 1.769382375], // 0.6665794673742881
-  [4.5, 1.870971625], // 0.7182166165137326
-  [5.0, 2.033876625], // 0.839867451648901
-  [5.5, 2.135506625], // 0.8883945962121529
-  [6.0, 2.2963605], // 1.0119163118966252
+  [2.0, 1.29790475], // 0.3507369586959902
+  [2.5, 1.411421625], // 0.41087451664014507
+  [3.0, 1.616227875], // 0.5369714936916784
+  [3.5, 1.714914125], // 0.5739580082029744
+  [4.0, 1.90617], // 0.7068647719055826
+  [4.5, 2.001858], // 0.739623173397906
+  [5.0, 2.18622475], // 0.8802826029993165
+  [5.5, 2.284841125], // 0.9107488525093625
+  [6.0, 2.46834275], // 1.0540889986761803
 ], {precision: 20})
 // console.log(ACTIVATE3RDSPOTResult.equation[0], ACTIVATE3RDSPOTResult.equation[1])
-// m = 0.2625648333333326, b = 0.7070115972222251
+// m = 0.29096493750000046, b = 0.7125741388888871
 
 // // CR: ACTIVATE 4TH SPOT
 const ACTIVATE4THSPOTResult = regression.linear([
-  [2.0, 1.429224125], // 0.35270806390927995
-  [2.5, 1.662105], // 0.5180857886728544
-  [3.0, 1.863455125], // 0.6260330132603777
-  [3.5, 2.09627375], // 0.7888777954946737
-  [4.0, 2.2984065], // 0.8947930234622016
-  [4.5, 2.531137625], // 1.0579758792591523
-  [5.0, 2.732711125], // 1.1613880584652825
-  [5.5, 2.969303375], // 1.325628984760646
-  [6.0, 3.1686815], // 1.4287634219707142
+  [2.0, 1.446162875], // 0.4522485520965623
+  [2.5, 1.750804], // 0.5819483480067379
+  [3.0, 2.00719825], // 0.6825929615283783
+  [3.5, 2.26018675], // 0.8080006817688152
+  [4.0, 2.49569275], // 0.9160087194828374
+  [4.5, 2.735588125], // 1.050176001963825
+  [5.0, 2.966170625], // 1.164098420083239
+  [5.5, 3.19954125], // 1.3038284571814025
+  [6.0, 3.424197125], // 1.42056631146939
 ], {precision: 20})
 // console.log(ACTIVATE4THSPOTResult.equation[0], ACTIVATE4THSPOTResult.equation[1])
-// m = 0.43509335000000005, b = 0.5653263916666664
+// m = 0.4883898291666658, b = 0.522611988888892
 
 
 
-function dropNthSpotValue(strength, nth) {
+function dropNthSpotValue(strength, nth=4) {
   const nthValueArray = []
-  _.times(1000000, () => {
+  _.times(TIMES_RUN, () => {
 
     const cardValueArray = []
-    const randomCardStrength = _.random(2, strength*2)/2
+    const randomCardStrength = getRandomStrength(strength)
     _.times(CARD_RIVER_QUANTITY, () => {
       cardValueArray.push( _.sample(crStrengthToAvailableValueMapping[randomCardStrength]) )
     })
@@ -309,15 +360,16 @@ function dropNthSpotValue(strength, nth) {
   })
 
   // console.log(strength, _.round(_.mean(recallValueArray), 3), _.round(std(recallValueArray), 3))
-  console.log(strength, _.identity(_.mean(nthValueArray), 3), _.identity(std(nthValueArray), 3))
+  // console.log(strength, _.identity(_.mean(nthValueArray), 3), _.identity(std(nthValueArray), 3))
+  return [strength, _.mean(nthValueArray)]
 }
 
 function doAllDropNthSpot () {
   console.log('CR: DROP 4TH SPOT')
-  _.forEach(strengthArray, (strength) => dropNthSpotValue(strength, 4))
+  regressionAndLogMB(dropNthSpotValue)
   console.log('\n')
 }
-// doAllDropNthSpot()
+doAllDropNthSpot()
 
 const DropNthResult = regression.linear([
   [2.0, 0.17269074999995598], // 0.1854743590815375

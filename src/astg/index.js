@@ -16,6 +16,18 @@ const strengthArray = [
   5,    5.5,  6     // tier 3
 ]
 
+const cardCostProportions = {
+  0: 1,
+  1: 1,
+  2: 1,
+  3: 1,
+  4: 1,
+  5: 1,
+  6: 1,
+  7: 1,
+  8: 1,
+}
+
 function Cards () {
   return <div>hello world</div>
 }

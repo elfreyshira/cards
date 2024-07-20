@@ -5,55 +5,81 @@ import _ from 'lodash'
 // card river (cr) = government. cost = taxes. discount = productivity.
 // favor = wild. 6 favor --> anything
 
+const BASE_RESOURCES_VALUE = 100
 const DELAY_RESOURCES_VALUE = 40
 const ON_WP_LEAVE_VALUE = 75
 const DISCOUNT_VALUE = 150
 
+// RD: MOVE
+// m = 0.22983163333332526
+// b = -0.05564531111107751
+
+// WP: RECALL
+// m = 0.4853751666668089
+// b = 0.03166229629571782
+
+// WP: SEND
+// m = 0.4264227083333329
+// b = 0.5603863194444465
+
+// CR: ACTIVATE 2ND SPOT
+// m = 0.2616610833333324
+// b = 0.07391025000000395
+
+// CR: ACTIVATE 3RD SPOT
+// m = 0.2906679166666663
+// b = 0.713140555555557
+
+// CR: ACTIVATE 4TH SPOT
+// m = 0.4872330000000004
+// b = 0.5264039722222205
+
+// CR: DROP 4TH SPOT
+// m = 0.1507544166666662
+// b = -0.14884359259259095
+
+
 const effectToValueFuncMapping = {
   
   // RONDEL
-  goods: _.constant(100),
+  goods: _.constant(BASE_RESOURCES_VALUE),
   goodsDelay: _.constant(DELAY_RESOURCES_VALUE),
-  goodsDiscount: _.constant(DISCOUNT_VALUE),
   goodsOnWPLeave: _.constant(ON_WP_LEAVE_VALUE),
-  rdMove: (strength) => (strength*0.2621847333333209 - 0.16588682222216267),
-  rdMoveAndActivate: (strength) => (strength*0.5 + 0.5 - effectToValueFuncMapping.rdMove(strength)/3),
-  // rdMoveAndActivate: (strength) => (strength*0.5 + 0.5),
+  rdMove: ({strength}) => (strength*0.22983163333332526 - 0.05564531111107751),
+  rdMoveAndActivate: ({strength}) => (strength*0.5 + 0.5 - effectToValueFuncMapping.rdMove(strength)/3),
+  // rdMoveAndActivate: ({strength}) => (strength*0.5 + 0.5),
 
   // WORKER PLACEMENT
-  labor: _.constant(100),
+  labor: _.constant(BASE_RESOURCES_VALUE),
   laborDelay: _.constant(DELAY_RESOURCES_VALUE),
-  laborDiscount: _.constant(DISCOUNT_VALUE),
   // laborOnWPLeave: NONE, because WP spots can't produce labor
-  wpRecall: (strength) => (0.38206275000000006*strength - 0.04906238888888902),
-  wpSend: (strength) => (strength*0.5 + 0.5),
+  wpRecall: ({strength}) => (0.4853751666668089*strength + 0.03166229629571782),
+  wpSend: ({strength}) => (strength*0.5 + 0.5),
 
   // CARD RIVER
   // cannot have any delayed resources.
-  taxes: _.constant(100),
+  taxes: _.constant(BASE_RESOURCES_VALUE),
   taxesDelay: _.constant(DELAY_RESOURCES_VALUE),
-  taxesDiscount: _.constant(DISCOUNT_VALUE),
   taxesOnWPLeave: _.constant(ON_WP_LEAVE_VALUE),
-  crDrop: (strength) => (
-    // strength*0.16644334166665967 - 0.1676560888888886
-    (strength-1)*0.2
+  crDrop: ({strength}) => (
+    strength*0.1507544166666662 - 0.14884359259259095
+    // (strength-1)*0.2
   ),
-  crActivate2: (strength) => (
-    strength*0.2320048958333338 + 0.3280226944444423
+  crActivate2: ({strength}) => (
+    strength*0.2616610833333324 + 0.07391025000000395
     // effectToValueFuncMapping.crActivate4(strength)*0.5
   ),
-  crActivate3: (strength) => (
-    strength*0.2625648333333326 + 0.7070115972222251
+  crActivate3: ({strength}) => (
+    strength*0.2906679166666663 + 0.713140555555557
     // effectToValueFuncMapping.crActivate4(strength)*0.75
   ),
-  crActivate4: (strength) => (
-    // strength*0.43509335000000005 + 0.5653263916666664 + effectToValueFuncMapping.crDrop(strength)
-    strength*0.43509335000000005 + 0.5653263916666664
+  crActivate4: ({strength}) => (
+    strength*0.4872330000000004 + 0.5264039722222205
     // strength*0.5 + 0.5
   ),
   
-  card: _.constant(100),
-  favor: _.constant(25),
+  card: _.constant(BASE_RESOURCES_VALUE),
+  // favor: _.constant(25),
 
 }
 
@@ -75,15 +101,12 @@ const baseActionProportions = {
 const baseResourceProportions = {
   // RONDEL (residential)
   goods: 3,
-  goodsDiscount: 1,
 
   // WP (business)
   labor: 3,
-  laborDiscount: 1,
 
   // CR (government)
   taxes: 3,
-  taxesDiscount: 1,
 
   draw: 2,
   // favor: just filler
@@ -100,10 +123,8 @@ const cardRiverActionProportions = _.pick(baseActionProportions, availableAction
 // const cardRiverResourceProportions = _.pick(baseResourceProportions, availableResourcesForCr)
 const cardRiverResourceProportions = {
   goods: 3,
-  goodsDiscount: 1,
 
   labor: 3,
-  laborDiscount: 1,
 }
 
 // WP
@@ -116,15 +137,13 @@ const workerPlacementActionProportions = _.pick(baseActionProportions, available
 // const workerPlacementResourceProportions = _.pick(baseResourceProportions, availableResourcesForWp)
 const workerPlacementResourceProportions = {
   goods: 2.0,
-  goodsDelay: 0.5/(DELAY_RESOURCES_VALUE/100),
-  goodsOnWPLeave: 0.5/(ON_WP_LEAVE_VALUE/100),
-  goodsDiscount: 1,
+  goodsDelay: 0.5/(DELAY_RESOURCES_VALUE/BASE_RESOURCES_VALUE),
+  goodsOnWPLeave: 0.5/(ON_WP_LEAVE_VALUE/BASE_RESOURCES_VALUE),
 
 
   taxes: 2.0,
-  taxesDelay: 0.5/(DELAY_RESOURCES_VALUE/100),
-  taxesOnWPLeave: 0.5/(ON_WP_LEAVE_VALUE/100),
-  taxesDiscount: 1,
+  taxesDelay: 0.5/(DELAY_RESOURCES_VALUE/BASE_RESOURCES_VALUE),
+  taxesOnWPLeave: 0.5/(ON_WP_LEAVE_VALUE/BASE_RESOURCES_VALUE),
 }
 
 // RONDEL
@@ -137,12 +156,10 @@ const rondelActionProportions = _.pick(baseActionProportions, availableActionsFo
 // const rondelResourceProportions = _.pick(baseResourceProportions, availableResourcesForRd)
 const rondelResourceProportions = {
   taxes: 2.5,
-  taxesDelay: 0.5/(DELAY_RESOURCES_VALUE/100),
-  taxesDiscount: 1,
+  taxesDelay: 0.5/(DELAY_RESOURCES_VALUE/BASE_RESOURCES_VALUE),
 
   labor: 2.5,
-  laborDelay: 0.5/(DELAY_RESOURCES_VALUE/100),
-  laborDiscount: 1,
+  laborDelay: 0.5/(DELAY_RESOURCES_VALUE/BASE_RESOURCES_VALUE),
 }
 
 

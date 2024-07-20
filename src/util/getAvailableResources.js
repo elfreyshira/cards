@@ -5,7 +5,12 @@ import _ from 'lodash'
 function getAvailableResources (resourceMapping, remainingValue, valueSlack = 0, cardObj = {}) {
   return _.keys(
     _.pickBy(resourceMapping, (resourceValue, resourceKey) => {
-      return resourceValue <= (remainingValue + valueSlack)
+      let tempResourceValue = resourceValue
+      if (_.isFunction(resourceValue)) {
+        tempResourceValue = resourceValue(cardObj)
+      }
+
+      return tempResourceValue <= (remainingValue + valueSlack)
     })
   )
 }
