@@ -127,6 +127,7 @@ const ACTION_RESOURCE_LIST = [
   'crActivate4'
 ]
 
+
 const PHYSICAL_RESOURCE_LIST = [
   'goods',
   'goodsDelay',
@@ -143,6 +144,12 @@ const PHYSICAL_RESOURCE_LIST = [
   'draw',
   'drawOnWPLeave',
 ]
+const PHYSICAL_NORMAL_RESOURCE_LIST = [
+  'goods',
+  'labor',
+  'taxes',
+  'draw',
+]
 const PHYSICAL_SPECIAL_RESOURCE_LIST = [
   'goodsDelay',
   'goodsOnWPLeave',
@@ -152,6 +159,20 @@ const PHYSICAL_SPECIAL_RESOURCE_LIST = [
   'taxesOnWPLeave',
   'drawOnWPLeave',
 ]
+const PHYSICAL_DELAY_RESOURCE_LIST = [
+  'goodsDelay',
+  'laborDelay',
+  'taxesDelay',
+]
+const PHYSICAL_ON_LEAVE_RESOURCE_LIST = [
+  'goodsOnWPLeave',
+  'laborOnWPLeave',
+  'taxesOnWPLeave',
+  'drawOnWPLeave',
+]
+
+
+
 
 const GOODS_RESOURCE_LIST = [
   'goods',
@@ -281,8 +302,13 @@ export {
   rdResourceProportions,
 
   ACTION_RESOURCE_LIST,
+  
   PHYSICAL_RESOURCE_LIST,
+  PHYSICAL_NORMAL_RESOURCE_LIST,
+  PHYSICAL_DELAY_RESOURCE_LIST,
   PHYSICAL_SPECIAL_RESOURCE_LIST,
+  PHYSICAL_ON_LEAVE_RESOURCE_LIST,
+
   GOODS_RESOURCE_LIST,
   LABOR_RESOURCE_LIST,
   TAXES_RESOURCE_LIST,

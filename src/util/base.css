@@ -32,3 +32,24 @@ html {
     display: none;
   }
 }
+
+.md {
+  font-size: 24px;
+}
+.lg {
+  font-size: 36px;
+}
+.sm {
+  font-size: 18px;
+}
+
+
+.icon {
+  max-height: 1em;
+  transform: translateY(14%);
+}
+
+.icon-container {
+  display: inline-block;
+  margin-right: .3em;
+}
