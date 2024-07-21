@@ -124,7 +124,6 @@ _.forEach(TYPES_OF_CARD, (cardType) => {
       }
 
       const favor = _.max([_.round((cardObj.expectedValue - currentValue)/50), 0])
-      console.log(favor)
       if (favor > 0) {
         gainObj.favor = favor
         currentValue += favor * 50
