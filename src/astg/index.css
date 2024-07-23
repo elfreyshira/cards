@@ -1,5 +1,63 @@
 .gain {
-  padding: 10px;
+  padding: 5px;
   bottom: 0;
   position: absolute;
+  width: 100%;
+}
+.gain-group {
+  margin: 5px auto;
+  border: 1px solid grey;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+
+.card-type-container {
+  border: 5px solid;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.card-type-container.wp {
+  border-color: #1982c4;
+}
+
+.card-type-container.cr {
+  border-color: #ff595e;
+}
+
+.card-type-container.rd {
+  border-color: #8ac926;
+}
+
+.card .info {
+  padding: 8px;
+  border-bottom: 2px solid black;
+  position: relative;
+}
+
+
+.info-right {
+  position: absolute;
+  padding: 8px;
+  width: 50%;
+  right: 0;
+  top: 0;
+  text-align: right;
+  font-family: serif;
+}
+
+.cr-guide-container {
+  margin: 5px;
+}
+
+.cr-guide {
+  display: inline-block;
+  border: 1px solid black;
+  width: 20px;
+  height: 30px;
+  vertical-align: bottom;
+  text-align: center;
+  padding-top: 3px;
+  margin-right: 2px;
 }

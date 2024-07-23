@@ -197,7 +197,8 @@ const DRAW_RESOURCE_LIST = [
 
 // global.effectToValueFuncMapping = effectToValueFuncMapping
 
-const ACTION_PROPORTION_MULTIPLIER = 0.0625
+// const ACTION_PROPORTION_MULTIPLIER = 0.0625
+const ACTION_PROPORTION_MULTIPLIER = 0.06
 const baseActionProportions = _.mapValues({  
   rdMove: 10,
   rdMoveAndActivate: 14,

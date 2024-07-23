@@ -174,7 +174,11 @@ _.forEach(TYPES_OF_CARD, (cardType) => {
 
       // cardObj.points2 = ((cardObj.cost + 200) - (adjustedCurrentValue - 100)) / 50
       const actualPoints = ((cardObj.cost + 200) - (adjustedCurrentValue - 100)*1.5) / 25
-      cardObj.points = _.round(cardObj.expectedPoints + (actualPoints - cardObj.expectedPoints)*1.2)
+      cardObj.points = _.clamp(
+        _.round(cardObj.expectedPoints + (actualPoints - cardObj.expectedPoints)*1.2),
+        0, // can't have any points lower than 0
+        100
+      )
 
       cardsArray.push(cardObj)
 
