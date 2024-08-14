@@ -19,9 +19,8 @@ import {
 } from './CONSTANTS.js'
 
 
-import getNewExcludeList from '../util/getNewExcludeList.js'
-import getAvailableResources from '../util/getAvailableResources.js'
 import roundToNearest from '../util/roundToNearest.js'
+import generateGainObj from '../util/generateGainObj.js'
 
 import Card from './Card.js'
 
@@ -107,56 +106,44 @@ _.forEach(TYPES_OF_CARD, (cardType) => {
         expectedValue: getExpectedValue(cardType, strength, crActivationIndex),
       })
 
-      let gainObj = {}
-      let currentValue = 0
+      const tempGainObj = {}
+      let tempCurrentValue = 0
 
       /// CHOOSE FIRST RESOURCE, FORCING IT TO BE PHYSICAL
       const chosenResource = rollerByType[cardType].roll({only: PHYSICAL_RESOURCE_LIST})
-      gainObj[chosenResource] = 1
-      currentValue += effectToValueFuncMapping[chosenResource](cardObj)
+      tempGainObj[chosenResource] = 1
+      tempCurrentValue += effectToValueFuncMapping[chosenResource](cardObj)
 
-      while (true) {
 
-        const onlyList = getAvailableResources(
-          effectToValueFuncMapping,
-          cardObj.expectedValue - currentValue,
-          25, // slack
-          cardObj
-        )
-        // (resourceMapping, remainingValue, valueSlack = 0, cardObj = {})
+      const exclusionRules = {
+        groupingMaxVariety: [
+          {resourceList: PHYSICAL_RESOURCE_LIST, max: cardObj.expectedValue <= 330 ? 1 : 2},
+          {resourceList: PHYSICAL_SPECIAL_RESOURCE_LIST, max: 1},
 
-        const excludeList = getNewExcludeList(
-          gainObj,
-          {
-            groupingMaxVariety: [
-              {resourceList: PHYSICAL_RESOURCE_LIST, max: cardObj.expectedValue <= 330 ? 1 : 2},
-              {resourceList: PHYSICAL_SPECIAL_RESOURCE_LIST, max: 1},
-
-              {resourceList: GOODS_RESOURCE_LIST, max: 1},
-              {resourceList: LABOR_RESOURCE_LIST, max: 1},
-              {resourceList: TAXES_RESOURCE_LIST, max: 1},
-              {resourceList: DRAW_RESOURCE_LIST, max: 1},
-            ],
-            groupingMaxQuantity: [
-              {resourceList: ACTION_RESOURCE_LIST, max: 1},
-              {resourceList: PHYSICAL_SPECIAL_RESOURCE_LIST, max: 3},
-              {resourceList: DRAW_RESOURCE_LIST, max: 2},
-            ]
-          }
-        )
-
-        const chosenResource = _.attempt(
-          () => rollerByType[cardType].roll({only: onlyList, exclude: excludeList})
-        )
-        if (_.isError(chosenResource)) {
-          break
-        }
-        else {
-          gainObj[chosenResource] = gainObj[chosenResource] ? gainObj[chosenResource] + 1 : 1
-          currentValue += effectToValueFuncMapping[chosenResource](cardObj)
-        }
-
+          {resourceList: GOODS_RESOURCE_LIST, max: 1},
+          {resourceList: LABOR_RESOURCE_LIST, max: 1},
+          {resourceList: TAXES_RESOURCE_LIST, max: 1},
+          {resourceList: DRAW_RESOURCE_LIST, max: 1},
+        ],
+        groupingMaxQuantity: [
+          {resourceList: ACTION_RESOURCE_LIST, max: 1},
+          {resourceList: PHYSICAL_SPECIAL_RESOURCE_LIST, max: 3},
+          {resourceList: DRAW_RESOURCE_LIST, max: 2},
+        ]
       }
+
+      let {gainObj, currentValue} = generateGainObj({
+        // REQUIRED
+        resourceToValueMapping: effectToValueFuncMapping,
+        cardObj, // {expectedValue, ...}
+        resourceRoller: rollerByType[cardType],
+
+        // OPTIONAL
+        valueSlack: 25,
+        exclusionRules,
+        gainObj: tempGainObj,
+        currentValue: tempCurrentValue,
+      })
 
       const favor = _.max([_.round((cardObj.expectedValue - currentValue)/50), 0])
       if (favor > 0) {
