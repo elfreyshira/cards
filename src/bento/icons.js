@@ -98,7 +98,8 @@ function Money ({number=0}) {
 
 function Point ({number=0}) {
   return <div className="icon-container">
-    <img className="icon" src={point}/>
+    {/*<img className="icon" src={point}/>*/}
+    &#x1F604;
     <span className="number">{number}</span>
   </div>
 }

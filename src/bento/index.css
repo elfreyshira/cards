@@ -16,3 +16,8 @@
   top: 0;
   right: 0;
 }
+
+
+polyomino-control {
+  --cell-color: red;
+}
