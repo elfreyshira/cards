@@ -12,27 +12,27 @@ import './index.css'
 
 // console.clear()
 
-const CARD_QUANTITY = 50
+const CARD_QUANTITY = 100
 
 
 const squareRoller = createNestedBrngRoller({
-  remove: {weight: 1, children: {
-    remove1: 3,
-    remove2: 3.5,
-    remove3: 4,
-    remove4: 4.5,
+  remove: {weight: .7, children: {
+    remove1: 1,
+    remove2: 1,
+    remove3: 1,
+    remove4: 1,
   }},
   normal: {weight: 1, children: {
     normal1: 3,
     normal2: 4,
     normal3: 5,
-    normal4: 6,
+    normal4: 5,
   }},
-  special: {weight: 1, children: {
+  special: {weight: 1.2, children: {
     special1: 3,
     special2: 4,
     special3: 5,
-    special4: 6,
+    special4: 5,
   }},
   edge: {weight: .5, children: {
     edge1: 4,
@@ -92,7 +92,7 @@ const resourceToValueMapping = {
   normal3: 0.5,
   normal4: 0,
 
-  speical: -1, // minimum value
+  special: -1, // minimum value
   special1: 1.25,
   special2: 0.5,
   special3: -0.25,
