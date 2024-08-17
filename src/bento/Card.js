@@ -28,21 +28,47 @@ const squareResourcesList = [
 
 const otherResourcesList = [
   'trash',
-
   'money',
   'point',
   'bonus',
 ]
 // _.capitalize(resource)
 
+
+const typeRenderMapping = {
+  normal: <>&#9675;</>,
+  special: <>&#10005;</>,
+  remove: null
+}
+
+function Polyomino ({shape =`
+111
+010`,
+  type = 'normal'
+}) {
+  if (type === 'edge') return null
+
+  const shapeList = shape.trim().replace(/ /g, '').split('\n')
+  const typeRender = typeRenderMapping[type]
+
+  return _.map(shapeList, (line, idx) => {
+    const lineRender = _.map(line, (square, idx2) => {
+      const displayClass = square === '1' ? 'shown' : 'hidden'
+      return <div key={square + idx2} className={classnames("square", displayClass)}> <span className="icon">{typeRender}</span> </div>
+    })
+    return <div key={line+idx} className={"line " + type}>{lineRender}</div>
+  })
+}
+
 function Card (props) {
   
   const {
     cost,
     gain,
+    type,
+    shape,
     uuid,
   } = props.cardObj
-
 
   return (
     <div className="card lg">
@@ -54,13 +80,20 @@ function Card (props) {
           }
         }))}
       </div>
-
+      <div className="shape-container">
+        <Polyomino type={type} shape={shape} />
+      </div>
       <div className="card-container">
         {_.compact(_.map(otherResourcesList, (resource) => {
           const ChosenIcon = ICONS[_.capitalize(resource)]
-          if (gain[resource] > 0) {
-            return <div key={resource}><ChosenIcon number={gain[resource]} /></div>
-          }
+          return (
+            <div
+              key={resource}
+              className={classnames("resource-gain", resource, gain[resource] > 0 ? 'shown' : '')}
+            >
+              {gain[resource] > 0 ? <ChosenIcon number={gain[resource]} /> : null}
+            </div>
+          )
         }))}
       </div>
 

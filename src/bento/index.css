@@ -18,6 +18,59 @@
 }
 
 
-polyomino-control {
-  --cell-color: red;
+.line {
+/*  margin: 2px auto;*/
+height: calc(1em - 3px);
+}
+.square {
+  display: inline-block;
+  position: relative;
+  width: 1em;
+  height: 1em;
+  border: 3px solid black;
+  text-align: center;
+  margin: auto -1.5px;
+}
+.square.hidden {
+  visibility: hidden;
+}
+.square span.icon {
+  position: absolute;
+}
+
+.special .square span.icon {
+  bottom: .20em;
+  left: 0.08em;
+  color: purple;
+  zoom: 90%;
+  font-weight: 700;
+}
+
+.normal .square span.icon {
+  bottom: .28em;
+  left: 0.05em;
+  zoom: 80%;
+  color: forestgreen;
+  font-weight: 700;
+}
+.remove .square {
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 100, 100, 100%),
+    rgba(255, 100, 100, 100%) 5px,
+    transparent 5px,
+    transparent 12px
+  );
+}
+
+.shape-container {
+  margin-top: 10px;
+}
+
+.resource-gain {
+  height: 1.1em; 
+}
+
+.resource-gain.bonus.shown img.icon {
+  filter: invert(18%) sepia(60%) saturate(3453%) hue-rotate(350deg) brightness(89%) contrast(86%);
 }

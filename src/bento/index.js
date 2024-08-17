@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import Brng from 'brng'
+import seed from 'seed-random'
 
 import generateGainObj from '../util/generateGainObj.js'
 
@@ -12,7 +13,15 @@ import './index.css'
 
 // console.clear()
 
-const CARD_QUANTITY = 100
+
+const params = new URL(document.URL).searchParams
+const seedID = params.get('seed')
+if (_.isString(seedID)) {
+  Brng.random = seed(seedID)
+}
+
+
+const CARD_QUANTITY = 50
 
 
 const squareRoller = createNestedBrngRoller({
@@ -41,30 +50,45 @@ const squareRoller = createNestedBrngRoller({
   }},
 }, {bias: 4})
 
-// const squareRoller2 = new Brng({
-//   // empty: 14, // makes for boring plays in a polyomino game
+const shapes = {
+  T4: ` 111
+        010`,
 
-//   remove1: 3,
-//   remove2: 4,
-//   remove3: 4.5,
-//   remove4: 5,
+  L4: ` 111
+        100`,
 
-//   // 18 total
-//   normal1: 3,
-//   normal2: 4,
-//   normal3: 5,
-//   normal4: 6,
+  S4: ` 110
+        011`,
 
-//   special1: 4,
-//   special2: 5.33,
-//   special3: 6.67,
-//   special4: 8,
+  I4: ` 1111`,
 
-//   edge1: 2.4,
-//   edge2: 3,
-//   edge3: 3.6,
+  O4: ` 11
+        11`,
 
-// }, {bias: 4})
+  I3: ` 111`,
+
+  L3: ` 11
+        10`,
+
+  I2: ` 11`,
+
+  O1: ` 1`,
+}
+
+
+const generateShapeRollerMapping = () => {
+  return {
+    4: new Brng({T4: 1, L4: 1, S4: 1, I4: 1, O4: 1}, {bias: 4}),
+    3: new Brng({I3: 1, L3: 1}, {bias: 4}),
+    2: {roll: _.constant('I2')},
+    1: {roll: _.constant('O1')},
+  }
+}
+const typeToRollerMapping = {
+  remove: generateShapeRollerMapping(),
+  normal: generateShapeRollerMapping(),
+  special: generateShapeRollerMapping(),
+}
 
 const gainRoller = new Brng({
   money: 3,
@@ -165,6 +189,13 @@ _.forEach(cardsArray, (cardObj, index) => {
   tempGainObj[chosenResource] = 1
   tempCurrentValue += resourceToValueMapping[chosenResource]
 
+  cardObj.type = chosenResource.replace(/\d/, '')
+  if (cardObj.type !== 'edge') {
+    const size = chosenResource.replace(/[^\d]+/, '')
+    cardObj.shape = shapes[typeToRollerMapping[cardObj.type][size].roll()]
+    cardObj.size = size
+  }
+
 
   const exclusionRules = {
     groupingMaxVariety: [
@@ -203,11 +234,23 @@ _.forEach(cardsArray, (cardObj, index) => {
 })
 
 
+
+const cardsImportantKeys = [
+  'cost',
+  'expectedValue',
+  'currentValue',
+  'gain',
+  'uuid',
+]
+
 function Cards () {
   return <div>
-    <polyomino-control size={20} mode="create" value="[[0,0],[0,1],[1,0],[1,1]]"></polyomino-control>
     {_.map(cardsArray, (cardObj, idx) => <Card key={idx} cardObj={cardObj} /> )}
-    <pre className="noprint">{JSON.stringify(cardsArray, null, 2)}</pre>
+    <pre className="noprint">
+      {/*{JSON.stringify(cardsArray, null, 2)}*/}
+      {JSON.stringify(_.chain(cardsArray).map((obj) => _.pick(obj, cardsImportantKeys)).value(), null, 2)}
+    </pre>
+
   </div>
 }
 
