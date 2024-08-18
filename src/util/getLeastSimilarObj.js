@@ -24,9 +24,7 @@ function getLeastSimilarObj (
       similarityRatio <= acceptableSimilarityRatio
       || timesTried >= maxRuns
     ) {
-      console.log('similarityRatio', similarityRatio)
-      console.log('timesTried', timesTried)
-      return newCardObj
+      return newCardObj // !!!!!!!!!!!!!
       break
     }
     else {
@@ -37,12 +35,6 @@ function getLeastSimilarObj (
     
   }
 
-  
-
-  // const {
-  //   top, bottom, effectsRolledArray,
-  //   similarityRatio, mostSimilarCardObj,
-  // } = _.sortBy(fillEffectsAttemptsArray, 'similarityRatio')[0]
 }
 
 export default getLeastSimilarObj

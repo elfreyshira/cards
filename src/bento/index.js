@@ -4,6 +4,9 @@ import seed from 'seed-random'
 
 import generateGainObj from '../util/generateGainObj.js'
 
+import checkSimilarity from '../util/checkSimilarity.js'
+import getLeastSimilarObj from '../util/getLeastSimilarObj.js'
+
 import Card from './Card.js'
 
 import '../util/base.css'
@@ -70,7 +73,7 @@ const gainRoller = new Brng({
 
   // cycle: 1.5,
   trash: 1,
-}, {bias: 4})
+}, {bias: 4, keepHistory: true})
 
 
 
@@ -135,6 +138,21 @@ const costToValueMapping = {
   7: 5.38, // 3.38
 }
 
+const cardObjSimilaritySettings = {
+  cost: [1, 3], // multiplier = 1, max diff = 3, type = Number, 
+  type: [1, 1, String],
+  size: [1, 2],
+  shapeID: [1, 1, String],
+  gain: {
+    money: [1, 2],
+    point: [1, 2],
+    trash: [1, 1],
+  }
+}
+// const cardObjSimilaritySettings = {}
+
+/////////////////////////////
+
 const sortOrderArray = [
   (cardObj) => -cardObj.cost,
 ]
@@ -152,14 +170,17 @@ cardsArray = _.sortBy(cardsArray, sortOrderArray)
 
 _.forEach(cardsArray, (cardObj, index) => {
 
+
   const tempGainObj = {}
   let tempCurrentValue = 0
 
   /// CHOOSE SQUARE RESOURCE
   const onlyList = getAvailableResources(resourceToValueMapping, cardObj.expectedValue, 0.25)
+  
   const chosenResource = squareRoller.roll({
     only: onlyList
   })
+
   tempGainObj[chosenResource] = 1
   tempCurrentValue += resourceToValueMapping[chosenResource]
 
@@ -170,40 +191,55 @@ _.forEach(cardsArray, (cardObj, index) => {
     cardObj.size = size
   }
 
+  const leastSimilarObj = getLeastSimilarObj(
+    cardsArray.slice(0, index),
+    0.1, // acceptableSimilarityRatioArg
+    20, // max runs
+    cardObjSimilaritySettings,
+    (addUndo) => {
 
-  const exclusionRules = {
-    groupingMaxVariety: [
-      {resourceList: ['trash', 'point', 'money'], max: 2},
-      {resourceList: ['point', 'money'], max: cardObj.expectedValue < 3 ? 1 : 2},
-    ],
-    groupingMaxQuantity: [
-      {resourceList: ['trash'], max: 1},
-      {resourceList: ['money'], max: 4},
-    ]
-  }
+      const newCardObj = _.cloneDeep(cardObj)
 
-  let {gainObj, currentValue} = generateGainObj({
-    // REQUIRED
-    resourceToValueMapping: resourceToValueMapping,
-    cardObj, // {expectedValue, ...}
-    resourceRoller: gainRoller,
+      const exclusionRules = {
+        groupingMaxVariety: [
+          {resourceList: ['trash', 'point', 'money'], max: 2},
+          {resourceList: ['point', 'money'], max: newCardObj.expectedValue < 3 ? 1 : 2},
+        ],
+        groupingMaxQuantity: [
+          {resourceList: ['trash'], max: 1},
+          {resourceList: ['money'], max: 4},
+        ]
+      }
 
-    // OPTIONAL
-    valueSlack: 0.25,
-    exclusionRules,
-    gainObj: tempGainObj,
-    currentValue: tempCurrentValue,
+      let {gainObj, currentValue} = generateGainObj({
+        // REQUIRED
+        resourceToValueMapping: resourceToValueMapping,
+        cardObj: newCardObj, // {expectedValue, ...}
+        resourceRoller: gainRoller,
+
+        // OPTIONAL
+        valueSlack: 0.25,
+        exclusionRules,
+        gainObj: tempGainObj,
+        currentValue: tempCurrentValue,
+      })
+      // minus 1 to subtract the default shape resource. doesn't include bonus.
+      _.times( _.sum(_.values(gainObj)) - 1, () => addUndo(gainRoller) )
+
+      // gainObj.bonus = _.round((newCardObj.expectedValue - currentValue)/0.5)
+      const bonus = _.round((newCardObj.expectedValue - currentValue)/resourceToValueMapping.bonus)
+      if (bonus > 0) {
+        gainObj.bonus = bonus
+        currentValue += bonus * resourceToValueMapping.bonus
+      }
+
+      newCardObj.gain = gainObj
+      newCardObj.currentValue = currentValue
+
+      return newCardObj
   })
 
-  // gainObj.bonus = _.round((cardObj.expectedValue - currentValue)/0.5)
-  const bonus = _.round((cardObj.expectedValue - currentValue)/resourceToValueMapping.bonus)
-  if (bonus > 0) {
-    gainObj.bonus = bonus
-    currentValue += bonus * resourceToValueMapping.bonus
-  }
-
-  cardObj.gain = gainObj
-  cardObj.currentValue = currentValue
+  _.merge(cardObj, leastSimilarObj)
 
 })
 
