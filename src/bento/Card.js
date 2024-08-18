@@ -41,14 +41,39 @@ const typeRenderMapping = {
   remove: null
 }
 
-function Polyomino ({shape =`
+const shapes = {
+  T4: ` 111
+        010`,
+
+  L4: ` 111
+        100`,
+
+  S4: ` 110
+        011`,
+
+  I4: ` 1111`,
+
+  O4: ` 11
+        11`,
+
+  I3: ` 111`,
+
+  L3: ` 11
+        10`,
+
+  I2: ` 11`,
+
+  O1: ` 1`,
+}
+
+function Polyomino ({shapeLayout =`
 111
 010`,
   type = 'normal'
 }) {
   if (type === 'edge') return null
 
-  const shapeList = shape.trim().replace(/ /g, '').split('\n')
+  const shapeList = shapeLayout.trim().replace(/ /g, '').split('\n')
   const typeRender = typeRenderMapping[type]
 
   return _.map(shapeList, (line, idx) => {
@@ -66,7 +91,7 @@ function Card (props) {
     cost,
     gain,
     type,
-    shape,
+    shapeID,
     uuid,
   } = props.cardObj
 
@@ -81,7 +106,7 @@ function Card (props) {
         }))}
       </div>
       <div className="shape-container">
-        <Polyomino type={type} shape={shape} />
+        <Polyomino type={type} shapeLayout={shapes[shapeID]} />
       </div>
       <div className="card-container">
         {_.compact(_.map(otherResourcesList, (resource) => {

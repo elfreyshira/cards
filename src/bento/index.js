@@ -50,32 +50,6 @@ const squareRoller = createNestedBrngRoller({
   }},
 }, {bias: 4})
 
-const shapes = {
-  T4: ` 111
-        010`,
-
-  L4: ` 111
-        100`,
-
-  S4: ` 110
-        011`,
-
-  I4: ` 1111`,
-
-  O4: ` 11
-        11`,
-
-  I3: ` 111`,
-
-  L3: ` 11
-        10`,
-
-  I2: ` 11`,
-
-  O1: ` 1`,
-}
-
-
 const generateShapeRollerMapping = () => {
   return {
     4: new Brng({T4: 1, L4: 1, S4: 1, I4: 1, O4: 1}, {bias: 4}),
@@ -192,7 +166,7 @@ _.forEach(cardsArray, (cardObj, index) => {
   cardObj.type = chosenResource.replace(/\d/, '')
   if (cardObj.type !== 'edge') {
     const size = chosenResource.replace(/[^\d]+/, '')
-    cardObj.shape = shapes[typeToRollerMapping[cardObj.type][size].roll()]
+    cardObj.shapeID = typeToRollerMapping[cardObj.type][size].roll()
     cardObj.size = size
   }
 
@@ -247,8 +221,8 @@ function Cards () {
   return <div>
     {_.map(cardsArray, (cardObj, idx) => <Card key={idx} cardObj={cardObj} /> )}
     <pre className="noprint">
-      {/*{JSON.stringify(cardsArray, null, 2)}*/}
-      {JSON.stringify(_.chain(cardsArray).map((obj) => _.pick(obj, cardsImportantKeys)).value(), null, 2)}
+      {JSON.stringify(cardsArray, null, 2)}
+      {/*{JSON.stringify(_.chain(cardsArray).map((obj) => _.pick(obj, cardsImportantKeys)).value(), null, 2)}*/}
     </pre>
 
   </div>
