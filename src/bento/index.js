@@ -3,6 +3,7 @@ import Brng from 'brng'
 import seed from 'seed-random'
 
 import generateGainObj from '../util/generateGainObj.js'
+import checkSimilarity from '../util/checkSimilarity.js'
 
 import Card from './Card.js'
 
