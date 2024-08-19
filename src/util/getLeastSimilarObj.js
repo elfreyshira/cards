@@ -5,6 +5,9 @@ import checkSimilarity from './checkSimilarity.js'
 // addUndo(roller)
 // func(addUndo) returns [cardObj, undoChain]
 // returns cardObj
+
+document.lol = []
+
 function getLeastSimilarObj (
   cardsArray, acceptableSimilarityRatioArg = 0.3, maxRuns = 20, settings, func) {
 
@@ -24,7 +27,13 @@ function getLeastSimilarObj (
       similarityRatio <= acceptableSimilarityRatio
       || timesTried >= maxRuns
     ) {
-      return newCardObj // !!!!!!!!!!!!!
+      console.log('similarityRatio', similarityRatio)
+      console.log('timesTried', timesTried)
+
+      document.lol.push(similarityRatio)
+      
+      // RETURN !!!!!!!!!!!!!!!!!!!!!!
+      return newCardObj
       break
     }
     else {

@@ -92,7 +92,7 @@ function Edge3 () {
 function Money ({number=0}) {
   return <div className="icon-container">
     {/*<img className="icon" src={money}/>*/}
-    $<span className="number">{number}</span>
+    <span className="money-icon">$</span><span className="number">{number}</span>
   </div>
 }
 

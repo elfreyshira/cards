@@ -74,3 +74,19 @@ height: calc(1em - 3px);
 .resource-gain.bonus.shown img.icon {
   filter: invert(18%) sepia(60%) saturate(3453%) hue-rotate(350deg) brightness(89%) contrast(86%);
 }
+
+.starter-card-player {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  padding: 5px 10px;
+  border: 3px solid black;
+  border-top-left-radius: 20px;
+}
+
+.money-icon {
+  color: rgb(228, 155, 15);
+  text-shadow: 1px 1px 1px #000;
+/*  -webkit-text-fill-color: white;*/
+/*  -webkit-text-stroke: 1px black;*/
+}

@@ -14,6 +14,8 @@ import getAvailableResources from '../util/getAvailableResources.js'
 import createNestedBrngRoller from '../util/createNestedBrngRoller.js'
 import './index.css'
 
+import starterCards from './starterCards.js'
+
 // console.clear()
 
 
@@ -24,7 +26,7 @@ if (_.isString(seedID)) {
 }
 
 
-const CARD_QUANTITY = 50
+const CARD_QUANTITY = 34
 
 
 const squareRoller = createNestedBrngRoller({
@@ -70,8 +72,6 @@ const typeToRollerMapping = {
 const gainRoller = new Brng({
   money: 3,
   point: 4,
-
-  // cycle: 1.5,
   trash: 1,
 }, {bias: 4, keepHistory: true})
 
@@ -144,8 +144,8 @@ const cardObjSimilaritySettings = {
   size: [1, 2],
   shapeID: [1, 1, String],
   gain: {
-    money: [1, 2],
-    point: [1, 2],
+    money: [1, 3],
+    point: [1, 3],
     trash: [1, 1],
   }
 }
@@ -193,7 +193,7 @@ _.forEach(cardsArray, (cardObj, index) => {
 
   const leastSimilarObj = getLeastSimilarObj(
     cardsArray.slice(0, index),
-    0.1, // acceptableSimilarityRatioArg
+    0.5, // acceptableSimilarityRatioArg
     20, // max runs
     cardObjSimilaritySettings,
     (addUndo) => {
@@ -203,6 +203,7 @@ _.forEach(cardsArray, (cardObj, index) => {
       const exclusionRules = {
         groupingMaxVariety: [
           {resourceList: ['trash', 'point', 'money'], max: 2},
+          {resourceList: ['trash', 'money'], max: 1},
           {resourceList: ['point', 'money'], max: newCardObj.expectedValue < 3 ? 1 : 2},
         ],
         groupingMaxQuantity: [
@@ -243,7 +244,10 @@ _.forEach(cardsArray, (cardObj, index) => {
 
 })
 
+console.log(_.sum(_.sortBy(document.lol, (a) => -a).slice(0,10)))
 
+// !! TO ADD STARTER CARDS
+// cardsArray = cardsArray.concat(starterCards)
 
 const cardsImportantKeys = [
   'cost',

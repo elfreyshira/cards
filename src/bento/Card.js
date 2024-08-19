@@ -85,6 +85,29 @@ function Polyomino ({shapeLayout =`
   })
 }
 
+function Cost ({cost}) {
+  if (!_.isEmpty(cost)) {
+    return <div className="cost">
+      ${cost}
+    </div>
+  }
+  else {
+    return null
+  }
+}
+
+function Starter ({starter}) {
+  // return <div>lol</div>
+  if (_.isNumber(starter)) {
+    return <div className="starter-card-player md">
+      P{starter}
+    </div>
+  }
+  else {
+    return null
+  }
+}
+
 function Card (props) {
   
   const {
@@ -93,6 +116,7 @@ function Card (props) {
     type,
     shapeID,
     uuid,
+    starter,
   } = props.cardObj
 
   return (
@@ -122,9 +146,9 @@ function Card (props) {
         }))}
       </div>
 
-      <div className="cost">
-        ${cost}
-      </div>
+      <Cost cost={cost} />
+
+      <Starter starter={starter} />
 
     </div>
   )

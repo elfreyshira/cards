@@ -41,7 +41,7 @@ function createChildrenRollersFromParent (parentProportions, config = {}, roller
 
   _.forEach(parentProportions, (value, key) => {
     if (_.isObject(value)) {
-      rollers[key] = createFlattenedRoller(value.children)
+      rollers[key] = createFlattenedRoller(value.children, config)
       createChildrenRollersFromParent(value.children, config, rollers)
     }
   })

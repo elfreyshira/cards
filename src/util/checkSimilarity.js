@@ -1,18 +1,5 @@
 import _ from 'lodash'
 
-const cardObjSettings = {
-  cost: [1, 3], // multiplier = 1, max diff = 3, type = Number, 
-  type: [2, 1, String],
-  size: [1, 2],
-  shapeID: [2, 1, String],
-  gain: {
-    money: [2, 3],
-    point: [2, 3],
-    trash: [2, 1],
-    bonus: [1, 1],
-  }
-}
-
 function compareObj({currentObj, prevObj, settings, diff = 0, max = 0}) {
   let tempDiff = diff
   let tempMax = max
@@ -24,8 +11,10 @@ function compareObj({currentObj, prevObj, settings, diff = 0, max = 0}) {
       const ceiling = value[1] || 3
       const valueType = value[2] || Number
 
-
-      if (valueType === Number) {
+      if (!_.has(currentObj, key) && !_.has(prevObj, key)) {
+        // do nothing
+      }
+      else if (valueType === Number) {
         tempDiff += (_.clamp(
           Math.abs( (currentObj[key] || 0) - (prevObj[key] || 0) ),
           ceiling
