@@ -11,15 +11,20 @@ const squareResourcesList = [
   'remove3',
   'remove4',
 
-  'normal1',
-  'normal2',
-  'normal3',
-  'normal4',
+  'carb1',
+  'carb2',
+  'carb3',
+  'carb4',
 
-  'special1',
-  'special2',
-  'special3',
-  'special4',
+  'meat1',
+  'meat2',
+  'meat3',
+  'meat4',
+
+  'veggie1',
+  'veggie2',
+  'veggie3',
+  'veggie4',
 
   'edge1',
   'edge2',
@@ -36,8 +41,9 @@ const otherResourcesList = [
 
 
 const typeRenderMapping = {
-  normal: <>&#9675;</>,
-  special: <>&#10005;</>,
+  carb: <>&#9675;</>,
+  veggie: <>&#8964;</>,
+  meat: <>&#10005;</>,
   remove: null
 }
 
@@ -69,7 +75,7 @@ const shapes = {
 function Polyomino ({shapeLayout =`
 111
 010`,
-  type = 'normal'
+  type = 'carb'
 }) {
   if (type === 'edge') return null
 

@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-const normals = [
+const carbs = [
   'T4',
   'T4',
   'S4',
@@ -10,22 +10,22 @@ const normals = [
   'I4',
   'O4',
 ]
-const specials = [
+const meats = [
   'I4',
   'O4',
 ]
 
 const starterCardsArray = _.flatten(_.concat(
   _.times(2, (index) => {
-    return _.map(normals, shapeID => {
-      let gain = {normal4: 1, money: 1}
+    return _.map(carbs, shapeID => {
+      let gain = {carb4: 1, money: 1}
 
       if (shapeID === 'I4') {
-        gain = {normal4: 1, point: 1}
+        gain = {carb4: 1, point: 1}
       }
 
       return {
-        type: 'normal',
+        type: 'carb',
         shapeID,
         gain,
         starter: index+1,
@@ -33,15 +33,15 @@ const starterCardsArray = _.flatten(_.concat(
     })
   }),
   _.times(2, (index) => {
-    return _.map(specials, shapeID => {
+    return _.map(meats, shapeID => {
 
-      let gain = {special4: 1, point: 2}
+      let gain = {meat4: 1, point: 2}
       if (shapeID === 'I4') {
-        gain = {special4: 1, money: 2}
+        gain = {meat4: 1, money: 2}
       }
 
       return {
-        type: 'special',
+        type: 'meat',
         shapeID,
         gain,
         starter: index+1,
@@ -54,7 +54,7 @@ export default starterCardsArray
 
  // {
  //    "cost": "4",
- //    "type": "special",
+ //    "type": "meat",
  //    "shapeID": "I4",
  //    "size": "4",
  //    "gain": {

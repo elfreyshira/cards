@@ -38,7 +38,7 @@ height: calc(1em - 3px);
   position: absolute;
 }
 
-.special .square span.icon {
+.meat .square span.icon {
   bottom: .20em;
   left: 0.08em;
   color: purple;
@@ -46,7 +46,15 @@ height: calc(1em - 3px);
   font-weight: 700;
 }
 
-.normal .square span.icon {
+.veggie .square span.icon {
+  zoom: 120%;
+  color: blue;
+  font-weight: 700;
+  bottom: 55%;
+  left: .05em;
+}
+
+.carb .square span.icon {
   bottom: .28em;
   left: 0.05em;
   zoom: 80%;

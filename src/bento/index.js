@@ -36,19 +36,25 @@ const squareRoller = createNestedBrngRoller({
     remove3: 1,
     remove4: 1,
   }},
-  normal: {weight: 1, children: {
-    normal1: 3,
-    normal2: 4,
-    normal3: 5,
-    normal4: 5,
+  carb: {weight: 0.6, children: {
+    carb1: 3,
+    carb2: 4,
+    carb3: 5,
+    carb4: 5,
   }},
-  special: {weight: 1.2, children: {
-    special1: 3,
-    special2: 4,
-    special3: 5,
-    special4: 5,
+  meat: {weight: 0.9, children: {
+    meat1: 3,
+    meat2: 4,
+    meat3: 5,
+    meat4: 5,
   }},
-  edge: {weight: .5, children: {
+  veggie: {weight: 0.8, children: {
+    veggie1: 3,
+    veggie2: 4,
+    veggie3: 5,
+    veggie4: 5,
+  }},
+  edge: {weight: .4, children: {
     edge1: 4,
     edge2: 5,
     edge3: 6,
@@ -65,8 +71,9 @@ const generateShapeRollerMapping = () => {
 }
 const typeToRollerMapping = {
   remove: generateShapeRollerMapping(),
-  normal: generateShapeRollerMapping(),
-  special: generateShapeRollerMapping(),
+  carb: generateShapeRollerMapping(),
+  veggie: generateShapeRollerMapping(),
+  meat: generateShapeRollerMapping(),
 }
 
 const gainRoller = new Brng({
@@ -87,17 +94,23 @@ const resourceToValueMapping = {
   remove3: 4,
   remove4: 4.5,
 
-  normal: 0, // minimum value
-  normal1: 1.5,
-  normal2: 1,
-  normal3: 0.5,
-  normal4: 0,
+  carb: 0, // minimum value
+  carb1: 1.5,
+  carb2: 1,
+  carb3: 0.5,
+  carb4: 0,
 
-  special: -1, // minimum value
-  special1: 1.25,
-  special2: 0.5,
-  special3: -0.25,
-  special4: -1,
+  meat: -1, // minimum value
+  meat1: 1.25,
+  meat2: 0.5,
+  meat3: -0.25,
+  meat4: -1,
+
+  veggie: -0.5, // minimum value
+  veggie1: 1.375,
+  veggie2: 0.75,
+  veggie3: 0.125,
+  veggie4: -0.5,
 
   // includes the +2 from an empty square
   edge: 2.5, // minimum value

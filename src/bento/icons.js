@@ -31,45 +31,68 @@ function Remove4 () {
   </div>
 }
 
-function Normal1 () {
+function Carb1 () {
   return <div className="icon-container">
-    NORMAL 1
+    CARB 1
   </div>
 }
-function Normal2 () {
+function Carb2 () {
   return <div className="icon-container">
-    NORMAL 2
+    CARB 2
   </div>
 }
-function Normal3 () {
+function Carb3 () {
   return <div className="icon-container">
-    NORMAL 3
+    CARB 3
   </div>
 }
-function Normal4 () {
+function Carb4 () {
   return <div className="icon-container">
-    NORMAL 4
+    CARB 4
   </div>
 }
 
-function Special1 () {
+
+function Veggie1 () {
   return <div className="icon-container">
-    SPECIAL 1
+    VEGGIE 1
   </div>
 }
-function Special2 () {
+function Veggie2 () {
   return <div className="icon-container">
-    SPECIAL 2
+    VEGGIE 2
   </div>
 }
-function Special3 () {
+function Veggie3 () {
   return <div className="icon-container">
-    SPECIAL 3
+    VEGGIE 3
   </div>
 }
-function Special4 () {
+function Veggie4 () {
   return <div className="icon-container">
-    SPECIAL 4
+    VEGGIE 4
+  </div>
+}
+
+
+function Meat1 () {
+  return <div className="icon-container">
+    MEAT 1
+  </div>
+}
+function Meat2 () {
+  return <div className="icon-container">
+    MEAT 2
+  </div>
+}
+function Meat3 () {
+  return <div className="icon-container">
+    MEAT 3
+  </div>
+}
+function Meat4 () {
+  return <div className="icon-container">
+    MEAT 4
   </div>
 }
 
@@ -131,20 +154,29 @@ export default {
   Remove2,
   Remove3,
   Remove4,
-  Normal1,
-  Normal2,
-  Normal3,
-  Normal4,
-  Special1,
-  Special2,
-  Special3,
-  Special4,
+
+  Carb1,
+  Carb2,
+  Carb3,
+  Carb4,
+
+  Veggie1,
+  Veggie2,
+  Veggie3,
+  Veggie4,
+
+  Meat1,
+  Meat2,
+  Meat3,
+  Meat4,
+
   Edge1,
   Edge2,
   Edge3,
+
   Money,
   Point,
-  // Cycle,
   Trash,
+
   Bonus,
 }
