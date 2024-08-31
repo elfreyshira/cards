@@ -26,34 +26,62 @@ if (_.isString(seedID)) {
 }
 
 
-const CARD_QUANTITY = 34
+const CARD_QUANTITY = 50
 
 
 const squareRoller = createNestedBrngRoller({
   remove: {weight: .7, children: {
-    remove1: 1,
-    remove2: 1,
-    remove3: 1,
-    remove4: 1,
+    removeDiagonal: {weight: 1, children: {
+      remove205: 0.5,
+      remove305: 0.5,
+    }},
+    removeNormal: {weight: 3, children: {
+      remove1: 1,
+      remove2: 0.5, // 1
+      remove3: 0.5, // 1
+      remove4: 1,
+    }}
   }},
-  carb: {weight: 0.6, children: {
-    carb1: 3,
-    carb2: 4,
-    carb3: 5,
-    carb4: 5,
+
+  carb: {weight: 0.5, children: {
+    carbDiagonal: {weight: 4.5, children: {
+      carb205: 2,
+      carb305: 2.5,
+    }},
+    carbNormal: {weight: 12.5, children: {
+      carb1: 3,
+      carb2: 2, // 4
+      carb3: 2.5, // 5
+      carb4: 5,
+    }}
   }},
+
   meat: {weight: 0.9, children: {
-    meat1: 3,
-    meat2: 4,
-    meat3: 5,
-    meat4: 5,
+    meatDiagonal: {weight: 4.5, children: {
+      meat205: 2,
+      meat305: 2.5,
+    }},
+    meatNormal: {weight: 12.5, children: {
+      meat1: 3,
+      meat2: 2, // 4
+      meat3: 2.5, // 5
+      meat4: 5,
+    }}
   }},
-  veggie: {weight: 0.8, children: {
-    veggie1: 3,
-    veggie2: 4,
-    veggie3: 5,
-    veggie4: 5,
+
+  veggie: {weight: 0.9, children: {
+    // veggieDiagonal: {weight: diagonalRatio, children: {
+    //   veggie205: 2,
+    //   veggie305: 2.5,
+    // }},
+    veggieNormal: {weight: 1, children: {
+      veggie1: 3,
+      veggie2: 4,
+      veggie3: 5,
+      veggie4: 5,
+    }}
   }},
+
   edge: {weight: .4, children: {
     edge1: 4,
     edge2: 5,
@@ -64,7 +92,9 @@ const squareRoller = createNestedBrngRoller({
 const generateShapeRollerMapping = () => {
   return {
     4: new Brng({T4: 1, L4: 1, S4: 1, I4: 1, O4: 1}, {bias: 4}),
+    3.5: new Brng({T4s: 1, L4s: 1, S4s: 1, I4s: 1}, {bias: 4}),
     3: new Brng({I3: 1, L3: 1}, {bias: 4}),
+    2.5: new Brng({I3s: 1, L3s: 1}, {bias: 4}),
     2: {roll: _.constant('I2')},
     1: {roll: _.constant('O1')},
   }
@@ -87,31 +117,62 @@ const gainRoller = new Brng({
 const resourceToValueMapping = {
   // empty: 2, // taken out because it's against the core of tile-laying games
 
+  /// CARB
   // includes the +2 from an empty square
   remove: 3, // minimum value
+
+  removeNormal: 3, // minimum value
   remove1: 3,
   remove2: 3.5,
   remove3: 4,
   remove4: 4.5,
 
+  removeDiagonal: 3.25,
+  remove205: 3.25,
+  remove305: 3.75,
+
+
+  /// CARB
   carb: 0, // minimum value
+
+  carbNormal: 0, // minimum value
   carb1: 1.5,
   carb2: 1,
   carb3: 0.5,
   carb4: 0,
 
+  carbDiagonal: 0.25,
+  carb205: 0.75,
+  carb305: 0.25,
+
+  /// MEAT -- MAX GROUP OF 4
   meat: -1, // minimum value
+
+  meatNormal: -1, // minimum value
   meat1: 1.25,
   meat2: 0.5,
   meat3: -0.25,
   meat4: -1,
 
+  meatDiagonal: -0.25,
+  meat205: 0.5,
+  meat305: -0.25,
+
+  /// VEGGIE -- MUST ONLY HAVE ONE GROUP PER ENCLOSED AREA
   veggie: -0.5, // minimum value
+
+  veggieNormal: -0.5, // minimum value
   veggie1: 1.375,
   veggie2: 0.75,
   veggie3: 0.125,
   veggie4: -0.5,
 
+  // no veggie diagonal because veggies need to stick together
+  // veggieDiagonal: -0.1875,
+  // veggie205: 0.4375,
+  // veggie305: -0.1875,
+
+  /// EDGE
   // includes the +2 from an empty square
   edge: 2.5, // minimum value
   edge1: 2.5,
@@ -157,8 +218,8 @@ const cardObjSimilaritySettings = {
   size: [1, 2],
   shapeID: [1, 1, String],
   gain: {
-    money: [1, 3],
-    point: [1, 3],
+    money: [1, 2],
+    point: [1, 2],
     trash: [1, 1],
   }
 }
@@ -197,9 +258,9 @@ _.forEach(cardsArray, (cardObj, index) => {
   tempGainObj[chosenResource] = 1
   tempCurrentValue += resourceToValueMapping[chosenResource]
 
-  cardObj.type = chosenResource.replace(/\d/, '')
+  cardObj.type = chosenResource.replace(/\d+/, '')
   if (cardObj.type !== 'edge') {
-    const size = chosenResource.replace(/[^\d]+/, '')
+    const size = parseFloat( chosenResource.replace(/[^\d]+/, '').split(0).join('.') )
     cardObj.shapeID = typeToRollerMapping[cardObj.type][size].roll()
     cardObj.size = size
   }
@@ -260,7 +321,7 @@ _.forEach(cardsArray, (cardObj, index) => {
 console.log(_.sum(_.sortBy(document.lol, (a) => -a).slice(0,10)))
 
 // !! TO ADD STARTER CARDS
-// cardsArray = cardsArray.concat(starterCards)
+cardsArray = cardsArray.concat(starterCards)
 
 const cardsImportantKeys = [
   'cost',

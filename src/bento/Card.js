@@ -8,22 +8,30 @@ import ICONS from './icons.js'
 const squareResourcesList = [
   'remove1',
   'remove2',
+  'remove205',
   'remove3',
+  'remove305',
   'remove4',
 
   'carb1',
   'carb2',
+  'carb205',
   'carb3',
+  'carb305',
   'carb4',
 
   'meat1',
   'meat2',
+  'meat205',
   'meat3',
+  'meat305',
   'meat4',
 
   'veggie1',
   'veggie2',
+  'veggie205',
   'veggie3',
+  'veggie305',
   'veggie4',
 
   'edge1',
@@ -50,22 +58,32 @@ const typeRenderMapping = {
 const shapes = {
   T4: ` 111
         010`,
+  T4s: `101
+        010`,
 
   L4: ` 111
+        100`,
+  L4s: `101
         100`,
 
   S4: ` 110
         011`,
+  S4s: `110
+        001`,
 
   I4: ` 1111`,
+  I4s: `1101`,
 
   O4: ` 11
         11`,
 
   I3: ` 111`,
+  I3s: `101`,
 
   L3: ` 11
         10`,
+  L3s: `10
+        01`,
 
   I2: ` 11`,
 

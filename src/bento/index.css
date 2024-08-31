@@ -48,7 +48,7 @@ height: calc(1em - 3px);
 
 .veggie .square span.icon {
   zoom: 120%;
-  color: blue;
+  color: forestgreen;
   font-weight: 700;
   bottom: 55%;
   left: .05em;
@@ -58,7 +58,7 @@ height: calc(1em - 3px);
   bottom: .28em;
   left: 0.05em;
   zoom: 80%;
-  color: forestgreen;
+  color: saddlebrown;
   font-weight: 700;
 }
 .remove .square {
