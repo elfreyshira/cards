@@ -17,7 +17,7 @@ const veggies = [
   'T4',
 ]
 
-const PLAYER_COUNT = 2
+const PLAYER_COUNT = 4
 
 const starterCardsArray = _.flatten(_.times(PLAYER_COUNT, (index) => _.concat(
 
