@@ -267,10 +267,9 @@ _.forEach(cardsArray, (cardObj, index) => {
 
   const leastSimilarObj = getLeastSimilarObj(
     cardsArray.slice(0, index),
-    0.5, // acceptableSimilarityRatioArg
-    20, // max runs
+    10, // max attempts
     cardObjSimilaritySettings,
-    (addUndo) => {
+    (addUndo, addRedo) => {
 
       const newCardObj = _.cloneDeep(cardObj)
 
@@ -297,9 +296,9 @@ _.forEach(cardsArray, (cardObj, index) => {
         exclusionRules,
         gainObj: tempGainObj,
         currentValue: tempCurrentValue,
+        addUndo,
+        addRedo,
       })
-      // minus 1 to subtract the default shape resource. doesn't include bonus.
-      _.times( _.sum(_.values(gainObj)) - 1, () => addUndo(gainRoller) )
 
       // gainObj.bonus = _.round((newCardObj.expectedValue - currentValue)/0.5)
       const bonus = _.round((newCardObj.expectedValue - currentValue)/resourceToValueMapping.bonus)
@@ -312,7 +311,8 @@ _.forEach(cardsArray, (cardObj, index) => {
       newCardObj.currentValue = currentValue
 
       return newCardObj
-  })
+    }
+  )
 
   _.merge(cardObj, leastSimilarObj)
 

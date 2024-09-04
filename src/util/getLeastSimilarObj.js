@@ -2,47 +2,56 @@ import _ from 'lodash'
 
 import checkSimilarity from './checkSimilarity.js'
 
-// addUndo(roller)
-// func(addUndo) returns [cardObj, undoChain]
-// returns cardObj
-
 document.lol = []
 
+// addUndo(roller)
+
+// func(addUndo, addRedo) -- generates and fills the cardObj with resources
+// returns newCardObj
+
+// returns cardObj
 function getLeastSimilarObj (
-  cardsArray, acceptableSimilarityRatioArg = 0.3, maxRuns = 20, settings, func) {
+  cardsArray, totalAttempts = 10, settings, func) {
 
   let timesTried = 0
-  let acceptableSimilarityRatio = acceptableSimilarityRatioArg
+  const attemptsArray = []
 
-  while (true) {
+  while (timesTried < totalAttempts) {
     const undoChain = []
     const addUndo = (roller) => {
       undoChain.push(() => roller.undo())
     }
-    const newCardObj = func(addUndo)
+
+    const redoChain = []
+    const addRedo = (roller, chosenResource) => {
+      redoChain.push(() => roller.roll(chosenResource))
+    }
+
+    const newCardObj = func(addUndo, addRedo)
 
     const similarityRatio = checkSimilarity(cardsArray, newCardObj, settings)
 
-    if (
-      similarityRatio <= acceptableSimilarityRatio
-      || timesTried >= maxRuns
-    ) {
-      console.log('similarityRatio', similarityRatio)
-      console.log('timesTried', timesTried)
+    attemptsArray.push({
+      similarityRatio,
+      cardObj: _.cloneDeep(newCardObj),
+      redoChain
+    })
 
-      document.lol.push(similarityRatio)
-      
-      // RETURN !!!!!!!!!!!!!!!!!!!!!!
-      return newCardObj
-      break
-    }
-    else {
-      _.over(undoChain)()
-      timesTried++
-      acceptableSimilarityRatio += (1 - acceptableSimilarityRatioArg) / maxRuns
-    }
+    _.over(undoChain)()
+    timesTried++
     
   }
+
+  const {
+    similarityRatio,
+    cardObj,
+    redoChain,
+  } = _.sortBy(attemptsArray, 'similarityRatio')[0]
+  _.over(redoChain)()  
+
+  document.lol.push(similarityRatio)
+
+  return cardObj
 
 }
 

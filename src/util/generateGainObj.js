@@ -16,6 +16,8 @@ function generateGainObj ({
   gainObj = {},
   currentValue = 0,
   excludeList = [],
+  addUndo = _.noop(),
+  addRedo = _.noop(),
 }) {
 
   const tempGainObj = _.cloneDeep(gainObj)
@@ -49,6 +51,9 @@ function generateGainObj ({
         resourceToValueMapping[chosenResource](cardObj) : resourceToValueMapping[chosenResource]
       
       tempCurrentVal =  tempCurrentVal + valueIncrease
+
+      addUndo(resourceRoller, chosenResource)
+      addRedo(resourceRoller, chosenResource)
     }
 
   }

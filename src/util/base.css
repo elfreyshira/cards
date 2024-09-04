@@ -31,6 +31,10 @@ html {
   .noprint {
     display: none;
   }
+  @page {
+    size: A4; /* DIN A4 standard, Europe */
+    margin: 0.25in;
+  }
 }
 
 .md {
