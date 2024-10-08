@@ -8,6 +8,7 @@ function generateGainObj ({
   // REQUIRED
   resourceToValueMapping, // {key: Number | Function}
   cardObj, // {expectedValue, ...}
+  expectedValue,
   resourceRoller, // brng object
 
   // OPTIONAL
@@ -22,12 +23,13 @@ function generateGainObj ({
 
   const tempGainObj = _.cloneDeep(gainObj)
   let tempCurrentVal = currentValue
+  let tempExpectedValue = expectedValue || cardObj.expectedValue
 
   while (true) {
 
     const onlyList = getAvailableResources(
       resourceToValueMapping,
-      cardObj.expectedValue - tempCurrentVal,
+      tempExpectedValue - tempCurrentVal,
       valueSlack,
       cardObj
     )

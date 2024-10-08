@@ -12,9 +12,8 @@ import './App.css';
 // import Cards from './one-deck-engine-2/index.js';
 // import Cards from './one-deck-engine-3/index.js';
 // import Cards from './fantasy-realms/index.js';
-import Cards from './bento/index.js';
-
-import getNewExcludeList from './util/getNewExcludeList.js'
+// import Cards from './bento/index.js';
+import Cards from './dbg-dudes/index.js';
 
 
 function App() {
