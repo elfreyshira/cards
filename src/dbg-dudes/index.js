@@ -6,14 +6,15 @@ import '../util/base.css'
 import generateGainObj from '../util/generateGainObj.js'
 import getLeastSimilarObj from '../util/getLeastSimilarObj.js'
 import createNestedBrngRoller from '../util/createNestedBrngRoller.js'
+import countOccurances from '../util/countOccurances.js'
 
-// import Card from './Card.js'
+import Card from './Card.js'
 
 
 
-// import './index.css'
+import './index.css'
 
-// import starterCards from './starterCards.js'
+import starterCards from './starterCards.js'
 
 // console.clear()
 
@@ -25,12 +26,12 @@ if (_.isString(seedID)) {
 }
 
 
-const CARD_QUANTITY = 50
+const CARD_QUANTITY = 27
 
 const valueSlackRoller = new Brng({0: 1, 0.5: 1}, {bias: 4})
 
 const gainTopRoller = new Brng({
-  extract: 60,
+  extract: 70,
 
   // add troops = 115
   addTroop: 110,
@@ -42,16 +43,14 @@ const gainTopRoller = new Brng({
   moveAll: 10, // x 3 = 30
   moveMech: 20, // x 3 = 60
 
-  
-  // 5
   // draw: 2,
-  // cycle: 1,
+  // cycle: 15,
 }, {bias: 4, keepHistory: true})
 
 const gainBottomRoller = new Brng({
-  atk: 13, // winning
+  atk: 12, // winning
 
-  def: 10, // losing
+  def: 9, // losing
   retaliate: 5, // losing
   retreat: 5, // losing
   resurrect: 2, // losing
@@ -70,7 +69,7 @@ const resourceToValueMapping = {
   addTroop: 1,
   moveTroop: 0.5,
   moveMech: 1.5,
-  addToAny: 2,
+  addToAny: 1.75,
   moveToAny: 1,
   moveAll: 1.5,
 
@@ -81,9 +80,9 @@ const resourceToValueMapping = {
   // BOTTOM
   atk: 0.75, // winning
   def: 0.75, // losing
-  retaliate: 1, // losing
+  retaliate: 1.25, // losing
   retreat: 0.75, // losing
-  resurrect: 1.5, // losing
+  resurrect: 1.25, // losing
   rally: 0.75, // both
   push: 1.5, // both
 }
@@ -101,14 +100,14 @@ const costRoller = new Brng({
 
 const costToValueMapping = {
   1: 2,
-  2: 2.80,
+  2: 2.82,
 
-  3: 3.45,
-  4: 4.00,
-  5: 4.46,
-  6: 4.86,
-  7: 5.20,
-  8: 5.50,
+  3: 3.5,
+  4: 4.08,
+  5: 4.57,
+  6: 5.00,
+  // 7: 5.20,
+  // 8: 5.50,
 }
 
 const cardObjSimilaritySettings = {
@@ -122,6 +121,7 @@ const cardObjSimilaritySettings = {
     moveAll: [1, 1],
     moveMech: [1, 1],
   },
+  currentTopValue: [1, 2],
   gainBottom: {
     atk: [1, 3],
     def: [1, 3],
@@ -130,6 +130,7 @@ const cardObjSimilaritySettings = {
     retreat: [1, 3],
     rally: [1, 3],
   },
+  currentBottomValue: [1, 2],
 }
 const cardObjSimilaritySettings2 = {
   cost: [1, 3], // multiplier = 1, max diff = 3, type = Number, 
@@ -141,6 +142,7 @@ const cardObjSimilaritySettings2 = {
     retreat: [1, 3],
     rally: [1, 3],
   },
+  currentBottomValue: [1, 2],
 }
 
 /////////////////////////////
@@ -233,17 +235,19 @@ _.forEach(cardsArray, (cardObj, index) => {
           {resourceList: ['extract', 'addTroop', 'addToAny',
             'moveTroop', 'moveToAny', 'moveAll', 'moveMech'], max: 2},
           {resourceList: ['moveTroop', 'moveToAny', 'moveAll', 'moveMech'], max: 1},
+          {resourceList: ['addToAny', 'moveToAny'], max: 1},
           {resourceList: ['addTroop', 'addToAny'], max: 1},
         ],
         groupingMaxQuantity: [
           {resourceList: ['extract'], max: 3},
           {resourceList: ['moveTroop'], max: 4},
+          {resourceList: ['moveMech'], max: 2},
         ]
       }
 
       const topExpectedValue = newCardObj.expectedValue
         + (newCardObj.expectedValue - newCardObj.currentBottomValue) * .7
-        
+
       let {gainObj, currentValue} = generateGainObj({
         // REQUIRED
         resourceToValueMapping: resourceToValueMapping,
@@ -279,10 +283,13 @@ _.forEach(cardsArray, (cardObj, index) => {
 
 })
 
-console.log(_.sum(_.sortBy(document.lol, (a) => -a).slice(0,20)))
+// console.log(_.sum(_.sortBy(document.lol, (a) => -a).slice(0,50)))
+console.log(_.round(_.mean(document.lol), 4))
+
+countOccurances(cardsArray, 'gainTop', 'bonus')
 
 // !! TO ADD STARTER CARDS
-// cardsArray = cardsArray.concat(starterCards)
+cardsArray = cardsArray.concat(starterCards)
 
 const cardsImportantKeys = [
   'cost',
@@ -294,7 +301,7 @@ const cardsImportantKeys = [
 
 function Cards () {
   return <div>
-    {/*{_.map(cardsArray, (cardObj, idx) => <Card key={idx} cardObj={cardObj} /> )}*/}
+    {_.map(cardsArray, (cardObj, idx) => <Card key={idx} cardObj={cardObj} /> )}
     <pre className="noprint">
       {JSON.stringify(cardsArray, null, 2)}
       {/*{JSON.stringify(_.chain(cardsArray).map((obj) => _.pick(obj, cardsImportantKeys)).value(), null, 2)}*/}
