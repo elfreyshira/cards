@@ -8,6 +8,12 @@
   border-bottom-left-radius: 15px;
 }
 
+.cost.starter {
+  background-color: initial;
+  color: initial;
+  border-bottom: 3px solid black;
+  border-left: 3px solid black;
+}
 
 .top {
   position: absolute;

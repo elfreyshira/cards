@@ -7,9 +7,9 @@ import ICONS from '../util/icons.js'
 function Cost({cost}) {
   // for starter cards
   if (_.startsWith(cost, 'P')) {
-    return <div className="cost">{cost}</div>
+    return <div className="cost starter">{cost}</div>
   }
-  
+
   return <div className="cost">${cost}</div>
 }
 

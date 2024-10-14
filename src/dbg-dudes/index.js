@@ -26,7 +26,7 @@ if (_.isString(seedID)) {
 }
 
 
-const CARD_QUANTITY = 27
+const CARD_QUANTITY = 31
 
 const valueSlackRoller = new Brng({0: 1, 0.5: 1}, {bias: 4})
 
@@ -34,12 +34,12 @@ const gainTopRoller = new Brng({
   extract: 70,
 
   // add troops = 115
-  addTroop: 110,
-  addToAny: 15, // add = 1 * 15 = 15, move = 2 * 15 = 30
+  addTroop: 115,
+  // addToAny: 15, // add = 1 * 15 = 15, move = 2 * 15 = 30
   
-  // move troops = 200
-  moveTroop: 50, // x 1 = 50
-  moveToAny: 15, // x 2 = 30
+  // move troops = 180
+  moveTroop: 45, // x 1 = 50
+  moveToAny: 23, // x 2 = 40
   moveAll: 10, // x 3 = 30
   moveMech: 20, // x 3 = 60
 
@@ -84,7 +84,7 @@ const resourceToValueMapping = {
   retreat: 0.75, // losing
   resurrect: 1.25, // losing
   rally: 0.75, // both
-  push: 1.5, // both
+  push: 1.25, // both
 }
 
 const costRoller = new Brng({
@@ -100,12 +100,12 @@ const costRoller = new Brng({
 
 const costToValueMapping = {
   1: 2,
-  2: 2.82,
+  2: 2.78,
 
-  3: 3.5,
-  4: 4.08,
-  5: 4.57,
-  6: 5.00,
+  3: 3.4,
+  4: 3.91,
+  5: 4.33,
+  6: 4.69,
   // 7: 5.20,
   // 8: 5.50,
 }
@@ -235,12 +235,13 @@ _.forEach(cardsArray, (cardObj, index) => {
           {resourceList: ['extract', 'addTroop', 'addToAny',
             'moveTroop', 'moveToAny', 'moveAll', 'moveMech'], max: 2},
           {resourceList: ['moveTroop', 'moveToAny', 'moveAll', 'moveMech'], max: 1},
-          {resourceList: ['addToAny', 'moveToAny'], max: 1},
-          {resourceList: ['addTroop', 'addToAny'], max: 1},
+          // {resourceList: ['addToAny', 'moveToAny'], max: 1},
+          // {resourceList: ['addTroop', 'addToAny'], max: 1},
         ],
         groupingMaxQuantity: [
           {resourceList: ['extract'], max: 3},
-          {resourceList: ['moveTroop'], max: 4},
+          {resourceList: ['moveTroop'], max: 3},
+          {resourceList: ['moveToAny'], max: 2},
           {resourceList: ['moveMech'], max: 2},
         ]
       }
