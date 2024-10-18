@@ -1,8 +1,8 @@
 import _ from 'lodash'
 
-function compareObj({currentObj, prevObj, settings, diff = 0, max = 0}) {
-  let tempDiff = diff
-  let tempMax = max
+function compareObj({currentObj, prevObj, settings, similarityPoints = 0, comparisonSpace = 0}) {
+  let smyPts = similarityPoints
+  let compSpce = comparisonSpace
 
   _.forEach(settings, (value, key) => {
     if (_.isArray(value)) {
@@ -15,17 +15,18 @@ function compareObj({currentObj, prevObj, settings, diff = 0, max = 0}) {
         // do nothing
       }
       else if (valueType === Number) {
-        tempDiff += (_.clamp(
-          Math.abs( (currentObj[key] || 0) - (prevObj[key] || 0) ),
-          ceiling
-        )/ ceiling)
-        * multiplier
+        smyPts += multiplier - (
+          (_.clamp(
+            Math.abs( (currentObj[key] || 0) - (prevObj[key] || 0) ),
+            ceiling
+          )/ ceiling)
+        ) * multiplier
 
-        tempMax += multiplier
+        compSpce += multiplier
       }
       else { // String
-        tempDiff += (currentObj[key] === prevObj[key] ? multiplier : 0)
-        tempMax += multiplier
+        smyPts += (currentObj[key] === prevObj[key] ? multiplier : 0)
+        compSpce += multiplier
       }
 
     }
@@ -34,16 +35,16 @@ function compareObj({currentObj, prevObj, settings, diff = 0, max = 0}) {
         currentObj: currentObj[key],
         prevObj: prevObj[key],
         settings: value,
-        diff: tempDiff,
-        max: tempMax,
+        // similarityPoints: smyPts,
+        // comparisonSpace: compSpce,
       })
 
-      tempDiff += similarityResults[0]
-      tempMax += similarityResults[1]
+      smyPts += similarityResults[0]
+      compSpce += similarityResults[1]
     }
   })
 
-  return [tempDiff, tempMax]
+  return [smyPts, compSpce]
 }
 
 function checkSimilarity(cardsArray, currentObj = {}, settings = {}) {
@@ -53,8 +54,8 @@ function checkSimilarity(cardsArray, currentObj = {}, settings = {}) {
 
   _.forEach(cardsArray, (prevObj) => {
     
-    const [diff, max] = compareObj({currentObj, prevObj, settings})
-    const similarityRatio = diff / (max||1)
+    const [similarityPoints, comparisonSpace] = compareObj({currentObj, prevObj, settings})
+    const similarityRatio = similarityPoints / (comparisonSpace||1)
     
     if (similarityRatio > highestSimilarityRatio) {
       // mostSimilarCardObj = prevObj

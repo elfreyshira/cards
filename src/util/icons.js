@@ -18,6 +18,13 @@ import potion from './images/potion.png'
 import push from './images/push.png'
 import deckCycle from './images/deck-cycle.png'
 
+import drawCard from './images/draw-card.png'
+import trashCard from './images/trash-card.png'
+
+import rerollDice from './images/reroll-dice.png'
+import diceSingle from './images/dice-single.png'
+import trashCan from './images/trash-can.png'
+import marketStall from './images/market-stall.png'
 
 
 
@@ -50,6 +57,25 @@ export default {
   Potion: makeIconComponent(potion),
   Push: makeIconComponent(push),
   DeckCycle: makeIconComponent(deckCycle),
-  
+
+  DrawCard: makeIconComponent(drawCard),
+  TrashCard: makeIconComponent(trashCard),
+  RerollDice: makeIconComponent(rerollDice),
+  DrawDice: ({number}) => (
+    <div className="icon-container">
+      +<img className="icon" src={diceSingle}/>
+      &nbsp;<span className="number">{number}</span>
+    </div>
+  ),
+
+  TrashDice: makeIconComponent(trashCan, diceSingle),
+
+  Dollar: ({number}) => (
+    <div className="icon-container">
+      <span className="icon">$</span>
+      <span className="number">{number}</span>
+    </div>
+  ),
+  MarketStall: makeIconComponent(trashCan, marketStall),
 
 }
