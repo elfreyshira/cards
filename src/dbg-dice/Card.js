@@ -4,13 +4,16 @@ import classnames from 'classnames'
 import ICONS from '../util/icons.js'
 
 
-function Cost({cost}) {
+function PurchaseCost({cost}) {
   // for starter cards
   if (_.startsWith(cost, 'P')) {
-    return <div className="cost starter">{cost}</div>
+    return <div className="purchase-cost starter">{cost}</div>
   }
 
-  return <div className="cost">${cost}</div>
+  const costType = (cost <= 5)
+    ? 'cost-cheap'
+    : 'cost-expensive'
+  return <div className={classnames('purchase-cost', costType)}>${cost}</div>
 }
 
 
@@ -68,20 +71,26 @@ const endTurnEffects = {
 
 
 
+function Discard ({discardValue = 1}) {
+  return <div className="discard-value md">{discardValue}</div>
+}
+
 
 function Card (props) {
   
   const {
     cost,
     gain,
+    discardValue,
   } = props.cardObj
 
   return (
     <div className="card lg">
       <DiceCost gain={gain} />
-      <Cost cost={cost} />
+      <PurchaseCost cost={cost} />
       <Effect gain={gain} effectsAndIcons={instantEffects} type="instant" />
       <Effect gain={gain} effectsAndIcons={endTurnEffects} type="endturn" />
+      <Discard discardValue={discardValue} />
 
     </div>
   )

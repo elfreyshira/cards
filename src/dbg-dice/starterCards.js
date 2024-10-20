@@ -25,15 +25,15 @@ const starterCardsArray = _.flattenDeep(_.times(PLAYER_COUNT, (index) => [
       "reroll": 1,
     }
   },
-  {
-    "cost": "P" + (index + 1),
-    "gain": {
-      "cost0": 1,
-      "trashMarket": 1,
-      "reroll": 1,
-    }
-  },
-  _.times(5, () => ({
+  // {
+  //   "cost": "P" + (index + 1),
+  //   "gain": {
+  //     "cost0": 1,
+  //     "trashMarket": 1,
+  //     "reroll": 1,
+  //   }
+  // },
+  _.times(6, () => ({
     "cost": "P" + (index + 1),
     "gain": {
       "cost0": 1,

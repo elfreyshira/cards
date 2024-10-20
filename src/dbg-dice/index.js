@@ -31,7 +31,7 @@ else {
 }
 
 
-const CARD_QUANTITY = 27
+const CARD_QUANTITY = 36
 
 const effectsList = [
   'money', 'cycleCard', 'cycleDice', 'trashDice', 'trashCard', 'drawCard',
@@ -44,8 +44,8 @@ const resourceToValueMapping = {
   money: 100,
   cycleCard: 100,
   cycleDice: 100,
-  trashDice: 100,
-  trashCard: 100,
+  trashDice: 150,
+  trashCard: 150,
   drawCard: 200,
   drawDice: 200,
   reroll: 75,
@@ -57,7 +57,7 @@ const resourceToValueMapping = {
   cost3: -300 - extraDiceCost,
   cost4: -400 - extraDiceCost,
   cost5: -500 - extraDiceCost,
-  cost6: -600 - extraDiceCost,
+  // cost6: -600 - extraDiceCost,
 
   bonus: 50
 }
@@ -70,20 +70,9 @@ const diceCostRoller = createNestedBrngRoller({
     cost3: 1,
     cost4: 1,
     cost5: 1,
-    cost6: 1,
+    // cost6: 1,
   }},
 }, {bias: 4, repeatTolerance: 0})
-
-// const diceCostRoller = new Brng({
-//   cost0: 6,
-//   cost1: 1,
-//   cost2: 1,
-//   cost3: 1,
-//   cost4: 1,
-//   cost5: 1,
-//   cost6: 1,
-// }, {bias: 4, repeatTolerance: 0})
-
 
 const gainRoller = new Brng({
   money: 175,
@@ -110,22 +99,34 @@ const bonusTypeRoller = new Brng({
 
 
 const costRoller = new Brng({
-  1: 1,
-  2: 2,
+  // 1: 1,
+  // 2: 2,
 
+  // 3: 3,
+  // 4: 4,
+  // 5: 3,
+  // 6: 2,
+
+  2: 2,
   3: 3,
   4: 4,
-  5: 3,
-  6: 2,
+  5: 5,
+
+  6: 5,
+  7: 4,
+  8: 3,
+  9: 2,
 }, {bias: 4})
 
 const costToValueMapping = {
-  1: 200,
-  2: 283,
-  3: 354,
-  4: 414,
-  5: 467,
-  6: 513,
+  2: 200,
+  3: 243,
+  4: 283,
+  5: 320,
+  6: 354,
+  7: 385,
+  8: 414,
+  9: 441,
 }
 
 /////////////////////////////
@@ -176,7 +177,7 @@ const cardObjSimilaritySettings = {
     cost3: [1, 1],
     cost4: [1, 1],
     cost5: [1, 1],
-    cost6: [1, 1],
+    // cost6: [1, 1],
 
     money: [1,4],
     drawCard: [1,2],
@@ -213,7 +214,6 @@ _.forEach(cardsArray, (cardObj, index) => {
           {resourceList: ['drawCard'], max: 3},
           {resourceList: ['drawDice'], max: 2},
           {resourceList: ['reroll'], max: 2},
-          // {resourceList: ['retreat'], max: 4},
         ]
       }
 
@@ -252,6 +252,10 @@ _.forEach(cardsArray, (cardObj, index) => {
       newCardObj.gain = gainObj
       newCardObj.currentValue = currentValue
 
+      const discardValue = currentValue > newCardObj.expectedValue
+        ? _.floor(newCardObj.expectedValue, -2) : _.ceil(newCardObj.expectedValue, -2)
+      newCardObj.discardValue = discardValue/100
+
       return newCardObj
     }
   )
@@ -267,17 +271,20 @@ _.forEach(cardsArray, (cardObj, index) => {
 console.log(_.sortBy(document.lol, (a) => -a).slice(0,50))
 console.log(_.round(_.mean(document.lol), 4))
 countOccurances(cardsArray, 'gain', ['deckCycle', 'trashMarket'])
+countOccurances(cardsArray, 'gain', ['reroll'])
+countOccurances(cardsArray, 'gain', ['money'])
 
 // !! TO ADD STARTER CARDS
-cardsArray = cardsArray.concat(starterCards)
+// cardsArray = cardsArray.concat(starterCards)
 
 const cardsImportantKeys = [
   'cost',
-  'expectedValue',
-  'currentValue',
+  // 'expectedValue',
+  // 'currentValue',
   'gain',
   'uuid',
 ]
+
 
 function Cards () {
   return <div>
@@ -285,6 +292,7 @@ function Cards () {
     <pre className="noprint">
       {JSON.stringify(cardsArray, null, 2)}
       {/*{JSON.stringify(_.chain(cardsArray).map((obj) => _.pick(obj, cardsImportantKeys)).value(), null, 2)}*/}
+      {/*{JSON.stringify(_.map(cardsArray, obj => obj.gain), null, 2)}*/}
     </pre>
 
   </div>

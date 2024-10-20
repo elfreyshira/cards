@@ -2,7 +2,7 @@
   padding-top: 10px;
 }
 
-.cost {
+.purchase-cost {
   position: absolute;
   right: 0;
   top: 0;
@@ -11,8 +11,14 @@
   background-color: black;
   border-bottom-left-radius: 15px;
 }
+.cost-expensive {
+  border-bottom: 5px solid mediumpurple;
+}
+.cost-cheap {
+  border-bottom: 5px solid sandybrown;
+}
 
-.cost.starter {
+.purchase-cost.starter {
   background-color: initial;
   color: initial;
   border-bottom: 3px solid black;
@@ -49,3 +55,15 @@
   margin-left: 10px;
 }
 
+
+.discard-value {
+  display: inline-block;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  padding: 10px 5px 5px 10px;
+  background-color: #ddd;
+  border-top-left-radius: 20px;
+  border-left: 1px solid #aaa;
+  border-top: 1px solid #aaa;
+}
