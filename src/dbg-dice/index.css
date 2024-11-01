@@ -67,3 +67,11 @@
   border-left: 1px solid #aaa;
   border-top: 1px solid #aaa;
 }
+
+.w90 {
+  padding-right: 22px;
+}
+
+.effect-line:not(:last-child) {
+  margin-bottom: 5px;
+}

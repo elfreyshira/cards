@@ -31,72 +31,141 @@ else {
 }
 
 
-const CARD_QUANTITY = 36
-
-const effectsList = [
-  'money', 'cycleCard', 'cycleDice', 'trashDice', 'trashCard', 'drawCard',
-  'drawDice', 'reroll', 'pickRoll']
+const CARD_QUANTITY = 100
 
 
-const extraDiceCost = 25
+const extraDiceCost = 50
 
 const resourceToValueMapping = {
-  money: 100,
-  cycleCard: 100,
-  cycleDice: 100,
-  trashDice: 150,
-  trashCard: 150,
-  drawCard: 200,
-  drawDice: 200,
-  reroll: 75,
-  pickRoll: 250,
-
   cost0: 0,
   cost1: -100 - extraDiceCost,
   cost2: -200 - extraDiceCost,
   cost3: -300 - extraDiceCost,
   cost4: -400 - extraDiceCost,
   cost5: -500 - extraDiceCost,
-  // cost6: -600 - extraDiceCost,
+  cost6: -600 - extraDiceCost*2,
+
+  /////// #### TOP
+  drawCard: 200,
+  drawDice: 200,
+  reroll: 75,
+  // cycleCard: 125,
+  // cycleDice: 125,
+  // trashDice: 150,
+  // trashCard: 150,
+  // pickRoll: 200,
+
+  doubleNextCard: 350, // card
+  discardCardDrawDice: 250, // dice
+  discardDiceDrawCard: 250, // card
+
+  discountDiceCost: 200, // dice
+  // discountValueToDrawDice: 150, // dice
+  // discountValueToDrawCard: 150, // card
+
+
+  /////// #### BOTTOM
+  money: 100,
+  moneyPerDiceUsed: 300,
+  moneyPer2CardsUsed: 375,
+  purchasedCardsToTopDeck: 225,
+  purchasedDiceToBag: 225,
+  doubleBaseMoneyOfCard: 250, // max 5
+
+  discountPurchaseCard: 225, // money
+  discountPurchaseDice: 225, // money
+  discountTrash: 225, // trash
+  
 
   bonus: 50
 }
 
-const diceCostRoller = createNestedBrngRoller({
+const diceCostRollerCheap = createNestedBrngRoller({
   cost0: 1,
   hasCost: {weight: 1, children: {
-    cost1: 1,
-    cost2: 1,
-    cost3: 1,
-    cost4: 1,
-    cost5: 1,
-    // cost6: 1,
+    cost1: 8,
+    cost2: 7,
+    cost3: 6,
+    cost4: 5,
+    cost5: 4,
+    cost6: 3,
+  }},
+}, {bias: 4, repeatTolerance: 0})
+const diceCostRollerExpensive = createNestedBrngRoller({
+  cost0: 1,
+  hasCost: {weight: 1, children: {
+    cost1: 3,
+    cost2: 4,
+    cost3: 5,
+    cost4: 6,
+    cost5: 7,
+    cost6: 8,
   }},
 }, {bias: 4, repeatTolerance: 0})
 
+
+
 const gainRoller = new Brng({
-  money: 175,
 
-  // 50*1.25*2+10*1.25*1+10*1.25*1+20*2+4*1+4+6+4*2.5 = 214
-  drawCard: 50,
-  trashCard: 10,
-  
+  /////// #### TOP
+  drawCard: 50,  
   drawDice: 25,
-  trashDice: 5,
+  reroll: 8,
+
+  doubleNextCard: 3, // card
+  discardCardDrawDice: 3, // dice
+  discardDiceDrawCard: 3, // card
+
+  discountDiceCost: 3, // dice
+  // discountValueToDrawDice: 3, // dice
+  // discountValueToDrawCard: 3, // card
   
-  reroll: 12,
-  // pickRoll: 4,
+
+  /////// #### BOTTOM
+  money: 120, // UNIVERSAL
+
+  moneyPerDiceUsed: 3,
+  moneyPer2CardsUsed: 3,
+
+  purchasedCardsToTopDeck: 3,
+  purchasedDiceToBag: 3,
+  doubleBaseMoneyOfCard: 3,
+
+  discountPurchaseCard: 3, // money
+  discountPurchaseDice: 3, // money
+  discountTrash: 3, // trash
 
 }, {bias: 4, keepHistory: true})
 
 
+const topEffectsList = [
+  'drawCard', 'drawDice', 'reroll',
+  'doubleNextCard', 'discardCardDrawDice', 'discardDiceDrawCard',
+  'discountDiceCost', 'discountValueToDrawDice', 'discountValueToDrawCard'
+]
 
-const bonusTypeRoller = new Brng({
-  deckCycle: 1,
-  trashMarket: 1,
-}, {bias: 4, keepHistory: true})
+const bottomEffectsList = [
+  'moneyPerDiceUsed', 'moneyPer2CardsUsed', 'purchasedCardsToTopDeck',
+  'purchasedDiceToBag', 'doubleBaseMoneyOfCard',
+  'discountPurchaseCard', 'discountPurchaseDice', 'discountTrash',
+]
 
+const onlyOneEffectsList = [
+  'doubleNextCard', 'discardCardDrawDice', 'discardDiceDrawCard',
+  'discountDiceCost', 'discountValueToDrawDice', 'discountValueToDrawCard',
 
+  'moneyPerDiceUsed', 'moneyPer2CardsUsed', 'purchasedCardsToTopDeck',
+  'purchasedDiceToBag', 'doubleBaseMoneyOfCard',
+  'discountPurchaseCard', 'discountPurchaseDice', 'discountTrash',
+]
+
+const specialEffectsList = [
+  'doubleNextCard',
+  'discountDiceCost', 'discountValueToDrawDice', 'discountValueToDrawCard',
+
+  'purchasedCardsToTopDeck', 'purchasedDiceToBag', 'doubleBaseMoneyOfCard',
+  'discountPurchaseCard', 'discountPurchaseDice', 'discountTrash',
+]
 
 const costRoller = new Brng({
   // 1: 1,
@@ -148,7 +217,7 @@ const sortOrderArray = [
 let cardsArray = []
 
 _.times(CARD_QUANTITY, (index) => {
-  const cardCost = costRoller.roll()
+  const cardCost = _.toNumber(costRoller.roll())
   cardsArray.push({
     cost: cardCost,
     expectedValue: costToValueMapping[cardCost],
@@ -159,10 +228,12 @@ cardsArray = _.sortBy(cardsArray, sortOrderArray)
 
 _.forEach(cardsArray, (cardObj, index) => {
   const gainObj = {}
-  const chosenCardCost = diceCostRoller.roll()
+  const chosenCardCost = cardObj.cost <= 5 ?
+    diceCostRollerCheap.roll() : diceCostRollerExpensive.roll()
   
   gainObj[chosenCardCost] = 1
   cardObj.gain = gainObj
+  cardObj.diceCost = _.toNumber(_.last(chosenCardCost))
   cardObj.currentValue = resourceToValueMapping[chosenCardCost]
 })
 cardsArray = _.sortBy(cardsArray, sortOrderArray)
@@ -170,22 +241,31 @@ cardsArray = _.sortBy(cardsArray, sortOrderArray)
 
 const cardObjSimilaritySettings = {
   cost: [1, 3], // multiplier = 1, max diff = 3, type = Number, 
+  diceCost: [1,3],
   gain: {
-    cost0: [1, 1],
-    cost1: [1, 1],
-    cost2: [1, 1],
-    cost3: [1, 1],
-    cost4: [1, 1],
-    cost5: [1, 1],
-    // cost6: [1, 1],
+
+    doubleNextCard: [1,1,String], // card
+    discardCardDrawDice: [1,1,String], // dice
+    discardDiceDrawCard: [1,1,String], // card
+
+    discountDiceCost: [1,1,String], // dice
+
+    moneyPerDiceUsed: [1,1,String],
+    moneyPer2CardsUsed: [1,1,String],
+
+    purchasedCardsToTopDeck: [1,1,String],
+    purchasedDiceToBag: [1,1,String],
+    doubleBaseMoneyOfCard: [1,1,String],
+
+    discountPurchaseCard: [1,1,String], // money
+    discountPurchaseDice: [1,1,String], // money
+    discountTrash: [1,1,String], // trash
+
+
 
     money: [1,4],
     drawCard: [1,2],
-    trashCard: [1,2],
-
     drawDice: [1,2],
-    trashDice: [1,2],
-
     reroll: [1,2],
   },
 }
@@ -202,18 +282,35 @@ _.forEach(cardsArray, (cardObj, index) => {
 
       const exclusionRules = {
         groupingMaxVariety: [
-          {resourceList: effectsList, max: 2},
-          {resourceList: ['drawCard', 'drawDice', 'pickRoll'], max: 1},
-          {resourceList: ['trashCard', 'trashDice'], max: 1},
-          {resourceList: ['reroll', 'pickRoll'], max: 1},
+          {resourceList: _.concat(topEffectsList, bottomEffectsList), max: 2},
+          // {resourceList: bottomEffectsList, max: 1},
+          {resourceList: specialEffectsList, max: 1},
+          // {resourceList: ['drawCard', 'drawDice'], max: 1},
+          // {resourceList: ['reroll', 'pickRoll'], max: 1},
           {resourceList: ['cost0', 'drawCard'], max: 1},
+
+          {resourceList: [
+            ['cost1', 'cost2', 'cost3', 'cost4', 'cost5', 'cost6'],
+            'drawDice'],
+          max: 1},
+
+          {resourceList: [
+            ['cost1', 'cost2', 'cost3', 'cost4', 'cost5', 'cost6'],
+            ['discardCardDrawDice', 'discardDiceDrawCard']],
+          max: 1},
+
+          // {resourceList: [
+          //   ['cost1', 'cost2', 'cost3', 'cost4', 'cost5', 'cost6'],
+          //   'doubleBaseMoneyOfCard'],
+          // max: 1},
         ],
         groupingMaxQuantity: [
-          {resourceList: ['trashCard'], max: 1},
-          {resourceList: ['trashDice'], max: 1},
+          {resourceList: onlyOneEffectsList, max: 1},
           {resourceList: ['drawCard'], max: 3},
           {resourceList: ['drawDice'], max: 2},
           {resourceList: ['reroll'], max: 2},
+          {resourceList: ['discardCardDrawDice'], max: 1},
+          {resourceList: ['discardDiceDrawCard'], max: 1},
         ]
       }
 
@@ -241,12 +338,8 @@ _.forEach(cardsArray, (cardObj, index) => {
         currentValue += moneyGain * resourceToValueMapping.money
       }
       if (bonus > 0) {
-        const bonusType = bonusTypeRoller.roll()
-        gainObj[bonusType] = bonus
+        gainObj.deckCycle = bonus
         currentValue += bonus * resourceToValueMapping.bonus
-        
-        addUndo(bonusTypeRoller)
-        addRedo(bonusTypeRoller, bonusType)
       }
 
       newCardObj.gain = gainObj
@@ -270,9 +363,13 @@ _.forEach(cardsArray, (cardObj, index) => {
 // console.log(_.sum(_.sortBy(document.lol, (a) => -a).slice(0,50)))
 console.log(_.sortBy(document.lol, (a) => -a).slice(0,50))
 console.log(_.round(_.mean(document.lol), 4))
-countOccurances(cardsArray, 'gain', ['deckCycle', 'trashMarket'])
-countOccurances(cardsArray, 'gain', ['reroll'])
-countOccurances(cardsArray, 'gain', ['money'])
+// countOccurances(cardsArray, 'gain', ['deckCycle', 'trashMarket'])
+// countOccurances(cardsArray, 'gain', ['reroll'])
+// countOccurances(cardsArray, 'gain', ['money'])
+
+_.forEach(resourceToValueMapping, (val, key) => {
+  countOccurances(cardsArray, 'gain', [key])
+})
 
 // !! TO ADD STARTER CARDS
 // cardsArray = cardsArray.concat(starterCards)
