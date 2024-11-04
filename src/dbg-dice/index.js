@@ -43,7 +43,7 @@ const resourceToValueMapping = {
   cost3: -300 - extraDiceCost,
   cost4: -400 - extraDiceCost,
   cost5: -500 - extraDiceCost,
-  cost6: -600 - extraDiceCost*2,
+  cost6: -600 - extraDiceCost,
 
   /////// #### TOP
   drawCard: 200,
