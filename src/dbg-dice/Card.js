@@ -60,7 +60,7 @@ const instantEffects = {
   reroll: ICONS.RerollDice,
   deckCycle: ICONS.DeckCycle,
   
-  doubleNextCard: () => <div className="sm">Double the next card played (dice cost & effects).</div>,
+  doubleNextCard: () => <div className="sm">Double the next card played (activation cost & effects).</div>,
   discardDiceDrawCard: () => <div className="md">
     <ICONS.DiscardDice number="X" /> &#8680; &nbsp;<ICONS.DrawCard number="X"/>
   </div>, // card
@@ -82,17 +82,17 @@ const endTurnEffects = {
   moneyPer2CardsUsed: () => <div className="md">+<ICONS.Dollar number="1" />/ 2<ICONS.CardSingle/> <ICONS.InPlay /></div>,
   
   purchasedCardsToTopDeck: () => <div className="w90 sm">
-    [<ICONS.MarketStall/><ICONS.CardSingle/> &#8680; <ICONS.Deck/>]<br/>&nbsp;&nbsp;OR [+$2]
+    [<ICONS.MarketStall/><ICONS.CardSingle/> &#8680; <ICONS.Deck/>]<br/>&nbsp;&nbsp;OR [+$1]
   </div>,
   purchasedDiceToBag: () => <div className="w90 sm">
-    [<ICONS.MarketStall/><ICONS.DiceSingle/> &#8680; <ICONS.Bag/>]<br/>&nbsp;&nbsp;OR [+$2]
+    [<ICONS.MarketStall/><ICONS.DiceSingle/> &#8680; <ICONS.Bag/>]<br/>&nbsp;&nbsp;OR [+$1]
   </div>,
   
   doubleBaseMoneyOfCard: () => <div className="w90 sm"><b>+$X</b> equal to the base <b>$X</b> of any other card. (Max +$5)</div>,
 
-  discountPurchaseCard: () => <div className="w90 sm">[<ICONS.MarketStall/><ICONS.CardSingle/> : -$1] OR [+$2]</div>, // money
-  discountPurchaseDice: () => <div className="w90 sm">[<ICONS.MarketStall/><ICONS.DiceSingle/> : -$1] OR [+$2]</div>, // money
-  discountTrash: () => <div className="w90 sm">[ <ICONS.TrashCan/>: -$1 ] OR [+$2]</div>, // trash
+  discountPurchaseCard: () => <div className="w90 sm">[<ICONS.MarketStall/><ICONS.CardSingle/> : -$1] OR [+$1]</div>, // money
+  discountPurchaseDice: () => <div className="w90 sm">[<ICONS.MarketStall/><ICONS.DiceSingle/> : -$1] OR [+$1]</div>, // money
+  discountTrash: () => <div className="w90 sm">[ <ICONS.TrashCan/>: -$1 ] OR [+$1]</div>, // trash
 }
 
 

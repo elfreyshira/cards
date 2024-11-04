@@ -31,7 +31,7 @@ else {
 }
 
 
-const CARD_QUANTITY = 100
+const CARD_QUANTITY = 36
 
 
 const extraDiceCost = 50
@@ -48,7 +48,7 @@ const resourceToValueMapping = {
   /////// #### TOP
   drawCard: 200,
   drawDice: 200,
-  reroll: 75,
+  reroll: 100,
   // cycleCard: 125,
   // cycleDice: 125,
   // trashDice: 150,
@@ -56,8 +56,8 @@ const resourceToValueMapping = {
   // pickRoll: 200,
 
   doubleNextCard: 350, // card
-  discardCardDrawDice: 250, // dice
-  discardDiceDrawCard: 250, // card
+  discardCardDrawDice: 225, // dice
+  discardDiceDrawCard: 225, // card
 
   discountDiceCost: 200, // dice
   // discountValueToDrawDice: 150, // dice
@@ -67,17 +67,18 @@ const resourceToValueMapping = {
   /////// #### BOTTOM
   money: 100,
   moneyPerDiceUsed: 300,
-  moneyPer2CardsUsed: 375,
-  purchasedCardsToTopDeck: 225,
-  purchasedDiceToBag: 225,
+  moneyPer2CardsUsed: 350,
+  purchasedCardsToTopDeck: 175,
+  purchasedDiceToBag: 175,
   doubleBaseMoneyOfCard: 250, // max 5
 
-  discountPurchaseCard: 225, // money
-  discountPurchaseDice: 225, // money
-  discountTrash: 225, // trash
+  discountPurchaseCard: 175, // money
+  discountPurchaseDice: 175, // money
+  discountTrash: 175, // trash
   
 
-  bonus: 50
+  bonus: 50,
+  deckCycle: 50
 }
 
 const diceCostRollerCheap = createNestedBrngRoller({
@@ -105,37 +106,47 @@ const diceCostRollerExpensive = createNestedBrngRoller({
 
 
 
-const gainRoller = new Brng({
 
+const specialEffectsProportionsWeight = 3.3
+const gainProportions = {
   /////// #### TOP
-  drawCard: 50,  
+  drawCard: 51,
   drawDice: 25,
-  reroll: 8,
+  reroll: 11,
 
-  doubleNextCard: 3, // card
-  discardCardDrawDice: 3, // dice
-  discardDiceDrawCard: 3, // card
+  doubleNextCard: specialEffectsProportionsWeight, // card
+  discardCardDrawDice: specialEffectsProportionsWeight, // dice
+  discardDiceDrawCard: specialEffectsProportionsWeight, // card
 
-  discountDiceCost: 3, // dice
-  // discountValueToDrawDice: 3, // dice
-  // discountValueToDrawCard: 3, // card
+  discountDiceCost: specialEffectsProportionsWeight, // dice
+  // discountValueToDrawDice: specialEffectsProportionsWeight, // dice
+  // discountValueToDrawCard: specialEffectsProportionsWeight, // card
   
 
   /////// #### BOTTOM
   money: 120, // UNIVERSAL
 
-  moneyPerDiceUsed: 3,
-  moneyPer2CardsUsed: 3,
+  moneyPerDiceUsed: specialEffectsProportionsWeight,
+  moneyPer2CardsUsed: specialEffectsProportionsWeight,
 
-  purchasedCardsToTopDeck: 3,
-  purchasedDiceToBag: 3,
-  doubleBaseMoneyOfCard: 3,
+  purchasedCardsToTopDeck: specialEffectsProportionsWeight,
+  purchasedDiceToBag: specialEffectsProportionsWeight,
+  doubleBaseMoneyOfCard: specialEffectsProportionsWeight,
 
-  discountPurchaseCard: 3, // money
-  discountPurchaseDice: 3, // money
-  discountTrash: 3, // trash
+  discountPurchaseCard: specialEffectsProportionsWeight, // money
+  discountPurchaseDice: specialEffectsProportionsWeight, // money
+  discountTrash: specialEffectsProportionsWeight, // trash
+}
+const gainRoller = new Brng(gainProportions, {bias: 4, keepHistory: true})
 
-}, {bias: 4, keepHistory: true})
+const proportionsWithDiceCost = _.merge({}, gainProportions, {
+  drawCard: 57,
+  drawDice: 19,
+})
+const proportionsWithoutDiceCost = _.merge({}, gainProportions, {
+  drawCard: 38,
+  drawDice: 38,
+})
 
 
 const topEffectsList = [
@@ -168,14 +179,6 @@ const specialEffectsList = [
 ]
 
 const costRoller = new Brng({
-  // 1: 1,
-  // 2: 2,
-
-  // 3: 3,
-  // 4: 4,
-  // 5: 3,
-  // 6: 2,
-
   2: 2,
   3: 3,
   4: 4,
@@ -201,7 +204,10 @@ const costToValueMapping = {
 /////////////////////////////
 
 const sortOrderArray = [
+  (cardObj) => !(cardObj.diceCost > 0),
   (cardObj) => -cardObj.cost,
+  (cardObj) => -cardObj.diceCost,
+  
   // (cardObj) => {
   //   const diceCostNumber = _.chain(cardObj.gain)
   //     .keys()
@@ -232,9 +238,14 @@ _.forEach(cardsArray, (cardObj, index) => {
     diceCostRollerCheap.roll() : diceCostRollerExpensive.roll()
   
   gainObj[chosenCardCost] = 1
+
   cardObj.gain = gainObj
   cardObj.diceCost = _.toNumber(_.last(chosenCardCost))
   cardObj.currentValue = resourceToValueMapping[chosenCardCost]
+
+  if (cardObj.cost <= 2 && cardObj.diceCost === 0) {
+    gainObj.noDrawCard = 1
+  }
 })
 cardsArray = _.sortBy(cardsArray, sortOrderArray)
 
@@ -272,6 +283,13 @@ const cardObjSimilaritySettings = {
 
 _.forEach(cardsArray, (cardObj, index) => {
 
+  if (cardObj.diceCost === 0) {
+    gainRoller.updateProportions(proportionsWithoutDiceCost)
+  }
+  else { // cardObj.diceCost > 0
+    gainRoller.updateProportions(proportionsWithDiceCost)
+  }
+
   const leastSimilarObj = getLeastSimilarObj(
     cardsArray.slice(0, index),
     10, // max attempts
@@ -285,32 +303,37 @@ _.forEach(cardsArray, (cardObj, index) => {
           {resourceList: _.concat(topEffectsList, bottomEffectsList), max: 2},
           // {resourceList: bottomEffectsList, max: 1},
           {resourceList: specialEffectsList, max: 1},
-          // {resourceList: ['drawCard', 'drawDice'], max: 1},
-          // {resourceList: ['reroll', 'pickRoll'], max: 1},
-          {resourceList: ['cost0', 'drawCard'], max: 1},
+          {resourceList: ['moneyPerDiceUsed', 'drawDice'], max: 1},
+          {resourceList: ['moneyPer2CardsUsed', 'drawCard'], max: 1},
 
-          {resourceList: [
-            ['cost1', 'cost2', 'cost3', 'cost4', 'cost5', 'cost6'],
-            'drawDice'],
-          max: 1},
+          {resourceList: ['discardCardDrawDice', 'drawDice'], max: 1},
+          {resourceList: ['discardDiceDrawCard', 'drawCard'], max: 1},
 
-          {resourceList: [
-            ['cost1', 'cost2', 'cost3', 'cost4', 'cost5', 'cost6'],
-            ['discardCardDrawDice', 'discardDiceDrawCard']],
-          max: 1},
+          {resourceList: ['drawCard', 'drawDice'], max: 1},
+          // {resourceList: ['cost0', 'drawCard'], max: 1},
+          // {resourceList: [
+          //   ['cost1', 'cost2', 'cost3', 'cost4', 'cost5', 'cost6'],
+          //   'drawDice'],
+          // max: 1},
+
+          // {resourceList: [
+          //   ['cost1', 'cost2', 'cost3', 'cost4', 'cost5', 'cost6'],
+          //   ['discardCardDrawDice', 'discardDiceDrawCard']],
+          // max: 1},
 
           // {resourceList: [
           //   ['cost1', 'cost2', 'cost3', 'cost4', 'cost5', 'cost6'],
           //   'doubleBaseMoneyOfCard'],
           // max: 1},
+
+          {resourceList: ['noDrawCard', 'drawCard'], max: 1},
         ],
         groupingMaxQuantity: [
           {resourceList: onlyOneEffectsList, max: 1},
           {resourceList: ['drawCard'], max: 3},
           {resourceList: ['drawDice'], max: 2},
+          {resourceList: ['drawCard', 'drawDice'], max: 3},
           {resourceList: ['reroll'], max: 2},
-          {resourceList: ['discardCardDrawDice'], max: 1},
-          {resourceList: ['discardDiceDrawCard'], max: 1},
         ]
       }
 
@@ -382,6 +405,8 @@ const cardsImportantKeys = [
   'uuid',
 ]
 
+console.log(gainRoller.proportions)
+console.log(gainRoller.originalProportions)
 
 function Cards () {
   return <div>
