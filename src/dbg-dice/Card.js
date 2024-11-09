@@ -3,6 +3,7 @@ import classnames from 'classnames'
 
 import ICONS from '../util/icons.js'
 
+const cheapCostMax = 3
 
 function PurchaseCost({cost}) {
   // for starter cards
@@ -10,7 +11,7 @@ function PurchaseCost({cost}) {
     return <div className="md purchase-cost starter">{cost}</div>
   }
 
-  const costType = (cost <= 5)
+  const costType = (cost <= cheapCostMax)
     ? 'cost-cheap'
     : 'cost-expensive'
   return <div className={classnames('md purchase-cost', costType)}>${cost}</div>
@@ -81,11 +82,11 @@ const endTurnEffects = {
   moneyPerDiceUsed: () => <div className="md">+<ICONS.Dollar number="1" />/ <ICONS.DiceSingle/> <ICONS.InPlay /></div>,
   moneyPer2CardsUsed: () => <div className="md">+<ICONS.Dollar number="1" />/ 2<ICONS.CardSingle/> <ICONS.InPlay /></div>,
   
-  purchasedCardsToTopDeck: () => <div className="w90 sm">
-    [<ICONS.MarketStall/><ICONS.CardSingle/> &#8680; <ICONS.Deck/>]<br/>&nbsp;&nbsp;OR [+$1]
+  purchasedCardsToTopDeck: () => <div className="w90 md">
+    <ICONS.MarketStall/><ICONS.CardSingle/> &#8680; <ICONS.Deck/>
   </div>,
-  purchasedDiceToBag: () => <div className="w90 sm">
-    [<ICONS.MarketStall/><ICONS.DiceSingle/> &#8680; <ICONS.Bag/>]<br/>&nbsp;&nbsp;OR [+$1]
+  purchasedDiceToBag: () => <div className="w90 md">
+    <ICONS.MarketStall/><ICONS.DiceSingle/> &#8680; <ICONS.Bag/>
   </div>,
   
   doubleBaseMoneyOfCard: () => <div className="w90 sm"><b>+$X</b> equal to the base <b>$X</b> of any other card. (Max +$5)</div>,
