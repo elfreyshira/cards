@@ -35,7 +35,7 @@ const effectTopToIconMapping = {
 
   moveMech: ICONS.MechShoe,
 
-  extract: ICONS.Grab,
+  money: ICONS.Dollar,
   bonus: ICONS.DeckCycle,
 }
 
@@ -64,15 +64,15 @@ function Top ({gainTop}) {
 
 
 const effectBottomToIconMapping = {
-  atk: ICONS.Sword,
+  strength: ICONS.Sword,
 
-  def: ICONS.Shield,
   retaliate: ICONS.SkullBurning,
   retreat: ICONS.WhiteFlag,
   resurrect: ICONS.Potion,
 
   rally: ICONS.Bugle,
   push: ICONS.Push,
+  steal: ICONS.Steal,
 }
 
 function Bottom ({gainBottom}) {

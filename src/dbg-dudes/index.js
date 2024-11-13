@@ -28,18 +28,43 @@ if (_.isString(seedID)) {
 
 const CARD_QUANTITY = 31
 
-const valueSlackRoller = new Brng({0: 1, 0.5: 1}, {bias: 4})
+
+const resourceToValueMapping = {
+  money: 100,
+
+  addTroop: 100,
+  moveTroop: 50,
+  moveMech: 150,
+  addToAny: 175,
+  moveToAny: 100,
+  moveAll: 150,
+
+  draw: 200,
+  cycle: 1,
+  bonus: 50, // put 1 at bottom of deck, draw 1
+
+  // BOTTOM
+  strength: 150,
+  retaliate: 125, // losing
+  retreat: 75, // losing
+  // resurrect: 125, // losing
+  rally: 75, // both
+  push: 125, // both
+  steal: 100,
+}
+
+const valueSlackRoller = new Brng({0: 1, 50: 1}, {bias: 4})
 
 const gainTopRoller = new Brng({
-  extract: 70,
+  money: 95,
 
-  // add troops = 115
-  addTroop: 115,
+  // add troops = 180
+  addTroop: 180,
   // addToAny: 15, // add = 1 * 15 = 15, move = 2 * 15 = 30
   
-  // move troops = 180
-  moveTroop: 45, // x 1 = 50
-  moveToAny: 23, // x 2 = 40
+  // move troops = 181
+  moveTroop: 45, // x 1 = 45
+  moveToAny: 23, // x 2 = 46
   moveAll: 10, // x 3 = 30
   moveMech: 20, // x 3 = 60
 
@@ -48,44 +73,17 @@ const gainTopRoller = new Brng({
 }, {bias: 4, keepHistory: true})
 
 const gainBottomRoller = new Brng({
-  atk: 12, // winning
-
-  def: 9, // losing
+  strength: 15, // winning
   retaliate: 5, // losing
-  retreat: 5, // losing
-  resurrect: 2, // losing
+  retreat: 4, // losing
+  // resurrect: 2, // losing
 
-  rally: 5, // both
+  rally: 6, // both
   push: 2, // both
+  steal: 3, // both
 }, {bias: 4, keepHistory: true})
 
 
-const resourceToValueMapping = {
-  extract: 1,
-  money: 1,
-  tech: 1,
-  trash: 1,
-
-  addTroop: 1,
-  moveTroop: 0.5,
-  moveMech: 1.5,
-  addToAny: 1.75,
-  moveToAny: 1,
-  moveAll: 1.5,
-
-  draw: 2,
-  cycle: 1,
-  bonus: 0.5, // put 1 at bottom of deck, draw 1
-
-  // BOTTOM
-  atk: 0.75, // winning
-  def: 0.75, // losing
-  retaliate: 1.25, // losing
-  retreat: 0.75, // losing
-  resurrect: 1.25, // losing
-  rally: 0.75, // both
-  push: 1.25, // both
-}
 
 const costRoller = new Brng({
   1: 2,
@@ -99,13 +97,13 @@ const costRoller = new Brng({
 }, {bias: 4})
 
 const costToValueMapping = {
-  1: 2,
-  2: 2.78,
+  1: 200,
+  2: 275,
 
-  3: 3.4,
-  4: 3.91,
-  5: 4.33,
-  6: 4.69,
+  3: 333,
+  4: 380,
+  5: 418,
+  6: 450,
   // 7: 5.20,
   // 8: 5.50,
 }
@@ -113,7 +111,7 @@ const costToValueMapping = {
 const cardObjSimilaritySettings = {
   cost: [1, 3], // multiplier = 1, max diff = 3, type = Number, 
   gainTop: {
-    extract: [1, 2],
+    money: [1, 2],
     addTroop: [1, 2],
     addToAny: [1, 1],
     moveTroop: [1, 3],
@@ -123,24 +121,24 @@ const cardObjSimilaritySettings = {
   },
   currentTopValue: [1, 2],
   gainBottom: {
-    atk: [1, 3],
-    def: [1, 3],
+    strength: [1, 3],
     retaliate: [1, 3],
-    resurrect: [1, 2],
+    // resurrect: [1, 2],
     retreat: [1, 3],
     rally: [1, 3],
+    steal: [1, 3],
   },
   currentBottomValue: [1, 2],
 }
 const cardObjSimilaritySettings2 = {
   cost: [1, 3], // multiplier = 1, max diff = 3, type = Number, 
   gainBottom: {
-    atk: [1, 3],
-    def: [1, 3],
+    strength: [1, 3],
     retaliate: [1, 3],
-    resurrect: [1, 2],
+    // resurrect: [1, 2],
     retreat: [1, 3],
     rally: [1, 3],
+    steal: [1, 3],
   },
   currentBottomValue: [1, 2],
 }
@@ -178,11 +176,9 @@ _.forEach(cardsArray, (cardObj, index) => {
 
       const exclusionRules = {
         groupingMaxVariety: [
-          {resourceList: ['atk', 'def', 'retaliate', 'retreat', 'rally', 'resurrect', 'push'], max: 1},
-          {resourceList: ['retreat', 'rally'], max: 1},
-          {resourceList: ['retreat', 'atk'], max: 1},
-          {resourceList: ['def', 'atk'], max: 1},
-          {resourceList: ['def', 'retaliate'], max: 1},
+          {resourceList: ['strength', 'retaliate', 'retreat', 'rally', 'push', 'steal'], max: 1},
+          // {resourceList: ['retreat', 'rally'], max: 1},
+          // {resourceList: ['retreat', 'strength'], max: 1},
         ],
         groupingMaxQuantity: [
           // {resourceList: ['extract'], max: 3},
@@ -232,14 +228,14 @@ _.forEach(cardsArray, (cardObj, index) => {
 
       const exclusionRules = {
         groupingMaxVariety: [
-          {resourceList: ['extract', 'addTroop', 'addToAny',
+          {resourceList: ['money', 'addTroop', 'addToAny',
             'moveTroop', 'moveToAny', 'moveAll', 'moveMech'], max: 2},
           {resourceList: ['moveTroop', 'moveToAny', 'moveAll', 'moveMech'], max: 1},
           // {resourceList: ['addToAny', 'moveToAny'], max: 1},
           // {resourceList: ['addTroop', 'addToAny'], max: 1},
         ],
         groupingMaxQuantity: [
-          {resourceList: ['extract'], max: 3},
+          {resourceList: ['money'], max: 3},
           {resourceList: ['moveTroop'], max: 3},
           {resourceList: ['moveToAny'], max: 2},
           {resourceList: ['moveMech'], max: 2},
@@ -257,7 +253,7 @@ _.forEach(cardsArray, (cardObj, index) => {
         resourceRoller: gainTopRoller,
 
         // OPTIONAL
-        valueSlack: 0.25,
+        valueSlack: resourceToValueMapping.bonus/2,
         exclusionRules,
         gainObj: tempGainObj,
         addUndo,
@@ -290,7 +286,7 @@ console.log(_.round(_.mean(document.lol), 4))
 countOccurances(cardsArray, 'gainTop', 'bonus')
 
 // !! TO ADD STARTER CARDS
-cardsArray = cardsArray.concat(starterCards)
+// cardsArray = cardsArray.concat(starterCards)
 
 const cardsImportantKeys = [
   'cost',

@@ -30,6 +30,7 @@ import trashCan from './images/trash-can.png'
 import marketStall from './images/market-stall.png'
 import areaBox from './images/area-box.png'
 import bag from './images/bag.png'
+import steal from './images/steal.png'
 
 
 
@@ -63,6 +64,7 @@ export default {
   Potion: makeIconComponent(potion),
   Push: makeIconComponent(push),
   DeckCycle: makeIconComponent(deckCycle),
+  Steal: makeIconComponent(steal),
 
   DrawCard: makeIconComponent(drawCard),
   CardSingle: makeIconComponent(card),
