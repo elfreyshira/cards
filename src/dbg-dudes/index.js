@@ -32,15 +32,19 @@ const CARD_QUANTITY = 31
 const resourceToValueMapping = {
   money: 100,
 
+  energy: 50,
+  ninja: 200,
+  point: 200,
+
   addTroop: 100,
   moveTroop: 50,
   moveMech: 150,
-  addToAny: 175,
+  addToAny: 150,
   moveToAny: 100,
   moveAll: 150,
 
   draw: 200,
-  cycle: 1,
+  cycle: 100,
   bonus: 50, // put 1 at bottom of deck, draw 1
 
   // BOTTOM
@@ -56,17 +60,18 @@ const resourceToValueMapping = {
 const valueSlackRoller = new Brng({0: 1, 50: 1}, {bias: 4})
 
 const gainTopRoller = new Brng({
-  money: 95,
+  money: 120,
 
-  // add troops = 180
-  addTroop: 180,
-  // addToAny: 15, // add = 1 * 15 = 15, move = 2 * 15 = 30
-  
-  // move troops = 181
-  moveTroop: 45, // x 1 = 45
-  moveToAny: 23, // x 2 = 46
+  // point: 10,
+
+  energy: 200, // * 0.5 = 100
+
+  ninja: 15, // * 2 = 30
+  addToAny: 10, //* 3 = 30
+
+  moveToAny: 20, // x 2 = 40
   moveAll: 10, // x 3 = 30
-  moveMech: 20, // x 3 = 60
+  moveMech: 10, // x 3 = 30
 
   // draw: 2,
   // cycle: 15,
@@ -111,10 +116,10 @@ const costToValueMapping = {
 const cardObjSimilaritySettings = {
   cost: [1, 3], // multiplier = 1, max diff = 3, type = Number, 
   gainTop: {
+    energy: [1, 3],
     money: [1, 2],
-    addTroop: [1, 2],
+    ninja: [1, 1],
     addToAny: [1, 1],
-    moveTroop: [1, 3],
     moveToAny: [1, 1],
     moveAll: [1, 1],
     moveMech: [1, 1],
@@ -228,17 +233,17 @@ _.forEach(cardsArray, (cardObj, index) => {
 
       const exclusionRules = {
         groupingMaxVariety: [
-          {resourceList: ['money', 'addTroop', 'addToAny',
-            'moveTroop', 'moveToAny', 'moveAll', 'moveMech'], max: 2},
-          {resourceList: ['moveTroop', 'moveToAny', 'moveAll', 'moveMech'], max: 1},
+          {resourceList: ['money', 'moveToAny', 'moveAll', 'moveMech', 'addToAny', 'ninja'], max: 1},
           // {resourceList: ['addToAny', 'moveToAny'], max: 1},
           // {resourceList: ['addTroop', 'addToAny'], max: 1},
         ],
         groupingMaxQuantity: [
           {resourceList: ['money'], max: 3},
-          {resourceList: ['moveTroop'], max: 3},
+          // {resourceList: ['moveTroop'], max: 3},
+          {resourceList: ['moveAll'], max: 1},
           {resourceList: ['moveToAny'], max: 2},
           {resourceList: ['moveMech'], max: 2},
+          {resourceList: ['ninja'], max: 2},
         ]
       }
 
@@ -284,6 +289,8 @@ _.forEach(cardsArray, (cardObj, index) => {
 console.log(_.round(_.mean(document.lol), 4))
 
 countOccurances(cardsArray, 'gainTop', 'bonus')
+
+console.log(gainTopRoller.proportions)
 
 // !! TO ADD STARTER CARDS
 // cardsArray = cardsArray.concat(starterCards)

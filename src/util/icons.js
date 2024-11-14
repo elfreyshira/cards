@@ -31,6 +31,8 @@ import marketStall from './images/market-stall.png'
 import areaBox from './images/area-box.png'
 import bag from './images/bag.png'
 import steal from './images/steal.png'
+import battery from './images/battery.png'
+import ninja from './images/ninja.png'
 
 
 
@@ -65,6 +67,8 @@ export default {
   Push: makeIconComponent(push),
   DeckCycle: makeIconComponent(deckCycle),
   Steal: makeIconComponent(steal),
+  Energy: makeIconComponent(battery),
+  Ninja: makeIconComponent(ninja),
 
   DrawCard: makeIconComponent(drawCard),
   CardSingle: makeIconComponent(card),

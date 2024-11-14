@@ -26,7 +26,10 @@ function Cost({cost}) {
 //   moveMech: 20, // x 3 = 60
 
 const effectTopToIconMapping = {
-  addTroop: ICONS.Meeple,
+  
+
+  // addTroop: ICONS.Meeple,
+  addArcher:ICONS.MeepleWing, 
   addToAny: ICONS.MeepleWing,
 
   moveTroop: ICONS.Shoe,
@@ -34,8 +37,12 @@ const effectTopToIconMapping = {
   moveAll: ICONS.Truck,
 
   moveMech: ICONS.MechShoe,
+  ninja: ICONS.Ninja,
 
-  money: ICONS.Dollar,
+  energy: (props) => <>+<ICONS.Energy {...props} /></>,
+  money: (props) => <>+<ICONS.Dollar {...props} /></>,
+  
+  
   bonus: ICONS.DeckCycle,
 }
 
