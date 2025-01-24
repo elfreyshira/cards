@@ -50,15 +50,29 @@ function createChildrenRollersFromParent (parentProportions, config = {}, roller
 }
 
 function createNestedBrng (nestedProportions, config = {}) {
+
+  const combineStrings = !!config.combineStrings
+
   const childrenRollers = createChildrenRollersFromParent(nestedProportions, config)
   const parentRoller = createFlattenedRoller(nestedProportions, config)
 
   const roll = (settings) => {
+    let stringArray = []
+
     let chosenValue = parentRoller.roll(settings)
+    stringArray.push(chosenValue)
+
     while (_.has(childrenRollers, chosenValue)) {
       chosenValue = childrenRollers[chosenValue].roll(settings)
+      stringArray.push(chosenValue)
     }
-    return chosenValue
+
+    if (combineStrings) {
+      return _.join(stringArray, '_')
+    }
+    else {
+      return chosenValue  
+    }
   }
 
   return {roll: roll}
