@@ -40,6 +40,9 @@ html {
 .md {
   font-size: 24px;
 }
+.md-lg, .lg-md {
+  font-size: 30px;
+}
 .lg {
   font-size: 36px;
 }

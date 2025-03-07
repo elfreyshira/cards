@@ -1,0 +1,14 @@
+.outline-top, .outline-bottom {
+  width: 100%;
+  height: 100%;
+}
+.outline-top {
+  border: 4px solid aquamarine;
+}
+.outline-bottom {
+  border: 4px solid #f88379;
+}
+
+.cost {
+
+}

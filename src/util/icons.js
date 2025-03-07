@@ -34,6 +34,9 @@ import steal from './images/steal.png'
 import battery from './images/battery.png'
 import ninja from './images/ninja.png'
 
+import fish from './images/fish.png'
+import coral from './images/coral.png'
+
 
 
 
@@ -104,6 +107,9 @@ export default {
   InPlay: makeIconComponent(areaBox),
   Deck: makeIconComponent(deck),
   Bag: makeIconComponent(bag),
+  
+  Fish: makeIconComponent(fish),
+  Coral: makeIconComponent(coral),
 
 
 }
