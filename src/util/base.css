@@ -37,19 +37,21 @@ html {
   }
 }
 
+.sm {
+  font-size: 18px;
+}
+.sm-md, .md-sm {
+  font-size: 20px;
+}
 .md {
   font-size: 24px;
 }
 .md-lg, .lg-md {
-  font-size: 30px;
+  font-size: 28px;
 }
 .lg {
   font-size: 36px;
 }
-.sm {
-  font-size: 18px;
-}
-
 
 .icon {
   max-height: 1em;
@@ -64,4 +66,8 @@ html {
 }
 .icon-container + .icon-container {
 /*  margin-left: .3em;*/
+}
+
+.icon-container .number {
+  margin-left: 3px;
 }

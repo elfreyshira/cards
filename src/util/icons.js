@@ -36,6 +36,15 @@ import ninja from './images/ninja.png'
 
 import fish from './images/fish.png'
 import coral from './images/coral.png'
+import arrowRight from './images/arrow-right.png'
+import playCard from './images/play-card.png'
+import swapCards from './images/swap-cards.png'
+import coinStar from './images/coin-star.png'
+import thisCard from './images/this-card.png'
+import wave from './images/wave.png'
+import star from './images/star.png'
+import pointLeft from './images/point-left.png'
+import pointRight from './images/point-right.png'
 
 
 
@@ -47,7 +56,7 @@ function makeIconComponent (...imgSrcList) {
   return ({number}) => (
     <div className="icon-container">
       {_.map(imgSrcList, (imgSrc) => <img key={imgSrc} className="icon" src={imgSrc}/>) }
-      {_.isUndefined(number) ? null : <>&nbsp;<span className="number">{number}</span></>}
+      {_.isUndefined(number) ? null : <span className="number">{number}</span>}
     </div>
   )
 }
@@ -110,6 +119,14 @@ export default {
   
   Fish: makeIconComponent(fish),
   Coral: makeIconComponent(coral),
-
+  ArrowRight: makeIconComponent(arrowRight),
+  PlayCard: makeIconComponent(playCard),
+  SwapCards: makeIconComponent(swapCards),
+  CoinStar: makeIconComponent(coinStar),
+  ThisCard: makeIconComponent(thisCard),
+  Wave: makeIconComponent(wave),
+  Star: makeIconComponent(star),
+  PointLeft: makeIconComponent(pointLeft),
+  PointRight: makeIconComponent(pointRight),
 
 }

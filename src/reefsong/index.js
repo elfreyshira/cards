@@ -31,7 +31,7 @@ else {
 }
 
 
-const CARD_QUANTITY = 100
+const CARD_QUANTITY = 45
 
 const gainRoller = createNestedBrngRoller({
   engine: {weight: 2, children: {
@@ -82,23 +82,23 @@ const gainRoller = createNestedBrngRoller({
       pointNegXPerEngineLeft1_p6: 3/3,
       // pointNegXPerEngineLeft2_p6: 2/3,
       // pointNegXPerEngineLeft2_p7: 2/3,
-      pointNegXPerEngineLeft2_p8: 2/2,
-      pointNegXPerEngineLeft2_p10: 2/2,
-      pointNegXPerEngineLeft2_p12: 2/2,
+      pointNegXPerEngineLeft2_p8: 2/3,
+      pointNegXPerEngineLeft2_p10: 2/3,
+      pointNegXPerEngineLeft2_p12: 2/3,
       // pointNegXPerEngineLeft3_p8: 1/2,
       // pointNegXPerEngineLeft3_p10: 1/1,
     }},
     pointsPerCardStored: {weight: 3, children: {
-      pointsPerCardStored1: 3,
-      pointsPerCardStored2: 2,
-      pointsPerCardStored3: 1,
+      pointsPerCardStored1: 4,
+      pointsPerCardStored2: 3,
+      pointsPerCardStored3: 2,
     }},
     
     // copyPointCard: 2/10,
   }},
-  neutral: {weight: .18, children: {
-    swapAdjacentCards: 2,
-    swapAdjacentCardsOnBuild: 1,
+  neutral: {weight: .27, children: {
+    swapAdjacentCards: 5,
+    swapAdjacentCardsOnBuild: 3,
   }},
 }, {bias: 4})
 
@@ -108,14 +108,42 @@ const TYPES = {
   drawPerPointLeft: 'drawPerPointLeft',
   drawXDiscardPerPointRight: 'drawXDiscardPerPointRight',
   drawOnBuild: 'drawOnBuild',
-  onBuildActivate: 'onBuildActivate',
-  // copyEngineCard: 'copyEngineCard',
   pointPerEngineRight: 'pointPerEngineRight',
   pointNegXPerEngineLeft: 'pointNegXPerEngineLeft',
   pointsPerCardStored: 'pointsPerCardStored',
-  // copyPointCard: 'copyPointCard',
   swapAdjacentCards: 'swapAdjacentCards',
   swapAdjacentCardsOnBuild: 'swapAdjacentCardsOnBuild',
+}
+
+const TYPE_COMPONENT = {
+  draw: ({number}) => <><ICONS.ArrowRight/>: <ICONS.DrawCard number={number}/></>,
+  drawPerPointLeft: ({number}) => <><ICONS.ArrowRight/>: <ICONS.DrawCard number={number}/>&#215; <ICONS.Star/><ICONS.PointLeft/></>,
+  drawXDiscardPerPointRight: ({number}) => <>
+    <ICONS.ArrowRight/>: <ICONS.DrawCard number={number}/>
+    <br/>
+    <ICONS.TrashCard number={1}/>&#215; <ICONS.Star/><ICONS.PointRight/>
+  </>,
+  drawOnBuild: ({number}) => <><ICONS.PlayCard/>: <ICONS.DrawCard number={number}/></>,
+  pointPerEngineRight: ({number}) => <>
+    <ICONS.CoinStar number={number}/>&#215; <ICONS.Wave/><ICONS.PointRight/>
+  </>,
+  pointNegXPerEngineLeft: ({number, endVP}) => <>
+    <ICONS.CoinStar number={endVP}/>
+    <br/>
+    <ICONS.CoinStar number={-number}/>&#215; <ICONS.Wave/><ICONS.PointLeft/>
+  </>,
+  pointsPerCardStored: ({number}) => <>
+    <ICONS.ArrowRight/>: <ICONS.ThisCard/>
+    <br/>
+    <ICONS.CoinStar number={number}/>&#215; <ICONS.CardSingle/>
+  </>,
+
+  swapAdjacentCards: ({row}) => <>
+    <ICONS.ArrowRight/>: {row === 'top' ? <ICONS.Coral/> : <ICONS.Fish/>}<ICONS.SwapCards/>
+  </>,
+  swapAdjacentCardsOnBuild: ({row}) => <>
+    <ICONS.PlayCard/>: {row === 'top' ? <ICONS.Coral/> : <ICONS.Fish/>}<ICONS.SwapCards/>
+  </>,
 }
 
 // [COST, TYPE, NUMBER = 1, POINTS = 0]
@@ -130,7 +158,6 @@ const gainMapping = {
   drawXDiscardPerPointRight4: [5, TYPES.drawXDiscardPerPointRight, 4],
   drawOnBuild1: [2, TYPES.drawOnBuild, 1],
   drawOnBuild2: [5, TYPES.drawOnBuild, 2],
-  // onBuildActivate: [4, TYPES.onBuildActivate],
 
   pointPerEngineRight1_p0: [1, TYPES.pointPerEngineRight, 1],
   pointPerEngineRight2_p0: [3, TYPES.pointPerEngineRight, 2],
@@ -145,8 +172,8 @@ const gainMapping = {
   pointsPerCardStored2: [3, TYPES.pointsPerCardStored, 2],
   pointsPerCardStored3: [5, TYPES.pointsPerCardStored, 3],
 
-  swapAdjacentCards: [4, TYPES.swapAdjacentCards, 1, 1],
-  swapAdjacentCardsOnBuild: [4, TYPES.swapAdjacentCardsOnBuild, 1, 1],
+  swapAdjacentCards: [4, TYPES.swapAdjacentCards],
+  swapAdjacentCardsOnBuild: [4, TYPES.swapAdjacentCardsOnBuild],
 }
 
 
@@ -163,12 +190,30 @@ function Card (props) {
     row,
   } = props.cardObj
 
+  const TypeComponent = TYPE_COMPONENT[type]
+
   return (
     <div className="card lg">
       <div className={"outline-"+row}>
 
-        <div className="row-species">{row === 'top' ? <ICONS.Fish/> : <ICONS.Coral/>}</div>
-        <div className="cost md">{cost}</div>
+        <div className="species">
+          {row === 'top' ? <ICONS.Fish/> : <ICONS.Coral/>}
+          {_.startsWith(type, 'draw') ? <ICONS.Wave/> : null}
+          {_.startsWith(type, 'point') ? <ICONS.Star/> : null}
+        </div>
+
+        <div className="cost sm-md">
+          {cost}&nbsp;&nbsp;
+          <ICONS.CardSingle/>
+          <b>/</b>&nbsp;
+          {row === 'bottom' ? <ICONS.Fish/> : <ICONS.Coral/>}
+        </div>
+
+        <div className="effect md-lg">
+          <TypeComponent number={amount} row={row} endVP={endVP} />
+        </div>
+        
+
       </div>
     </div>
   )

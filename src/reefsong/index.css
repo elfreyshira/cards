@@ -1,6 +1,7 @@
 .outline-top, .outline-bottom {
   width: 100%;
   height: 100%;
+  padding: 8px;
 }
 .outline-top {
   border: 4px solid aquamarine;
@@ -10,5 +11,24 @@
 }
 
 .cost {
+  display: inline-block;
+  border: 2px solid #222;
+  border-left: 0;
+  padding: 3px 6px;
+  background-color: #222;
+  color: white;
+  position: absolute;
+  margin-top: 10px;
+  left: 0;
+  border-bottom-right-radius: 10px;
+  border-top-right-radius: 10px;
+}
 
+.cost img {
+  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(281deg) brightness(104%) contrast(103%);
+}
+
+.effect {
+  position: absolute;
+  bottom: 10px;
 }
