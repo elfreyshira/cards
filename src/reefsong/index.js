@@ -103,17 +103,36 @@ const gainRoller = createNestedBrngRoller({
 }, {bias: 4})
 
 
-const TYPES = {
-  draw: 'draw',
-  drawPerPointLeft: 'drawPerPointLeft',
-  drawXDiscardPerPointRight: 'drawXDiscardPerPointRight',
-  drawOnBuild: 'drawOnBuild',
-  pointPerEngineRight: 'pointPerEngineRight',
-  pointNegXPerEngineLeft: 'pointNegXPerEngineLeft',
-  pointsPerCardStored: 'pointsPerCardStored',
-  swapAdjacentCards: 'swapAdjacentCards',
-  swapAdjacentCardsOnBuild: 'swapAdjacentCardsOnBuild',
+// [COST, TYPE, NUMBER = 1, POINTS = 0]
+const gainMapping = {
+  draw1: [1, 'draw', 1],
+  draw2: [3, 'draw', 2],
+  draw3: [5, 'draw', 3],
+  drawPerPointLeft1: [2, 'drawPerPointLeft', 1],
+  drawPerPointLeft2: [5, 'drawPerPointLeft', 2],
+  drawXDiscardPerPointRight2: [1, 'drawXDiscardPerPointRight', 2],
+  drawXDiscardPerPointRight3: [3, 'drawXDiscardPerPointRight', 3],
+  drawXDiscardPerPointRight4: [5, 'drawXDiscardPerPointRight', 4],
+  drawOnBuild1: [2, 'drawOnBuild', 1],
+  drawOnBuild2: [5, 'drawOnBuild', 2],
+
+  pointPerEngineRight1_p0: [1, 'pointPerEngineRight', 1],
+  pointPerEngineRight2_p0: [3, 'pointPerEngineRight', 2],
+  pointPerEngineRight3_p0: [5, 'pointPerEngineRight', 3],
+  pointNegXPerEngineLeft1_p4: [0, 'pointNegXPerEngineLeft', 1, 4],
+  pointNegXPerEngineLeft1_p5: [1, 'pointNegXPerEngineLeft', 1, 5],
+  pointNegXPerEngineLeft1_p6: [2, 'pointNegXPerEngineLeft', 1, 6],
+  pointNegXPerEngineLeft2_p8: [1, 'pointNegXPerEngineLeft', 2, 8],
+  pointNegXPerEngineLeft2_p10: [3, 'pointNegXPerEngineLeft', 2, 10],
+  pointNegXPerEngineLeft2_p12: [5, 'pointNegXPerEngineLeft', 2, 12],
+  pointsPerCardStored1: [1, 'pointsPerCardStored', 1],
+  pointsPerCardStored2: [3, 'pointsPerCardStored', 2],
+  pointsPerCardStored3: [5, 'pointsPerCardStored', 3],
+
+  swapAdjacentCards: [4, 'swapAdjacentCards'],
+  swapAdjacentCardsOnBuild: [4, 'swapAdjacentCardsOnBuild'],
 }
+
 
 const TYPE_COMPONENT = {
   draw: ({number}) => <><ICONS.ArrowRight/>: <ICONS.DrawCard number={number}/></>,
@@ -135,45 +154,17 @@ const TYPE_COMPONENT = {
   pointsPerCardStored: ({number}) => <>
     <ICONS.ArrowRight/>: <ICONS.ThisCard/>
     <br/>
-    <ICONS.CoinStar number={number}/>&#215; <ICONS.CardSingle/>
+    <ICONS.CoinStar number={number}/>&#215; <ICONS.CardSingle/><ICONS.ThisCard/>
   </>,
 
   swapAdjacentCards: ({row}) => <>
+    <ICONS.CoinStar number={2}/><br/>
     <ICONS.ArrowRight/>: {row === 'top' ? <ICONS.Coral/> : <ICONS.Fish/>}<ICONS.SwapCards/>
   </>,
   swapAdjacentCardsOnBuild: ({row}) => <>
+  <ICONS.CoinStar number={1}/><br/>
     <ICONS.PlayCard/>: {row === 'top' ? <ICONS.Coral/> : <ICONS.Fish/>}<ICONS.SwapCards/>
   </>,
-}
-
-// [COST, TYPE, NUMBER = 1, POINTS = 0]
-const gainMapping = {
-  draw1: [1, TYPES.draw, 1],
-  draw2: [3, TYPES.draw, 2],
-  draw3: [5, TYPES.draw, 3],
-  drawPerPointLeft1: [2, TYPES.drawPerPointLeft, 1],
-  drawPerPointLeft2: [5, TYPES.drawPerPointLeft, 2],
-  drawXDiscardPerPointRight2: [1, TYPES.drawXDiscardPerPointRight, 2],
-  drawXDiscardPerPointRight3: [3, TYPES.drawXDiscardPerPointRight, 3],
-  drawXDiscardPerPointRight4: [5, TYPES.drawXDiscardPerPointRight, 4],
-  drawOnBuild1: [2, TYPES.drawOnBuild, 1],
-  drawOnBuild2: [5, TYPES.drawOnBuild, 2],
-
-  pointPerEngineRight1_p0: [1, TYPES.pointPerEngineRight, 1],
-  pointPerEngineRight2_p0: [3, TYPES.pointPerEngineRight, 2],
-  pointPerEngineRight3_p0: [5, TYPES.pointPerEngineRight, 3],
-  pointNegXPerEngineLeft1_p4: [0, TYPES.pointNegXPerEngineLeft, 1, 4],
-  pointNegXPerEngineLeft1_p5: [1, TYPES.pointNegXPerEngineLeft, 1, 5],
-  pointNegXPerEngineLeft1_p6: [2, TYPES.pointNegXPerEngineLeft, 1, 6],
-  pointNegXPerEngineLeft2_p8: [1, TYPES.pointNegXPerEngineLeft, 2, 8],
-  pointNegXPerEngineLeft2_p10: [3, TYPES.pointNegXPerEngineLeft, 2, 10],
-  pointNegXPerEngineLeft2_p12: [5, TYPES.pointNegXPerEngineLeft, 2, 12],
-  pointsPerCardStored1: [1, TYPES.pointsPerCardStored, 1],
-  pointsPerCardStored2: [3, TYPES.pointsPerCardStored, 2],
-  pointsPerCardStored3: [5, TYPES.pointsPerCardStored, 3],
-
-  swapAdjacentCards: [4, TYPES.swapAdjacentCards],
-  swapAdjacentCardsOnBuild: [4, TYPES.swapAdjacentCardsOnBuild],
 }
 
 
