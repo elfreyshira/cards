@@ -31,17 +31,24 @@ else {
 }
 
 
-const CARD_QUANTITY = 45
+const CARD_QUANTITY = 54
 
 const gainRoller = createNestedBrngRoller({
   engine: {weight: 2, children: {
 
     engineActivate: {weight: 4, children: {
-      draw: {weight: 3, children: {
-        draw1: 3,
-        draw2: 2,
-        draw3: 1,
+      draw: {weight: 2, children: {
+        draw1: 8,
+        draw2: 5,
+        draw3: 3,
       }},
+      drawDelay: {weight: 1, children: {
+        drawDelay1: 2,
+        drawDelay2: 3,
+        drawDelay3: 3,
+        drawDelay4: 2,
+      }},
+      
       drawPerPointLeft: {weight: 1, children: {
         drawPerPointLeft1: 2,
         drawPerPointLeft2: 1,
@@ -88,6 +95,18 @@ const gainRoller = createNestedBrngRoller({
       // pointNegXPerEngineLeft3_p8: 1/2,
       // pointNegXPerEngineLeft3_p10: 1/1,
     }},
+    pointAddCostPerEngine: {weight: 2, children: {
+      pointAddCostPerEngine1_p4: 3/3,
+      pointAddCostPerEngine1_p5: 3/3,
+      pointAddCostPerEngine1_p6: 3/3,
+      // pointAddCostPerEngine2_p6: 2/3,
+      // pointAddCostPerEngine2_p7: 2/3,
+      pointAddCostPerEngine2_p8: 2/3,
+      pointAddCostPerEngine2_p10: 2/3,
+      pointAddCostPerEngine2_p12: 2/3,
+      // pointAddCostPerEngine3_p8: 1/2,
+      // pointAddCostPerEngine3_p10: 1/1,
+    }},
     pointsPerCardStored: {weight: 3, children: {
       pointsPerCardStored1: 4,
       pointsPerCardStored2: 3,
@@ -108,6 +127,10 @@ const gainMapping = {
   draw1: [1, 'draw', 1],
   draw2: [3, 'draw', 2],
   draw3: [5, 'draw', 3],
+  drawDelay1: [0, 'drawDelay', 1],
+  drawDelay2: [1, 'drawDelay', 2],
+  drawDelay3: [2, 'drawDelay', 3],
+  drawDelay4: [3, 'drawDelay', 4],
   drawPerPointLeft1: [2, 'drawPerPointLeft', 1],
   drawPerPointLeft2: [5, 'drawPerPointLeft', 2],
   drawXDiscardPerPointRight2: [1, 'drawXDiscardPerPointRight', 2],
@@ -119,12 +142,21 @@ const gainMapping = {
   pointPerEngineRight1_p0: [1, 'pointPerEngineRight', 1],
   pointPerEngineRight2_p0: [3, 'pointPerEngineRight', 2],
   pointPerEngineRight3_p0: [5, 'pointPerEngineRight', 3],
+
   pointNegXPerEngineLeft1_p4: [0, 'pointNegXPerEngineLeft', 1, 4],
   pointNegXPerEngineLeft1_p5: [1, 'pointNegXPerEngineLeft', 1, 5],
   pointNegXPerEngineLeft1_p6: [2, 'pointNegXPerEngineLeft', 1, 6],
   pointNegXPerEngineLeft2_p8: [1, 'pointNegXPerEngineLeft', 2, 8],
   pointNegXPerEngineLeft2_p10: [3, 'pointNegXPerEngineLeft', 2, 10],
   pointNegXPerEngineLeft2_p12: [5, 'pointNegXPerEngineLeft', 2, 12],
+  
+  pointAddCostPerEngine1_p4: [0, 'pointAddCostPerEngine', 1, 3],
+  pointAddCostPerEngine1_p5: [1, 'pointAddCostPerEngine', 1, 4],
+  pointAddCostPerEngine1_p6: [3, 'pointAddCostPerEngine', 1, 6],
+  pointAddCostPerEngine2_p8: [2, 'pointAddCostPerEngine', 2, 7],
+  pointAddCostPerEngine2_p10: [4, 'pointAddCostPerEngine', 2, 9],
+  pointAddCostPerEngine2_p12: [5, 'pointAddCostPerEngine', 2, 10],
+
   pointsPerCardStored1: [1, 'pointsPerCardStored', 1],
   pointsPerCardStored2: [3, 'pointsPerCardStored', 2],
   pointsPerCardStored3: [5, 'pointsPerCardStored', 3],
@@ -136,6 +168,10 @@ const gainMapping = {
 
 const TYPE_COMPONENT = {
   draw: ({number}) => <><ICONS.ArrowRight/>: <ICONS.DrawCard number={number}/></>,
+  drawDelay: ({number}) => <>
+    <ICONS.ArrowRight/>
+    : <ICONS.ThisCard number={number}/>/ <ICONS.Grab/>
+  </>,
   drawPerPointLeft: ({number}) => <><ICONS.ArrowRight/>: <ICONS.DrawCard number={number}/>&#215; <ICONS.Star/><ICONS.PointLeft/></>,
   drawXDiscardPerPointRight: ({number}) => <>
     <ICONS.ArrowRight/>: <ICONS.DrawCard number={number}/>
@@ -150,6 +186,9 @@ const TYPE_COMPONENT = {
     <ICONS.CoinStar number={endVP}/>
     <br/>
     <ICONS.CoinStar number={-number}/>&#215; <ICONS.Wave/><ICONS.PointLeft/>
+  </>,
+  pointAddCostPerEngine: ({number, row, endVP}) => <>
+    <ICONS.CoinStar number={endVP}/>
   </>,
   pointsPerCardStored: ({number}) => <>
     <ICONS.ArrowRight/>: <ICONS.ThisCard/>
@@ -198,6 +237,12 @@ function Card (props) {
           <ICONS.CardSingle/>
           <b>/</b>&nbsp;
           {row === 'bottom' ? <ICONS.Fish/> : <ICONS.Coral/>}
+          {_.startsWith(type, 'pointAddCostPerEngine') ?
+            <>
+              <br/>+{amount} &#215;&nbsp;
+              {row === 'top' ? <ICONS.Fish/> : <ICONS.Coral/>}<ICONS.Wave/>
+            </> : null
+          }
         </div>
 
         <div className="effect md-lg">
