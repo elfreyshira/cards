@@ -48,6 +48,11 @@ const gainRoller = createNestedBrngRoller({
         drawDelay3: 3,
         drawDelay4: 2,
       }},
+
+      draw2SubCostPerPoint: {weight: 0.3, children: {
+        draw2SubCostPerPoint1: 1, // cost 4
+        draw2SubCostPerPoint2: 1, // cost 6
+      }},
       
       drawPerPointLeft: {weight: 1, children: {
         drawPerPointLeft1: 2,
@@ -131,6 +136,8 @@ const gainMapping = {
   drawDelay2: [1, 'drawDelay', 2],
   drawDelay3: [2, 'drawDelay', 3],
   drawDelay4: [3, 'drawDelay', 4],
+  draw2SubCostPerPoint1: [4, 'draw2SubCostPerPoint', 1],
+  draw2SubCostPerPoint2: [6, 'draw2SubCostPerPoint', 2],
   drawPerPointLeft1: [2, 'drawPerPointLeft', 1],
   drawPerPointLeft2: [5, 'drawPerPointLeft', 2],
   drawXDiscardPerPointRight2: [1, 'drawXDiscardPerPointRight', 2],
@@ -172,6 +179,7 @@ const TYPE_COMPONENT = {
     <ICONS.ArrowRight/>
     : <ICONS.ThisCard number={number}/>/ <ICONS.Grab/>
   </>,
+  draw2SubCostPerPoint: ({number}) => <><ICONS.ArrowRight/>: <ICONS.DrawCard number={2}/></>,
   drawPerPointLeft: ({number}) => <><ICONS.ArrowRight/>: <ICONS.DrawCard number={number}/>&#215; <ICONS.Star/><ICONS.PointLeft/></>,
   drawXDiscardPerPointRight: ({number}) => <>
     <ICONS.ArrowRight/>: <ICONS.DrawCard number={number}/>
@@ -236,13 +244,24 @@ function Card (props) {
           {cost}&nbsp;&nbsp;
           <ICONS.CardSingle/>
           <b>/</b>&nbsp;
+
           {row === 'bottom' ? <ICONS.Fish/> : <ICONS.Coral/>}
+
           {_.startsWith(type, 'pointAddCostPerEngine') ?
             <>
               <br/>+{amount} &#215;&nbsp;
               {row === 'top' ? <ICONS.Fish/> : <ICONS.Coral/>}<ICONS.Wave/>
             </> : null
           }
+
+
+          {_.startsWith(type, 'draw2SubCostPerPoint') ?
+            <>
+              <br/>-{amount} &#215;&nbsp;
+              {row === 'top' ? <ICONS.Fish/> : <ICONS.Coral/>}<ICONS.Star/>
+            </> : null
+          }
+
         </div>
 
         <div className="effect md-lg">
