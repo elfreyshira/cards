@@ -1,8 +1,9 @@
 import _ from 'lodash'
 import Brng from 'brng'
-import seed from 'seed-random'
+
 
 import '../util/base.css'
+import setSeedForBrng from '../util/setSeedForBrng.js'
 import generateGainObj from '../util/generateGainObj.js'
 import getLeastSimilarObj from '../util/getLeastSimilarObj.js'
 import createNestedBrngRoller from '../util/createNestedBrngRoller.js'
@@ -19,17 +20,7 @@ import ICONS from '../util/icons.js'
 // console.clear()
 
 
-const params = new URL(document.URL).searchParams
-const seedID = params.get('seed')
-if (_.isString(seedID)) {
-  Brng.random = seed(seedID)
-}
-else {
-  const generatedSeedId = Math.random().toString(36).slice(2,6)
-  Brng.random = seed(generatedSeedId)
-  console.log('generatedSeedId', generatedSeedId)
-}
-
+setSeedForBrng(Brng)
 
 const CARD_QUANTITY = 30
 
