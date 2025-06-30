@@ -318,7 +318,7 @@ _.forEach(cardsArray, (cardObj, index) => {
 
 })
 
-console.log(_.sum(_.sortBy(document.lol, (a) => -a).slice(0,10)))
+console.log(_.sum(_.sortBy(document.similarityRatioArray, (a) => -a).slice(0,10)))
 
 // !! TO ADD STARTER CARDS
 cardsArray = cardsArray.concat(starterCards)

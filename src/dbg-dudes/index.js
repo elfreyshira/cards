@@ -285,8 +285,8 @@ _.forEach(cardsArray, (cardObj, index) => {
 
 })
 
-// console.log(_.sum(_.sortBy(document.lol, (a) => -a).slice(0,50)))
-console.log(_.round(_.mean(document.lol), 4))
+// console.log(_.sum(_.sortBy(document.similarityRatioArray, (a) => -a).slice(0,50)))
+console.log(_.round(_.mean(document.similarityRatioArray), 4))
 
 countOccurances(cardsArray, 'gainTop', 'bonus')
 

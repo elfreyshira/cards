@@ -2,7 +2,7 @@ import _ from 'lodash'
 
 import checkSimilarity from './checkSimilarity.js'
 
-document.lol = []
+document.similarityRatioArray = []
 
 // addUndo(roller)
 
@@ -49,7 +49,7 @@ function getLeastSimilarObj (
   } = _.sortBy(attemptsArray, 'similarityRatio')[0]
   _.over(redoChain)()  
 
-  document.lol.push(similarityRatio)
+  document.similarityRatioArray.push(similarityRatio)
 
   return cardObj
 

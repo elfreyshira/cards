@@ -8,7 +8,7 @@ function generateGainObj ({
   // REQUIRED
   resourceToValueMapping, // {key: Number | Function}
   cardObj, // {expectedValue, ...}
-  expectedValue,
+  expectedValue, // directly or as part of cardObj
   resourceRoller, // brng object
 
   // OPTIONAL

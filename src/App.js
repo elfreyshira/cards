@@ -17,7 +17,8 @@ import './App.css';
 // import Cards from './reefsong/index.js';
 // import Cards from './dbg-dice/index.js';
 // import Cards from './auction-tcg/index.js';
-import Cards from './mtg-box/index.js';
+// import Cards from './mtg-box/index.js';
+import Cards from './dbg-duel-5cards/index.js'; // 2025.06.30
 
 
 function App() {
