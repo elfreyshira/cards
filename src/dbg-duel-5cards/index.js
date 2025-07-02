@@ -11,7 +11,7 @@ import ICONS from '../util/icons.js'
 
 
 // import Card from './Card.js'
-// import './index.css'
+import './index.css'
 // import starterCards from './starterCards.js'
 
 // console.clear()
@@ -193,6 +193,43 @@ cardsArray = _.sortBy(cardsArray, sortOrderArray)
 /////////////////////////////
 /////////////////////////////
 
+const effectToIconMapping = {
+  
+}
+
+function Card (props) {
+  
+  const {
+    cost,
+    gain
+  } = props.cardObj
+
+  return (
+    <div className="card lg">
+        <div className="cost md">
+          ${cost}
+        </div>
+        <div className="effect">
+          {_.map(effectToIconMapping, (ChosenIcon, effect) => {
+            if (_.has(gain, effect)) {
+              return <div key={effect}>
+                <ChosenIcon number={gain[effect]} />
+              </div>
+            }
+            else {
+              return null
+            }
+          })}
+        </div>
+    </div>
+  )
+}
+
+/////////////////////////////
+/////////////////////////////
+/////////////////////////////
+
+
 console.log(gainRoller.proportions)
 // console.log(_.sum(_.sortBy(document.similarityRatioArray, (a) => -a).slice(0, 10)))
 // console.log(_.round(_.mean(document.similarityRatioArray), 4))
@@ -212,7 +249,7 @@ const cardsImportantKeys = [
 
 function Cards () {
   return <div>
-    {/*{_.map(cardsArray, (cardObj, idx) => <Card key={idx} cardObj={cardObj} /> )}*/}
+    {_.map(cardsArray, (cardObj, idx) => <Card key={idx} cardObj={cardObj} /> )}
     <pre className="noprint">
       {JSON.stringify(cardsArray, null, 2)}
       {/*{JSON.stringify(_.chain(cardsArray).map((obj) => _.pick(obj, cardsImportantKeys)).value(), null, 2)}*/}

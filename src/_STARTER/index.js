@@ -128,9 +128,47 @@ _.forEach(cardsArray, (cardObj, index) => {
 })
 cardsArray = _.sortBy(cardsArray, sortOrderArray)
 
+
 /////////////////////////////
 /////////////////////////////
 /////////////////////////////
+
+const effectToIconMapping = {
+  
+}
+
+function Card (props) {
+  
+  const {
+    cost,
+    gain
+  } = props.cardObj
+
+  return (
+    <div className="card lg">
+        <div className="cost md">
+          ${cost}
+        </div>
+        <div className="effect">
+          {_.map(effectToIconMapping, (ChosenIcon, effect) => {
+            if (_.has(gain, effect)) {
+              return <div key={effect}>
+                <ChosenIcon number={gain[effect]} />
+              </div>
+            }
+            else {
+              return null
+            }
+          })}
+        </div>
+    </div>
+  )
+}
+
+/////////////////////////////
+/////////////////////////////
+/////////////////////////////
+
 
 // console.log(gainRoller.proportions)
 // console.log(_.sum(_.sortBy(document.similarityRatioArray, (a) => -a).slice(0, 10)))

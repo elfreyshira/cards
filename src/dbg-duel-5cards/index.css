@@ -1,0 +1,16 @@
+.cost {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 0 4px 5px 10px;
+  color: white;
+  background-color: black;
+  border-bottom-left-radius: 15px;
+}
+
+.cost.starter {
+  background-color: initial;
+  color: initial;
+  border-bottom: 3px solid black;
+  border-left: 3px solid black;
+}
