@@ -132,6 +132,7 @@ cardsArray = _.sortBy(cardsArray, sortOrderArray)
 /////////////////////////////
 /////////////////////////////
 
+// console.log(gainRoller.proportions)
 // console.log(_.sum(_.sortBy(document.similarityRatioArray, (a) => -a).slice(0, 10)))
 // console.log(_.round(_.mean(document.similarityRatioArray), 4))
 
