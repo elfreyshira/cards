@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import Brng from 'brng'
 
-import '../util/base.css'
 import setSeedForBrng from '../util/setSeedForBrng.js'
 import generateGainObj from '../util/generateGainObj.js'
 import getLeastSimilarObj from '../util/getLeastSimilarObj.js'
@@ -12,12 +11,12 @@ import ICONS from '../util/icons.js'
 
 // import Card from './Card.js'
 import './index.css'
-// import starterCards from './starterCards.js'
+import starterCards from './starterCards.js'
 
 // console.clear()
 setSeedForBrng(Brng)
 
-const CARD_QUANTITY = 50
+const CARD_QUANTITY = 38
 
 
 /// vv COST vv ///
@@ -34,9 +33,9 @@ const costToValueMapping = {
 const costRoller = new Brng({
   1: 3,
   2: 5,
-  3: 7,
-  4: 5,
-  5: 3,
+  3: 6,
+  4: 6,
+  5: 4,
   // 6: 3,
   7: 2,
 }, {bias: 4})
@@ -50,9 +49,9 @@ const resourceToValueMapping = {
   playFromHand: 250,
   playFromDeck: 300,
   nextAtk: 75,
+  futureAtk: 250,
   // atkHand: 400,
   // atkCardsPlayed: 400,
-  // futureAtk: 250,
   bonus: 50,
 }
 
@@ -60,7 +59,7 @@ const resourceToValueMapping = {
 const gainRoller = new Brng({
   atk: 30,
   nextAtk: 8,
-  // futureAtk: 4,
+  futureAtk: 3,
 
   money: 15,
 
@@ -69,18 +68,51 @@ const gainRoller = new Brng({
   playFromDeck: 5,
 }, {bias: 4, keepHistory: true})
 
-const alternateCubeRoller = new Brng({
-  1: 2,
-  2: 2.1,
-  3: 2.2,
-  4: 2.3,
-  5: 2.4,
+
+const alternateEffectRoller = createNestedBrngRoller({
+  atk: {weight: 2, children: {
+    atk1: 1,
+    atk2: 1,
+  }},
+  moreHandAtk: {weight: 1, children: {
+    moreHandAtk1: 1,
+    moreHandAtk2: 1,
+    moreHandAtk3: 1,
+  }},
+  moreLaneAtk: {weight: 1.5, children: {
+    moreLaneAtk1: 1,
+    moreLaneAtk2: 1,
+    moreLaneAtk3: 1,
+  }},
+  moreMoneyAtk: {weight: 1, children: {
+    moreMoneyAtk1: 1,
+    moreMoneyAtk2: 1,
+    moreMoneyAtk3: 1,
+  }},
+  trash: 2,
 }, {bias: 4})
+
+const alternateEffectCostMapping = {
+  atk1: 2,
+  atk2: 7,
+  moreHandAtk1: 1,
+  moreHandAtk2: 4,
+  moreHandAtk3: 7,
+  moreLaneAtk1: 1,
+  moreLaneAtk2: 4,
+  moreLaneAtk3: 7,
+  moreMoneyAtk1: 1,
+  moreMoneyAtk2: 4,
+  moreMoneyAtk3: 7,
+
+  trash: 3,
+}
 
 
 // for getLeastSimilarObj()
 const cardObjSimilaritySettings = {
-  cost: [1, 4], // multiplier = 1, max diff = 3, type = Number, 
+  cost: [2, 4], // multiplier = 1, max diff = 3, type = Number, 
+  alternate: [1, 1, String],
   gain: {
     atk: [1, 3],
     money: [1, 2],
@@ -88,7 +120,7 @@ const cardObjSimilaritySettings = {
     playFromHand: [1, 1],
     playFromDeck: [1, 1],
     nextAtk: [1, 3],
-    // futureAtk: [1, 2],
+    futureAtk: [1, 1],
     bonus: [1, 1],
   },
 }
@@ -101,6 +133,11 @@ const cardObjSimilaritySettings = {
 
 const sortOrderArray = [
   (cardObj) => -cardObj.cost,
+  (cardObj) => -(
+    _.get(cardObj, 'gain.atk', 0)
+    + _.get(cardObj, 'gain.nextAtk', 0) * .75
+    + _.get(cardObj, 'gain.futureAtk', 0) * 2.5
+  ),
 ]
 
 let cardsArray = []
@@ -115,15 +152,20 @@ _.times(CARD_QUANTITY, (index) => {
 })
 cardsArray = _.sortBy(cardsArray, sortOrderArray)
 
+
+// add the alternate purchase to the cards
+let alternateEffectArray = []
+_.times(CARD_QUANTITY, (index) => {
+  const alternateEffect = alternateEffectRoller.roll()
+  alternateEffectArray.push(alternateEffect)
+})
+alternateEffectArray = _.sortBy(alternateEffectArray, (effect) => alternateEffectCostMapping[effect])
+
 _.forEach(cardsArray, (cardObj, index) => {
-  if (index <= CARD_QUANTITY * 3/4) {
-    cardObj.alternate = _.toNumber(alternateCubeRoller.roll())
-  }
-  else {
-    cardObj.alternate = 'trash'
-  }
+  cardObj.alternate = alternateEffectArray[index]
 })
 cardsArray = _.sortBy(cardsArray, sortOrderArray)
+
 
 _.forEach(cardsArray, (cardObj, index) => {
 
@@ -139,10 +181,11 @@ _.forEach(cardsArray, (cardObj, index) => {
         groupingMaxVariety: [
           {resourceList: ['draw', 'playFromHand', 'playFromDeck'],
             max: 1},
+          {resourceList: ['nextAtk', 'futureAtk'], max: 1},
           {resourceList: _.keys(resourceToValueMapping), max: 2}
         ],
         groupingMaxQuantity: [
-          {resourceList: ['playFromHand', 'playFromDeck', 'draw'], max: 1},
+          {resourceList: ['draw', 'playFromHand', 'playFromDeck'], max: 1},
           // {resourceList: [ 'nextAtk'], max: 3}
         ]
       }
@@ -193,26 +236,92 @@ cardsArray = _.sortBy(cardsArray, sortOrderArray)
 /////////////////////////////
 /////////////////////////////
 
+
+// draw: 150,
+//   playFromHand: 250,
+//   playFromDeck: 300,
+//   nextAtk: 75,
+//   // atkHand: 400,
+//   // atkCardsPlayed: 400,
+//   // futureAtk: 250,
+//   bonus: 50,
 const effectToIconMapping = {
+  // atk: ICONS.Sword, // MANUALLY ADDED
+  money: ICONS.Dollar,
+
+  // draw: () => <><ICONS.Deck/><ICONS.ArrowRight/><ICONS.Hand/></>,
+  draw: () => <ICONS.DrawCard />,
+  playFromHand: () => <><ICONS.Hand/><ICONS.ArrowRight/><ICONS.WarBanner/></>,
+  playFromDeck: () => <><ICONS.Deck/><ICONS.ArrowRight/><ICONS.WarBanner/></>,
+  nextAtk: (props) => <><ICONS.OneTurn/>: +<ICONS.TwoSwords {...props} /></>,
+  futureAtk: (props) => <><ICONS.InfiniteTurn/>: +<ICONS.TwoSwords {...props} /></>,
   
+}
+
+const alternateToIconMapping = {
+  atk1: () => <>+<ICONS.TwoSwords number={1}/></>,
+  atk2: () => <>+<ICONS.TwoSwords number={2}/></>,
+  moreHandAtk1: () => <><ICONS.Hand/>> <ICONS.Opponent/>: +<ICONS.TwoSwords number={1}/></>,
+  moreHandAtk2: () => <><ICONS.Hand/>> <ICONS.Opponent/>: +<ICONS.TwoSwords number={2}/></>,
+  moreHandAtk3: () => <><ICONS.Hand/>> <ICONS.Opponent/>: +<ICONS.TwoSwords number={3}/></>,
+  moreLaneAtk1: () => <><ICONS.WarBanner/>> <ICONS.Opponent/>: +<ICONS.TwoSwords number={1}/></>,
+  moreLaneAtk2: () => <><ICONS.WarBanner/>> <ICONS.Opponent/>: +<ICONS.TwoSwords number={2}/></>,
+  moreLaneAtk3: () => <><ICONS.WarBanner/>> <ICONS.Opponent/>: +<ICONS.TwoSwords number={3}/></>,
+  moreMoneyAtk1: () => <>$ > <ICONS.Opponent/>: +<ICONS.TwoSwords number={1}/></>,
+  moreMoneyAtk2: () => <>$ > <ICONS.Opponent/>: +<ICONS.TwoSwords number={2}/></>,
+  moreMoneyAtk3: () => <>$ > <ICONS.Opponent/>: +<ICONS.TwoSwords number={3}/></>,
+  trash: () => <><ICONS.Lightning className="sm"/> <ICONS.TrashCard/></>,
+}
+
+function AlternateEffect ({alternate}) {
+
+  if (alternate) {
+    const AlternateEffectIcon = alternateToIconMapping[alternate]
+    return <>
+      <div className="alternate-cost">
+        ${alternateEffectCostMapping[alternate]}
+      </div>
+      <div className="alternate-effect inverse">
+        <AlternateEffectIcon/>
+      </div>
+    </>
+  }
+  else {
+    return null
+  }
 }
 
 function Card (props) {
   
   const {
     cost,
-    gain
+    gain,
+    alternate,
   } = props.cardObj
 
+  // for starter cards
+  let costSymbol = '$'
+  let costClass = 'cost'
+  if (_.startsWith(cost, 'P')) {
+    costSymbol = ''
+    costClass += ' starter'
+  }
+  
   return (
-    <div className="card lg">
-        <div className="cost md">
-          ${cost}
-        </div>
+    <div className="card md">
+      <div className={costClass}>
+        {costSymbol}{cost}
+      </div>
+
+      <div className="main-effect">
         <div className="effect">
+          <div className="lg sub-effect">
+            <ICONS.TwoSwords number={gain.atk || 0} />
+            &nbsp;{gain.bonus ? <ICONS.Star className="md-sm"/> : null}
+          </div>
           {_.map(effectToIconMapping, (ChosenIcon, effect) => {
             if (_.has(gain, effect)) {
-              return <div key={effect}>
+              return <div key={effect} className={effect + ' sub-effect'} >
                 <ChosenIcon number={gain[effect]} />
               </div>
             }
@@ -221,6 +330,11 @@ function Card (props) {
             }
           })}
         </div>
+      </div>
+
+      {/*<div className="sm">{JSON.stringify(gain)}</div>*/}
+
+      <AlternateEffect alternate={alternate} />
     </div>
   )
 }
@@ -239,9 +353,10 @@ countOccurances(cardsArray, 'gain', 'playFromHand')
 countOccurances(cardsArray, 'gain', 'playFromDeck')
 countOccurances(cardsArray, 'gain', ['atk', 'nextAtk'])
 countOccurances(cardsArray, 'gain', 'money')
+countOccurances(cardsArray, 'gain', 'bonus')
 
 // !! TO ADD STARTER CARDS
-// cardsArray = cardsArray.concat(starterCards)
+cardsArray = cardsArray.concat(starterCards)
 
 const cardsImportantKeys = [
   'cost',

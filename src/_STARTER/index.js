@@ -134,7 +134,7 @@ cardsArray = _.sortBy(cardsArray, sortOrderArray)
 /////////////////////////////
 
 const effectToIconMapping = {
-  
+  money: ICONS.Dollar
 }
 
 function Card (props) {

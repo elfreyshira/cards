@@ -46,6 +46,14 @@ import star from './images/star.png'
 import pointLeft from './images/point-left.png'
 import pointRight from './images/point-right.png'
 
+import warBanner from './images/war-banner.png'
+import hand from './images/hand.png'
+import oneTurn from './images/one-turn.png'
+import twoSwords from './images/two-swords.png'
+import infiniteTurn from './images/infinite-turn.png'
+import opponent from './images/opponent.png'
+import lightning from './images/lightning.png'
+
 
 
 
@@ -53,15 +61,17 @@ import pointRight from './images/point-right.png'
 // push: 2, // both
 
 function makeIconComponent (...imgSrcList) {
-  return ({number}) => (
-    <div className="icon-container">
-      {_.map(imgSrcList, (imgSrc) => <img key={imgSrc} className="icon" src={imgSrc}/>) }
+  return ({number, className = ''}) => (
+    <div className={"icon-container " + className}>
+      {_.map(imgSrcList, (imgSrc) =>
+        <span key={imgSrc}><img key={imgSrc} className="icon" src={imgSrc}/></span>
+      )}
       {_.isUndefined(number) ? null : <span className="number">{number}</span>}
     </div>
   )
 }
 
-export default {
+const ALL_ICONS = {
   Grab: makeIconComponent(grab),
   Shoe: makeIconComponent(shoe),
   ShoeWing: makeIconComponent(shoe, wing),
@@ -129,4 +139,24 @@ export default {
   PointLeft: makeIconComponent(pointLeft),
   PointRight: makeIconComponent(pointRight),
 
+  WarBanner: makeIconComponent(warBanner),
+  Hand: makeIconComponent(hand),
+  OneTurn: makeIconComponent(oneTurn),
+  TwoSwords: makeIconComponent(twoSwords),
+  InfiniteTurn: makeIconComponent(infiniteTurn),
+  Opponent: makeIconComponent(opponent),
+  Lightning: makeIconComponent(lightning),
+
+
+}
+
+
+export default ALL_ICONS
+
+export const Cards = () => {
+  return _.map(ALL_ICONS, (IconComponent, name) => {
+    return <div key={name} style={{marginLeft: '10px'}}>
+      <span style={{display: 'inline-block', width: '40px'}}><IconComponent /></span> : {name}
+    </div>
+  })
 }
