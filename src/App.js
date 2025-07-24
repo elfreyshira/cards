@@ -22,7 +22,8 @@ import './util/base.css'
 // import Cards from './dbg-dice/index.js';
 // import Cards from './auction-tcg/index.js';
 // import Cards from './mtg-box/index.js';
-import Cards from './dbg-duel-5cards/index.js'; // 2025.06.30
+// import Cards from './dbg-duel-5cards/index.js'; // 2025.06.30
+import Cards from './dbg-grid-simple/index.js'; // 2025.07.24
 
 
 
