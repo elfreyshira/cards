@@ -54,8 +54,12 @@ import infiniteTurn from './images/infinite-turn.png'
 import opponent from './images/opponent.png'
 import lightning from './images/lightning.png'
 
-
-
+import filmReel from './images/film-reel.png'
+import mango from './images/mango.png'
+import compassToken from './images/compass-token.png'
+import people4Directions from './images/people-4-directions.png'
+import shyKoala from './images/shy-koala.png'
+import braveLion from './images/brave-lion.png'
 
 
 // push: 2, // both
@@ -147,7 +151,12 @@ const ALL_ICONS = {
   Opponent: makeIconComponent(opponent),
   Lightning: makeIconComponent(lightning),
 
-
+  FilmReel: makeIconComponent(filmReel),
+  Mango: makeIconComponent(mango),
+  CompassToken: makeIconComponent(compassToken),
+  People4Directions: makeIconComponent(people4Directions),
+  BraveLion: makeIconComponent(braveLion),
+  ShyKoala: makeIconComponent(shyKoala),
 }
 
 

@@ -1,0 +1,111 @@
+.cost {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 0 4px 5px 10px;
+  color: white;
+  background-color: black;
+  border-bottom-left-radius: 15px;
+}
+.cost img.icon {
+  filter:
+    drop-shadow(0px 0px 1px rgba(220, 220, 220, 1))
+    drop-shadow(0px 0px 2px rgba(220, 220, 220, 1));
+}
+
+.main-effects .effect {
+  position: absolute;
+  padding: 5px 5px 5px 8px;
+  width: 62px;
+  border: 3px solid black;
+  border-left-width: 0;
+  border-bottom-right-radius: 15px;
+  border-top-right-radius: 15px;
+}
+.effect.move {
+  background-color: rgb(193, 255, 228);
+  top: 10px;
+}
+
+.effect.fruit {
+  background-color: rgb(245, 207, 255);
+  top: 63px;
+}
+.effect.fruit .icon {
+  margin-right: -2px;
+}
+
+.effect.film {
+  background-color: rgb(212, 216, 255);
+  top: 116px;
+}
+
+
+.top-container {
+  height: calc(100% - 80px);
+  width: 100%;
+}
+
+.background-art {
+  transform: translateY(-134px);
+  z-index: -9;
+}
+
+.special-effects {
+  position: absolute;
+  bottom: 90px;
+  padding: 10px;
+  /*background-color: rgba(220, 220, 220);*/
+  background: linear-gradient(90deg,
+    rgba(220, 220, 220, 1) 0%,
+    rgba(220, 220, 220, 1) 20%,
+    rgba(220, 220, 220, .7) 60%,
+    rgba(255, 255, 255, 0) 95%
+  );
+  width: 100%;
+  text-shadow: 0px 0px 2px rgba(220, 220, 220, 1), 0px 0px 2px rgba(220, 220, 220, 1);;
+}
+.special-effects img.icon {
+  filter: drop-shadow(0px 0px 2px rgba(220, 220, 220, 1)) drop-shadow(0px 0px 2px rgba(220, 220, 220, 1));
+}
+
+.scoring-container {
+  width: 100%;
+  border-top: 5px solid black;
+  position: absolute;
+  bottom: 0;
+  height: 80px;
+  background-color: rgba(50, 50, 50);
+}
+
+.score-cost {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: 2px 4px 2px 8px;
+  background-color: white;
+  /*border: 2px solid black;*/
+  border-top: 2px solid black;
+  border-left: 2px solid black;
+  border-top-left-radius: 15px;  
+  /*background-color: rgba(210, 210, 210);*/
+}
+
+.point-symbol {
+  padding-left: 40px;
+  padding-top: 6px;
+}
+.point-symbol img {
+  filter: drop-shadow(0px 0px 2px #fff) drop-shadow(0px 0px 1px #fff);
+}
+
+.score-effect {
+  display: block;
+  width: 100%;
+  text-align: right;
+  top: 2px;
+  position: absolute;
+  right: 3px;
+
+  filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(320deg) brightness(104%) contrast(104%);
+}

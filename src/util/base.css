@@ -52,6 +52,9 @@ html {
 .lg {
   font-size: 36px;
 }
+.lg-xl, .xl-lg {
+  font-size: 48px;
+}
 .xl {
   font-size: 60px;
 }
