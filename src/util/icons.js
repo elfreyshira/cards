@@ -61,6 +61,13 @@ import people4Directions from './images/people-4-directions.png'
 import shyKoala from './images/shy-koala.png'
 import braveLion from './images/brave-lion.png'
 
+import fire from './images/fire.png'
+import water from './images/water.png'
+import earth from './images/earth.png'
+import wild from './images/wild.png'
+import facedownCard from './images/facedown-card.png'
+import heart from './images/heart.png'
+
 
 // push: 2, // both
 
@@ -157,6 +164,14 @@ const ALL_ICONS = {
   People4Directions: makeIconComponent(people4Directions),
   BraveLion: makeIconComponent(braveLion),
   ShyKoala: makeIconComponent(shyKoala),
+
+  Fire: makeIconComponent(fire),
+  Water: makeIconComponent(water),
+  Earth: makeIconComponent(earth),
+  Wild: makeIconComponent(wild),
+  FacedownCard: makeIconComponent(facedownCard),
+  Heart: makeIconComponent(heart),
+
 }
 
 
